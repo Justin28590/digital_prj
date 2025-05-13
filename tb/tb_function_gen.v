@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module tb_function_gen;
 
 reg [11:0] a, b, c;
