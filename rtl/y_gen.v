@@ -23,11 +23,11 @@ always@(posedge clk) begin
 end
 
 //第二级：cos查表，计算a+d的值,同时继续传递a,b的值后面乘法要用
-reg [15:0] cos_out;
-reg [15:0] cos_reg;
-reg [12:0] apd_reg;
-reg [11:0] a_reg_2;
-reg [11:0] b_reg_2;
+wire [15:0] cos_out;
+reg  [15:0] cos_reg;
+reg  [12:0] apd_reg;
+reg  [11:0] a_reg_2;
+reg  [11:0] b_reg_2;
 cos_lut u_cos_lut(
     .addr(c),
     .cos_out(cos_out)
@@ -40,9 +40,9 @@ always@(posedge clk) begin
 end
 
 //第三级：cos取绝对值，div值查表
-reg [14:0] cos_abs;
-reg [23:0] div_val;
-reg [23:0] div_reg;
+reg  [14:0] cos_abs;
+wire [23:0] div_val;
+reg  [23:0] div_reg;
 div_lut u_div_lut(
     .apd(apd_reg),
     .div_val(div_val)
