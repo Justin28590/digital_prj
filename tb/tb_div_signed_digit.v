@@ -2,11 +2,11 @@
 
 module tb_div_signed_digit;
 
-    parameter WIDTH = 40;
-    parameter FBITS = 15;
+    parameter WIDTH = 6;
+    parameter FBITS = 5;
 		
-		parameter Q=4;
-		parameter N=5;
+		parameter Q=12;
+		parameter N=13;
 
     reg clk, rst, start;
     reg signed [WIDTH-1:0] a, b;
@@ -44,8 +44,8 @@ module tb_div_signed_digit;
 			.i_start(start),
 			.i_clk(clk),
 			.o_result_out(mul_result),
-			.o_complete(mul_complete),
-			.o_overflow(mul_overflow)
+			.reg_done(mul_complete),
+			.reg_overflow(mul_overflow)
 		);
 
     // 生成时钟
@@ -64,14 +64,14 @@ module tb_div_signed_digit;
         // 复位
         #10 rst = 0;
 
-        a = -40'sd271900;
-        b = 40'd4235264;
-				c = 6'b01000;
-				d = 6'b01100;
+        a = 6'b110000;
+        b = 6'b011100;
+				c = 13'b1001010111001;
+				d = 13'b0000000001001;
         start = 1;
         #10 start = 0;
 
-        wait(done);
+        wait(mul_complete);
         #10
 
         $finish;

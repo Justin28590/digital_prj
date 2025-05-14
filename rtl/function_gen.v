@@ -4,24 +4,23 @@ module function_gen(
 	input [11:0] c,
 	input e,
 	input clk,
-	output reg signed [12:0] y
+	output wire signed [12:0] y,
+	output done_1
 );
 
+parameter WIDTH = 38;
+parameter FBITS = 12;
+parameter Q = 12;
+parameter N = 13;
+
+reg rst = 1'b0;
+reg [1:0] cnt_rst = 2'b0;
 reg [11:0] d_reg = 12'd0;
 reg [4:0] d_cnt = 5'd0;
 reg d_ready = 1'b0;
-reg signed [12:0] xiaoshu = -13'sd1024;//fu shu yao zhuan hua zhi jie chu,bu xu yao zhuan hua wei bu ma zai chu
-reg signed [15:0] cos = 16'b1100_0000_0000_0000;
-reg signed [27:0] ans;
-assign ans = xiaoshu * cos;
-
-reg signed [3:0] beichushu = -4'sd3;
-reg [2:0] chushu = 3'b110;
-reg signed [5:0] shang;
-reg [3:0] beichushuzuoyi; 
-assign beichushuzuoyi = (beichushu[3]==1'b0)? (beichushu[2:0]<<1):((~beichushu[2:0]+1)<<1); 
-assign shang = beichushuzuoyi /$signed({1'b0,chushu});//qu zui gao yi wei zuo wei fuhaowei
-
+reg  valid;
+reg dbz;
+reg done;
 
 always@(posedge clk) begin
 	if(!d_ready) begin
@@ -37,53 +36,79 @@ end
 
 reg [11:0] a_reg = 12'd0 ,b_reg = 12'd0,c_reg = 12'd0;
 reg [23:0] mult_ab = 24'd0;
+reg [24:0] a_plus_d = 25'd0;
 always@(posedge clk) begin
 	if(d_ready) begin
 		a_reg <= a;
 		b_reg <= b;
 		c_reg <= c;
 		mult_ab <= a * b;
+		a_plus_d <= (a + d_reg) << 12;
 	end
 end
 
 
-wire signed [15:0] cos_val;
-cos_lut cos_table(
+reg signed [12:0] cos_val;
+cos_lut_digit cos_table(
 	.addr(c_reg),
 	.cos_out(cos_val)
 );
 
 
-reg signed [39:0] numerator = 40'sd0;//ren chu yi 2^15
+reg signed [37:0] numerator = 38'd0;
+reg signed [37:0] denominator = 38'd0;
 always@(posedge clk) begin
 	if(d_ready) begin
-		numerator <= $signed({1'b0,mult_ab}) * $signed(cos_val);
+		numerator <= {2'b00, mult_ab, 12'b0};
+		denominator <= {1'b0, a_plus_d, 12'b0};
 	end
 end
 
-
-reg [24:0] denominator = 25'd0;
 always@(posedge clk) begin
-	if(d_ready) begin
-		denominator <= (a_reg + d_reg) << 12;
-	end
+	if(cnt_rst >= 2'b11)
+		cnt_rst <= cnt_rst;
+	else if(cnt_rst == 2'b10) begin
+		rst <= ~rst;
+		cnt_rst <= cnt_rst + 1'b1;
+	end else if(cnt_rst == 2'b01) begin
+		rst <= ~rst;
+		cnt_rst <= cnt_rst + 1'b1;
+	end else 
+		cnt_rst <= cnt_rst + 1'b1;
 end
 
-reg signed [63:0] division_result = 64'd0;
-always@(posedge clk) begin
-	if(d_ready) begin
-		if(denominator != 0)
-			division_result <= numerator / denominator;
-		else 
-			division_result <= 95'd0;
-	end
-end
+reg signed [37:0] div_result;
+reg signed [12:0] val_div;
+div #(
+	.WIDTH(WIDTH),
+	.FBITS(FBITS)
+) u_div(
+	.clk(clk),
+	.rst(rst),
+	.start(d_ready),
+	.done(done),
+	.valid(valid),
+	.dbz(dbz),
+	.a(numerator),
+	.b(denominator),
+	.div_val(div_result),
+	.val_div(val_div)
+);
 
+reg mult_done;
+mult_digit #(
+	.Q(Q),
+	.N(N)
+) u_mult_digit(
+	.i_clk(clk),
+	.i_start(done),
+	.i_multiplicand(val_div),
+	.i_multiplier(cos_val),
+	.o_result_out(y),
+	.reg_done(mult_done)
+);
+	
 
-always@(posedge clk) begin
-	if(d_ready) begin
-		y <= division_result[25:13];
-	end
-end
+assign done_1 = mult_done;
 
 endmodule

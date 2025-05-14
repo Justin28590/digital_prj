@@ -8,9 +8,8 @@ module mult_digit#(
 	input 	[N-1:0]	i_multiplier,
 	input 	i_start,
 	input 	i_clk,
-	output 	[N-1:0] o_result_out,
-	output 	o_complete,
-	output	o_overflow
+	output reg 	[N-1:0] o_result_out,
+	output 	reg reg_done
 	);
 
 	reg [2*N-2:0]	reg_working_result;		//	a place to accumulate our result
@@ -18,27 +17,17 @@ module mult_digit#(
 	reg [N-1:0]		reg_multiplicand_temp;	//	a working copy of the umultiplicand
 	reg [$clog2(N):0] 			reg_count; 		
 										 
-	reg					reg_done;		//	Computation completed flag
-	reg					reg_sign;		//	The result's sign bit
-	reg					reg_overflow;	//	Overflow flag
+	reg	reg_sign = 1'b0;		//	The result's sign bit
+
+	initial reg_done <= 1'b0;
  
-	initial reg_done = 1'b1;			//	Initial state is to not be doing anything
-	initial reg_overflow = 1'b0;		//		And there should be no woverflow present
-	initial reg_sign = 1'b0;			//		And the sign should be positive
-	
-	assign o_result_out[N-2:0] = reg_working_result[N-2+Q:Q];	//	The multiplication results
-	assign o_result_out[N-1] = reg_sign;								//	The sign of the result
-	assign o_complete = reg_done;											//	"Done" flag
-	assign o_overflow = reg_overflow;									//	Overflow flag
-	
 	always @( posedge i_clk ) begin
-		if( reg_done && i_start ) begin										//	This is our startup condition
+		if(i_start) begin										//	This is our startup condition
 			reg_done <= 1'b0;														//	We're not done			
 			reg_count <= 0;														//	Reset the count
 			reg_working_result <= 0;											//	Clear out the result register
 			reg_multiplier_temp <= 0;											//	Clear out the multiplier register 
 			reg_multiplicand_temp <= 0;										//	Clear out the multiplicand register 
-			reg_overflow <= 1'b0;												//	Clear the overflow register
 
 			reg_multiplicand_temp <= i_multiplicand[N-2:0];				//	Load the multiplicand in its working register and lose the sign bit
 			reg_multiplier_temp <= i_multiplier[N-2:0];					//	Load the multiplier into its working register and lose the sign bit
@@ -54,12 +43,9 @@ module mult_digit#(
 			reg_count <= reg_count + 1;													//	Increment the count
 
 			//stop condition
-			if(reg_count == N) begin
-				reg_done <= 1'b1;										//	If we're done, it's time to tell the calling process
-				if (reg_working_result[2*N-2:N-1+Q] > 0)			// Check for an overflow
-					reg_overflow <= 1'b1;
-//			else
-//				reg_count <= reg_count + 1;													//	Increment the count
+				if(reg_count == N) begin
+					reg_done <= 1'b1;										//	If we're done, it's time to tell the calling process
+					o_result_out <= (reg_sign == 1'b1) ? {1'b1, -reg_working_result[N-2+Q:Q]}: {1'b0, reg_working_result[N-2+Q:Q]};
 				end
 			end
 		end
