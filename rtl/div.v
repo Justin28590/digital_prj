@@ -3,15 +3,15 @@ module div #(
     parameter FBITS = 4
 )(
     input clk,
-		input rst,
+	input rst,
     input start,
-		output reg done,
+	output reg done,
     output reg valid,
     output reg dbz,
     input signed [WIDTH-1:0] a,
     input signed [WIDTH-1:0] b,
     output reg signed [WIDTH-1:0] div_val,
-		output reg signed [12:0] val_div
+	output reg signed [12:0] val_div
 );
 
 localparam WIDTHU = WIDTH - 1;
