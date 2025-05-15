@@ -37,10 +37,16 @@ initial begin
 
     // 连续输入 a, b, c（每个在 posedge clk 改变）
     for (i = 0; i < 3; i = i + 1) begin
-        @(posedge clk);
-        a <= a_vals[i];
-        b <= b_vals[i];
-        c <= c_vals[i];
+        if(i==0) begin
+	        a <= a_vals[i];
+	        b <= b_vals[i];
+	        c <= c_vals[i];
+	    end else begin
+            @(posedge clk);
+            a <= a_vals[i];
+            b <= b_vals[i];
+            c <= c_vals[i];
+	    end 
     end
 
     #500;
