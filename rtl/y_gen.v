@@ -7,8 +7,9 @@ module y_gen(
 	output wire signed [12:0] y
 );
 
-//第一级：初始化，寄存变量值，每个时钟周期都可以处理一组新数据
+//第零级：初始化，寄存变量值，每个时钟周期都可以处理一组新数据,计算a+d的值
 reg [11:0] a_reg, b_reg, c_reg, d_reg;
+reg  [12:0] apd_reg;
 wire [11:0] d;
 d_gen u_d_gen(
     .clk(clk),
@@ -20,37 +21,30 @@ always@(posedge clk) begin
     b_reg <= b;
     c_reg <= c;
     d_reg <= d;
+    apd_reg <= a + d;
 end
 
-//第二级：cos查表，计算a+d的值,同时继续传递a,b的值后面乘法要用
-wire [15:0] cos_out;
-reg  [15:0] cos_reg;
-reg  [12:0] apd_reg;
+//第一级：cos查表,取绝对值，div查表，同时继续传递a,b的值后面乘法要用
+wire [12:0] cos_out;
 reg  [11:0] a_reg_2;
 reg  [11:0] b_reg_2;
+reg  [11:0] cos_abs;
 cos_lut u_cos_lut(
     .addr(c),
     .cos_out(cos_out)
 );
-always@(posedge clk) begin
-   cos_reg <= cos_out; 
-   apd_reg <= a_reg + d_reg;
-   a_reg_2 <= a_reg;
-   b_reg_2 <= b_reg;
-end
-
-//第三级：cos取绝对值，div值查表
-reg  [14:0] cos_abs;
 wire [23:0] div_reg;
 div_lut u_div_lut(
     .apd(apd_reg),
     .div_val(div_reg)
 );
 always@(posedge clk) begin
-    cos_abs <= (cos_reg[15]) ? -cos_reg[14:0] : cos_reg[14:0]; 
+   a_reg_2 <= a_reg;
+   b_reg_2 <= b_reg;
+   cos_abs <= (cos_out[12]) ? -cos_out[11:0] : cos_out[11:0];
 end
 
-//第四级：保存符号，计算a*cos,b*div:cos15位分成5*3，div24位分成6*4，a和b各12位分成4*3
+//第二级：保存符号，计算a*cos,b*div:cos15位分成5*3，div24位分成6*4，a和b各12位分成4*3
 reg sign_reg;
 reg [8:0] a1cos1, a2cos1, a3cos1;
 reg [8:0] a1cos2, a2cos2, a3cos2;
@@ -60,7 +54,7 @@ reg [9:0] b1d1, b1d2, b1d3, b1d4;
 reg [9:0] b2d1, b2d2, b2d3, b2d4;
 reg [9:0] b3d1, b3d2, b3d3, b3d4;
 always@(posedge clk) begin
-    sign_reg <= cos_reg[15];
+    sign_reg <= cos_out[12];
     a1cos1 <= a_reg_2[3:0] * cos_abs[4:0];
     a2cos1 <= a_reg_2[7:4] * cos_abs[4:0];
     a3cos1 <= a_reg_2[11:8]* cos_abs[4:0];
@@ -137,12 +131,11 @@ always@(posedge clk) begin
 end
 
 //第八级：右移12位，截取12位，合并符号位
-reg sign_reg_5;
 wire [11:0] result_cut;
+reg sign_reg_5;
 always@(posedge clk) begin
     sign_reg_5 <= sign_reg_4;
 end
 assign result_cut = result[50:39];
 assign y = sign_reg_5 ? {1'b1,-result_cut} : {1'b0,result_cut};
-
 endmodule

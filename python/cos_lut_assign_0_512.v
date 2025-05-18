@@ -1,15 +1,3 @@
-module cos_lut (
-    input wire [11:0] addr,
-    output wire signed [12:0] cos_out
-);
-
-wire signed [12:0] cos_val [1024:0];
-wire [9:0] idx;
-assign idx = (addr < 1024)? addr: (addr<2048)? 2048-addr: (addr<3072)? addr-2048: 4096-addr;
-wire sign;
-assign sign = (addr<1024)? 1'b0: (addr<2048)? 1'b1: (addr<3072)? 1'b1: 1'b0;
-assign cos_out = sign ? -cos_val[idx] : cos_val[idx];
-
 assign cos_val[0] = 13'sd4095;
 assign cos_val[1] = 13'sd4095;
 assign cos_val[2] = 13'sd4095;
@@ -1035,5 +1023,3 @@ assign cos_val[1021] = 13'sd19;
 assign cos_val[1022] = 13'sd13;
 assign cos_val[1023] = 13'sd6;
 assign cos_val[1024] = 13'sd0;
-
-endmodule
