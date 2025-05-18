@@ -7,7 +7,7 @@ module y_gen(
 	output wire signed [12:0] y
 );
 
-//第零级：初始化，寄存变量值，每个时钟周期都可以处理一组新数据,计算a+d的值
+//第0级：初始化，寄存变量值，每个时钟周期都可以处理一组新数据,计算a+d的值
 reg [11:0] a_reg, b_reg, c_reg, d_reg;
 reg  [12:0] apd_reg;
 wire [11:0] d;
@@ -24,7 +24,7 @@ always@(posedge clk) begin
     apd_reg <= a + d;
 end
 
-//第一级：cos查表,取绝对值，div查表，同时继续传递a,b的值后面乘法要用
+//第1级：cos查表,取绝对值，div查表，同时继续传递a,b的值后面乘法要用
 wire [12:0] cos_out;
 reg  [11:0] a_reg_2;
 reg  [11:0] b_reg_2;
@@ -44,7 +44,7 @@ always@(posedge clk) begin
    cos_abs <= (cos_out[12]) ? -cos_out[11:0] : cos_out[11:0];
 end
 
-//第二级：保存符号，计算a*cos,b*div:cos15位分成5*3，div24位分成6*4，a和b各12位分成4*3
+//第2级：保存符号，计算a*cos,b*div:cos15位分成5*3，div24位分成6*4，a和b各12位分成4*3
 reg sign_reg;
 reg [8:0] a1cos1, a2cos1, a3cos1;
 reg [8:0] a1cos2, a2cos2, a3cos2;
