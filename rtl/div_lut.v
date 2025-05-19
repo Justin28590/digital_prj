@@ -1,199 +1,542 @@
 module div_lut(
     input [12:0] apd,
-    output wire [11:0] div_val
+    output wire [14:0] div_val
 );
 
-wire [11:0] val [127:0];
-wire [6:0] idx;
-assign idx = (apd < 72)    ? apd :
-             (apd < 73)    ? 71  :
-             (apd < 74)    ? 72  :
-             (apd < 76)    ? 73  :
-             (apd < 77)    ? 74  :
-             (apd < 78)    ? 75  :
-             (apd < 80)    ? 76  :
-             (apd < 82)    ? 77  :
-             (apd < 83)    ? 78  :
-             (apd < 85)    ? 79  :
-             (apd < 87)    ? 80  :
-             (apd < 89)    ? 81  :
-             (apd < 91)    ? 82  :
-             (apd < 93)    ? 83  :
-             (apd < 95)    ? 84  :
-             (apd < 97)    ? 85  :
-             (apd < 99)    ? 86  :
-             (apd < 101)   ? 87  :
-             (apd < 103)   ? 88  :
-             (apd < 106)   ? 89  :
-             (apd < 109)   ? 90  :
-             (apd < 112)   ? 91  :
-             (apd < 115)   ? 92  :
-             (apd < 118)   ? 93  :
-             (apd < 122)   ? 94  :
-             (apd < 125)   ? 95  :
-             (apd < 130)   ? 96  :
-             (apd < 134)   ? 97  :
-             (apd < 138)   ? 98  :
-             (apd < 143)   ? 99  :
-             (apd < 148)   ? 100 :
-             (apd < 154)   ? 101 :
-             (apd < 160)   ? 102 :
-             (apd < 167)   ? 103 :
-             (apd < 174)   ? 104 :
-             (apd < 181)   ? 105 :
-             (apd < 190)   ? 106 :
-             (apd < 199)   ? 107 :
-             (apd < 210)   ? 108 :
-             (apd < 221)   ? 109 :
-             (apd < 234)   ? 110 :
-             (apd < 248)   ? 111 :
-             (apd < 264)   ? 112 :
-             (apd < 282)   ? 113 :
-             (apd < 303)   ? 114 :
-             (apd < 327)   ? 115 :
-             (apd < 356)   ? 116 :
-             (apd < 389)   ? 117 :
-             (apd < 431)   ? 118 :
-             (apd < 481)   ? 119 :
-             (apd < 546)   ? 120 :
-             (apd < 629)   ? 121 :
-             (apd < 744)   ? 122 :
-             (apd < 909)   ? 123 :
-             (apd < 1170)  ? 124 :
-             (apd < 1637)  ? 125 :
-             (apd < 2730)  ? 126 :
-             (apd < 8191)  ? 127 :
-                             127 ;
+wire [14:0] val [359:0];
+wire [8:0] idx;
+assign idx = (apd < 190) ? apd :
+    (apd < 192) ? 190 :
+    (apd < 193) ? 191 :
+    (apd < 194) ? 192 :
+    (apd < 195) ? 193 :
+    (apd < 196) ? 194 :
+    (apd < 197) ? 195 :
+    (apd < 198) ? 196 :
+    (apd < 200) ? 197 :
+    (apd < 201) ? 198 :
+    (apd < 202) ? 199 :
+    (apd < 203) ? 200 :
+    (apd < 205) ? 201 :
+    (apd < 206) ? 202 :
+    (apd < 207) ? 203 :
+    (apd < 209) ? 204 :
+    (apd < 210) ? 205 :
+    (apd < 211) ? 206 :
+    (apd < 213) ? 207 :
+    (apd < 214) ? 208 :
+    (apd < 215) ? 209 :
+    (apd < 217) ? 210 :
+    (apd < 218) ? 211 :
+    (apd < 220) ? 212 :
+    (apd < 221) ? 213 :
+    (apd < 223) ? 214 :
+    (apd < 224) ? 215 :
+    (apd < 226) ? 216 :
+    (apd < 227) ? 217 :
+    (apd < 229) ? 218 :
+    (apd < 230) ? 219 :
+    (apd < 232) ? 220 :
+    (apd < 234) ? 221 :
+    (apd < 235) ? 222 :
+    (apd < 237) ? 223 :
+    (apd < 239) ? 224 :
+    (apd < 241) ? 225 :
+    (apd < 242) ? 226 :
+    (apd < 244) ? 227 :
+    (apd < 246) ? 228 :
+    (apd < 248) ? 229 :
+    (apd < 250) ? 230 :
+    (apd < 252) ? 231 :
+    (apd < 254) ? 232 :
+    (apd < 255) ? 233 :
+    (apd < 257) ? 234 :
+    (apd < 260) ? 235 :
+    (apd < 262) ? 236 :
+    (apd < 264) ? 237 :
+    (apd < 266) ? 238 :
+    (apd < 268) ? 239 :
+    (apd < 270) ? 240 :
+    (apd < 272) ? 241 :
+    (apd < 275) ? 242 :
+    (apd < 277) ? 243 :
+    (apd < 279) ? 244 :
+    (apd < 282) ? 245 :
+    (apd < 284) ? 246 :
+    (apd < 287) ? 247 :
+    (apd < 289) ? 248 :
+    (apd < 292) ? 249 :
+    (apd < 294) ? 250 :
+    (apd < 297) ? 251 :
+    (apd < 300) ? 252 :
+    (apd < 302) ? 253 :
+    (apd < 305) ? 254 :
+    (apd < 308) ? 255 :
+    (apd < 311) ? 256 :
+    (apd < 314) ? 257 :
+    (apd < 317) ? 258 :
+    (apd < 320) ? 259 :
+    (apd < 323) ? 260 :
+    (apd < 327) ? 261 :
+    (apd < 330) ? 262 :
+    (apd < 333) ? 263 :
+    (apd < 337) ? 264 :
+    (apd < 340) ? 265 :
+    (apd < 344) ? 266 :
+    (apd < 347) ? 267 :
+    (apd < 351) ? 268 :
+    (apd < 355) ? 269 :
+    (apd < 359) ? 270 :
+    (apd < 363) ? 271 :
+    (apd < 367) ? 272 :
+    (apd < 371) ? 273 :
+    (apd < 375) ? 274 :
+    (apd < 379) ? 275 :
+    (apd < 384) ? 276 :
+    (apd < 388) ? 277 :
+    (apd < 393) ? 278 :
+    (apd < 398) ? 279 :
+    (apd < 403) ? 280 :
+    (apd < 408) ? 281 :
+    (apd < 413) ? 282 :
+    (apd < 418) ? 283 :
+    (apd < 423) ? 284 :
+    (apd < 429) ? 285 :
+    (apd < 435) ? 286 :
+    (apd < 440) ? 287 :
+    (apd < 446) ? 288 :
+    (apd < 452) ? 289 :
+    (apd < 459) ? 290 :
+    (apd < 465) ? 291 :
+    (apd < 472) ? 292 :
+    (apd < 479) ? 293 :
+    (apd < 486) ? 294 :
+    (apd < 493) ? 295 :
+    (apd < 501) ? 296 :
+    (apd < 509) ? 297 :
+    (apd < 517) ? 298 :
+    (apd < 525) ? 299 :
+    (apd < 533) ? 300 :
+    (apd < 542) ? 301 :
+    (apd < 551) ? 302 :
+    (apd < 561) ? 303 :
+    (apd < 570) ? 304 :
+    (apd < 580) ? 305 :
+    (apd < 591) ? 306 :
+    (apd < 602) ? 307 :
+    (apd < 613) ? 308 :
+    (apd < 625) ? 309 :
+    (apd < 637) ? 310 :
+    (apd < 649) ? 311 :
+    (apd < 662) ? 312 :
+    (apd < 676) ? 313 :
+    (apd < 690) ? 314 :
+    (apd < 705) ? 315 :
+    (apd < 721) ? 316 :
+    (apd < 737) ? 317 :
+    (apd < 754) ? 318 :
+    (apd < 771) ? 319 :
+    (apd < 790) ? 320 :
+    (apd < 810) ? 321 :
+    (apd < 830) ? 322 :
+    (apd < 852) ? 323 :
+    (apd < 874) ? 324 :
+    (apd < 898) ? 325 :
+    (apd < 924) ? 326 :
+    (apd < 950) ? 327 :
+    (apd < 979) ? 328 :
+    (apd < 1009) ? 329 :
+    (apd < 1041) ? 330 :
+    (apd < 1075) ? 331 :
+    (apd < 1111) ? 332 :
+    (apd < 1150) ? 333 :
+    (apd < 1192) ? 334 :
+    (apd < 1237) ? 335 :
+    (apd < 1285) ? 336 :
+    (apd < 1338) ? 337 :
+    (apd < 1395) ? 338 :
+    (apd < 1457) ? 339 :
+    (apd < 1525) ? 340 :
+    (apd < 1599) ? 341 :
+    (apd < 1681) ? 342 :
+    (apd < 1772) ? 343 :
+    (apd < 1873) ? 345 :
+    (apd < 1986) ? 346 :
+    (apd < 2115) ? 347 :
+    (apd < 2260) ? 348 :
+    (apd < 2428) ? 349 :
+    (apd < 2622) ? 350 :
+    (apd < 2850) ? 351 :
+    (apd < 3121) ? 352 :
+    (apd < 3450) ? 353 :
+    (apd < 3855) ? 354 :
+    (apd < 4369) ? 355 :
+    (apd < 5042) ? 356 :
+    (apd < 5958) ? 357 :
+    (apd < 7282) ? 358 :
+    (apd < 8191) ? 359 :
+    359;
 
 assign div_val = val[idx];
 
-assign val[0] = 12'd4095;   // 0
-assign val[1] = 12'd4095;   // 1
-assign val[2] = 12'd2048;   // 2
-assign val[3] = 12'd1365;   // 3
-assign val[4] = 12'd1024;   // 4
-assign val[5] = 12'd819;   // 5
-assign val[6] = 12'd682;   // 6
-assign val[7] = 12'd585;   // 7
-assign val[8] = 12'd512;   // 8
-assign val[9] = 12'd455;   // 9
-assign val[10] = 12'd410;   // 10
-assign val[11] = 12'd372;   // 11
-assign val[12] = 12'd341;   // 12
-assign val[13] = 12'd315;   // 13
-assign val[14] = 12'd292;   // 14
-assign val[15] = 12'd273;   // 15
-assign val[16] = 12'd256;   // 16
-assign val[17] = 12'd241;   // 17
-assign val[18] = 12'd228;   // 18
-assign val[19] = 12'd216;   // 19
-assign val[20] = 12'd205;   // 20
-assign val[21] = 12'd195;   // 21
-assign val[22] = 12'd186;   // 22
-assign val[23] = 12'd178;   // 23
-assign val[24] = 12'd171;   // 24
-assign val[25] = 12'd164;   // 25
-assign val[26] = 12'd158;   // 26
-assign val[27] = 12'd152;   // 27
-assign val[28] = 12'd146;   // 28
-assign val[29] = 12'd141;   // 29
-assign val[30] = 12'd136;   // 30
-assign val[31] = 12'd132;   // 31
-assign val[32] = 12'd128;   // 32
-assign val[33] = 12'd124;   // 33
-assign val[34] = 12'd120;   // 34
-assign val[35] = 12'd117;   // 35
-assign val[36] = 12'd114;   // 36
-assign val[37] = 12'd111;   // 37
-assign val[38] = 12'd108;   // 38
-assign val[39] = 12'd105;   // 39
-assign val[40] = 12'd102;   // 40
-assign val[41] = 12'd100;   // 41
-assign val[42] = 12'd98;   // 42
-assign val[43] = 12'd95;   // 43
-assign val[44] = 12'd93;   // 44
-assign val[45] = 12'd91;   // 45
-assign val[46] = 12'd89;   // 46
-assign val[47] = 12'd87;   // 47
-assign val[48] = 12'd85;   // 48
-assign val[49] = 12'd84;   // 49
-assign val[50] = 12'd82;   // 50
-assign val[51] = 12'd80;   // 51
-assign val[52] = 12'd79;   // 52
-assign val[53] = 12'd77;   // 53
-assign val[54] = 12'd76;   // 54
-assign val[55] = 12'd74;   // 55
-assign val[56] = 12'd73;   // 56
-assign val[57] = 12'd72;   // 57
-assign val[58] = 12'd71;   // 58
-assign val[59] = 12'd69;   // 59
-assign val[60] = 12'd68;   // 60
-assign val[61] = 12'd67;   // 61
-assign val[62] = 12'd66;   // 62
-assign val[63] = 12'd65;   // 63
-assign val[64] = 12'd64;   // 64
-assign val[65] = 12'd63;   // 65
-assign val[66] = 12'd62;   // 66
-assign val[67] = 12'd61;   // 67
-assign val[68] = 12'd60;   // 68
-assign val[69] = 12'd59;   // 69
-assign val[70] = 12'd58;   // 70-71
-assign val[71] = 12'd57;   // 72
-assign val[72] = 12'd56;   // 73
-assign val[73] = 12'd55;   // 74-75
-assign val[74] = 12'd54;   // 76
-assign val[75] = 12'd53;   // 77
-assign val[76] = 12'd52;   // 78-79
-assign val[77] = 12'd51;   // 80-81
-assign val[78] = 12'd50;   // 82
-assign val[79] = 12'd49;   // 83-84
-assign val[80] = 12'd48;   // 85-86
-assign val[81] = 12'd47;   // 87-88
-assign val[82] = 12'd46;   // 89-90
-assign val[83] = 12'd45;   // 91-92
-assign val[84] = 12'd44;   // 93-94
-assign val[85] = 12'd43;   // 95-96
-assign val[86] = 12'd42;   // 97-98
-assign val[87] = 12'd41;   // 99-101
-assign val[88] = 12'd40;   // 102-103
-assign val[89] = 12'd39;   // 104-106
-assign val[90] = 12'd38;   // 107-109
-assign val[91] = 12'd37;   // 110-112
-assign val[92] = 12'd36;   // 113-115
-assign val[93] = 12'd35;   // 116-118
-assign val[94] = 12'd34;   // 119-122
-assign val[95] = 12'd33;   // 123-125
-assign val[96] = 12'd32;   // 126-130
-assign val[97] = 12'd31;   // 131-134
-assign val[98] = 12'd30;   // 135-138
-assign val[99] = 12'd29;   // 139-143
-assign val[100] = 12'd28;   // 144-148
-assign val[101] = 12'd27;   // 149-154
-assign val[102] = 12'd26;   // 155-160
-assign val[103] = 12'd25;   // 161-167
-assign val[104] = 12'd24;   // 168-174
-assign val[105] = 12'd23;   // 175-181
-assign val[106] = 12'd22;   // 182-190
-assign val[107] = 12'd21;   // 191-199
-assign val[108] = 12'd20;   // 200-210
-assign val[109] = 12'd19;   // 211-221
-assign val[110] = 12'd18;   // 222-234
-assign val[111] = 12'd17;   // 235-248
-assign val[112] = 12'd16;   // 249-264
-assign val[113] = 12'd15;   // 265-282
-assign val[114] = 12'd14;   // 283-303
-assign val[115] = 12'd13;   // 304-327
-assign val[116] = 12'd12;   // 328-356
-assign val[117] = 12'd11;   // 357-389
-assign val[118] = 12'd10;   // 390-431
-assign val[119] = 12'd9;   // 432-481
-assign val[120] = 12'd8;   // 482-546
-assign val[121] = 12'd7;   // 547-629
-assign val[122] = 12'd6;   // 630-744
-assign val[123] = 12'd5;   // 745-909
-assign val[124] = 12'd4;   // 910-1170
-assign val[125] = 12'd3;   // 1171-1637
-assign val[126] = 12'd2;   // 1638-2730
-assign val[127] = 12'd1;   // 2731-8190
+assign val[0] = 15'd32767;   // 0-1
+assign val[1] = 15'd32767;   // 1
+assign val[2] = 15'd16384;   // 2
+assign val[3] = 15'd10922;   // 3
+assign val[4] = 15'd8192;   // 4
+assign val[5] = 15'd6553;   // 5
+assign val[6] = 15'd5461;   // 6
+assign val[7] = 15'd4681;   // 7
+assign val[8] = 15'd4096;   // 8
+assign val[9] = 15'd3641;   // 9
+assign val[10] = 15'd3277;   // 10
+assign val[11] = 15'd2979;   // 11
+assign val[12] = 15'd2731;   // 12
+assign val[13] = 15'd2521;   // 13
+assign val[14] = 15'd2340;   // 14
+assign val[15] = 15'd2184;   // 15
+assign val[16] = 15'd2048;   // 16
+assign val[17] = 15'd1927;   // 17
+assign val[18] = 15'd1820;   // 18
+assign val[19] = 15'd1725;   // 19
+assign val[20] = 15'd1638;   // 20
+assign val[21] = 15'd1560;   // 21
+assign val[22] = 15'd1489;   // 22
+assign val[23] = 15'd1425;   // 23
+assign val[24] = 15'd1365;   // 24
+assign val[25] = 15'd1311;   // 25
+assign val[26] = 15'd1260;   // 26
+assign val[27] = 15'd1214;   // 27
+assign val[28] = 15'd1170;   // 28
+assign val[29] = 15'd1130;   // 29
+assign val[30] = 15'd1092;   // 30
+assign val[31] = 15'd1057;   // 31
+assign val[32] = 15'd1024;   // 32
+assign val[33] = 15'd993;   // 33
+assign val[34] = 15'd964;   // 34
+assign val[35] = 15'd936;   // 35
+assign val[36] = 15'd910;   // 36
+assign val[37] = 15'd886;   // 37
+assign val[38] = 15'd862;   // 38
+assign val[39] = 15'd840;   // 39
+assign val[40] = 15'd819;   // 40
+assign val[41] = 15'd799;   // 41
+assign val[42] = 15'd780;   // 42
+assign val[43] = 15'd762;   // 43
+assign val[44] = 15'd745;   // 44
+assign val[45] = 15'd728;   // 45
+assign val[46] = 15'd712;   // 46
+assign val[47] = 15'd697;   // 47
+assign val[48] = 15'd683;   // 48
+assign val[49] = 15'd669;   // 49
+assign val[50] = 15'd655;   // 50
+assign val[51] = 15'd642;   // 51
+assign val[52] = 15'd630;   // 52
+assign val[53] = 15'd618;   // 53
+assign val[54] = 15'd607;   // 54
+assign val[55] = 15'd596;   // 55
+assign val[56] = 15'd585;   // 56
+assign val[57] = 15'd575;   // 57
+assign val[58] = 15'd565;   // 58
+assign val[59] = 15'd555;   // 59
+assign val[60] = 15'd546;   // 60
+assign val[61] = 15'd537;   // 61
+assign val[62] = 15'd528;   // 62
+assign val[63] = 15'd520;   // 63
+assign val[64] = 15'd512;   // 64
+assign val[65] = 15'd504;   // 65
+assign val[66] = 15'd496;   // 66
+assign val[67] = 15'd489;   // 67
+assign val[68] = 15'd482;   // 68
+assign val[69] = 15'd475;   // 69
+assign val[70] = 15'd468;   // 70
+assign val[71] = 15'd462;   // 71
+assign val[72] = 15'd455;   // 72
+assign val[73] = 15'd449;   // 73
+assign val[74] = 15'd443;   // 74
+assign val[75] = 15'd437;   // 75
+assign val[76] = 15'd431;   // 76
+assign val[77] = 15'd426;   // 77
+assign val[78] = 15'd420;   // 78
+assign val[79] = 15'd415;   // 79
+assign val[80] = 15'd410;   // 80
+assign val[81] = 15'd405;   // 81
+assign val[82] = 15'd400;   // 82
+assign val[83] = 15'd395;   // 83
+assign val[84] = 15'd390;   // 84
+assign val[85] = 15'd385;   // 85
+assign val[86] = 15'd381;   // 86
+assign val[87] = 15'd377;   // 87
+assign val[88] = 15'd372;   // 88
+assign val[89] = 15'd368;   // 89
+assign val[90] = 15'd364;   // 90
+assign val[91] = 15'd360;   // 91
+assign val[92] = 15'd356;   // 92
+assign val[93] = 15'd352;   // 93
+assign val[94] = 15'd349;   // 94
+assign val[95] = 15'd345;   // 95
+assign val[96] = 15'd341;   // 96
+assign val[97] = 15'd338;   // 97
+assign val[98] = 15'd334;   // 98
+assign val[99] = 15'd331;   // 99
+assign val[100] = 15'd328;   // 100
+assign val[101] = 15'd324;   // 101
+assign val[102] = 15'd321;   // 102
+assign val[103] = 15'd318;   // 103
+assign val[104] = 15'd315;   // 104
+assign val[105] = 15'd312;   // 105
+assign val[106] = 15'd309;   // 106
+assign val[107] = 15'd306;   // 107
+assign val[108] = 15'd303;   // 108
+assign val[109] = 15'd301;   // 109
+assign val[110] = 15'd298;   // 110
+assign val[111] = 15'd295;   // 111
+assign val[112] = 15'd293;   // 112
+assign val[113] = 15'd290;   // 113
+assign val[114] = 15'd287;   // 114
+assign val[115] = 15'd285;   // 115
+assign val[116] = 15'd282;   // 116
+assign val[117] = 15'd280;   // 117
+assign val[118] = 15'd278;   // 118
+assign val[119] = 15'd275;   // 119
+assign val[120] = 15'd273;   // 120
+assign val[121] = 15'd271;   // 121
+assign val[122] = 15'd269;   // 122
+assign val[123] = 15'd266;   // 123
+assign val[124] = 15'd264;   // 124
+assign val[125] = 15'd262;   // 125
+assign val[126] = 15'd260;   // 126
+assign val[127] = 15'd258;   // 127
+assign val[128] = 15'd256;   // 128
+assign val[129] = 15'd254;   // 129
+assign val[130] = 15'd252;   // 130
+assign val[131] = 15'd250;   // 131
+assign val[132] = 15'd248;   // 132
+assign val[133] = 15'd246;   // 133
+assign val[134] = 15'd245;   // 134
+assign val[135] = 15'd243;   // 135
+assign val[136] = 15'd241;   // 136
+assign val[137] = 15'd239;   // 137
+assign val[138] = 15'd237;   // 138
+assign val[139] = 15'd236;   // 139
+assign val[140] = 15'd234;   // 140
+assign val[141] = 15'd232;   // 141
+assign val[142] = 15'd231;   // 142
+assign val[143] = 15'd229;   // 143
+assign val[144] = 15'd228;   // 144
+assign val[145] = 15'd226;   // 145
+assign val[146] = 15'd224;   // 146
+assign val[147] = 15'd223;   // 147
+assign val[148] = 15'd221;   // 148
+assign val[149] = 15'd220;   // 149
+assign val[150] = 15'd218;   // 150
+assign val[151] = 15'd217;   // 151
+assign val[152] = 15'd216;   // 152
+assign val[153] = 15'd214;   // 153
+assign val[154] = 15'd213;   // 154
+assign val[155] = 15'd211;   // 155
+assign val[156] = 15'd210;   // 156
+assign val[157] = 15'd209;   // 157
+assign val[158] = 15'd207;   // 158
+assign val[159] = 15'd206;   // 159
+assign val[160] = 15'd205;   // 160
+assign val[161] = 15'd204;   // 161
+assign val[162] = 15'd202;   // 162
+assign val[163] = 15'd201;   // 163
+assign val[164] = 15'd200;   // 164
+assign val[165] = 15'd199;   // 165
+assign val[166] = 15'd197;   // 166
+assign val[167] = 15'd196;   // 167
+assign val[168] = 15'd195;   // 168
+assign val[169] = 15'd194;   // 169
+assign val[170] = 15'd193;   // 170
+assign val[171] = 15'd192;   // 171
+assign val[172] = 15'd191;   // 172
+assign val[173] = 15'd189;   // 173
+assign val[174] = 15'd188;   // 174
+assign val[175] = 15'd187;   // 175
+assign val[176] = 15'd186;   // 176
+assign val[177] = 15'd185;   // 177
+assign val[178] = 15'd184;   // 178
+assign val[179] = 15'd183;   // 179
+assign val[180] = 15'd182;   // 180
+assign val[181] = 15'd181;   // 181
+assign val[182] = 15'd180;   // 182
+assign val[183] = 15'd179;   // 183
+assign val[184] = 15'd178;   // 184
+assign val[185] = 15'd177;   // 185
+assign val[186] = 15'd176;   // 186
+assign val[187] = 15'd175;   // 187
+assign val[188] = 15'd174;   // 188
+assign val[189] = 15'd173;   // 189
+assign val[190] = 15'd172;   // 190-191
+assign val[191] = 15'd171;   // 192
+assign val[192] = 15'd170;   // 193
+assign val[193] = 15'd169;   // 194
+assign val[194] = 15'd168;   // 195
+assign val[195] = 15'd167;   // 196
+assign val[196] = 15'd166;   // 197
+assign val[197] = 15'd165;   // 198-199
+assign val[198] = 15'd164;   // 200
+assign val[199] = 15'd163;   // 201
+assign val[200] = 15'd162;   // 202
+assign val[201] = 15'd161;   // 203-204
+assign val[202] = 15'd160;   // 205
+assign val[203] = 15'd159;   // 206
+assign val[204] = 15'd158;   // 207-208
+assign val[205] = 15'd157;   // 209
+assign val[206] = 15'd156;   // 210
+assign val[207] = 15'd155;   // 211-212
+assign val[208] = 15'd154;   // 213
+assign val[209] = 15'd153;   // 214
+assign val[210] = 15'd152;   // 215-216
+assign val[211] = 15'd151;   // 217
+assign val[212] = 15'd150;   // 218-219
+assign val[213] = 15'd149;   // 220
+assign val[214] = 15'd148;   // 221-222
+assign val[215] = 15'd147;   // 223
+assign val[216] = 15'd146;   // 224-225
+assign val[217] = 15'd145;   // 226
+assign val[218] = 15'd144;   // 227-228
+assign val[219] = 15'd143;   // 229
+assign val[220] = 15'd142;   // 230-231
+assign val[221] = 15'd141;   // 232-233
+assign val[222] = 15'd140;   // 234
+assign val[223] = 15'd139;   // 235-236
+assign val[224] = 15'd138;   // 237-238
+assign val[225] = 15'd137;   // 239-240
+assign val[226] = 15'd136;   // 241
+assign val[227] = 15'd135;   // 242-243
+assign val[228] = 15'd134;   // 244-245
+assign val[229] = 15'd133;   // 246-247
+assign val[230] = 15'd132;   // 248-249
+assign val[231] = 15'd131;   // 250-251
+assign val[232] = 15'd130;   // 252-253
+assign val[233] = 15'd129;   // 254
+assign val[234] = 15'd128;   // 255-256
+assign val[235] = 15'd127;   // 257-259
+assign val[236] = 15'd126;   // 260-261
+assign val[237] = 15'd125;   // 262-263
+assign val[238] = 15'd124;   // 264-265
+assign val[239] = 15'd123;   // 266-267
+assign val[240] = 15'd122;   // 268-269
+assign val[241] = 15'd121;   // 270-271
+assign val[242] = 15'd120;   // 272-274
+assign val[243] = 15'd119;   // 275-276
+assign val[244] = 15'd118;   // 277-278
+assign val[245] = 15'd117;   // 279-281
+assign val[246] = 15'd116;   // 282-283
+assign val[247] = 15'd115;   // 284-286
+assign val[248] = 15'd114;   // 287-288
+assign val[249] = 15'd113;   // 289-291
+assign val[250] = 15'd112;   // 292-293
+assign val[251] = 15'd111;   // 294-296
+assign val[252] = 15'd110;   // 297-299
+assign val[253] = 15'd109;   // 300-301
+assign val[254] = 15'd108;   // 302-304
+assign val[255] = 15'd107;   // 305-307
+assign val[256] = 15'd106;   // 308-310
+assign val[257] = 15'd105;   // 311-313
+assign val[258] = 15'd104;   // 314-316
+assign val[259] = 15'd103;   // 317-319
+assign val[260] = 15'd102;   // 320-322
+assign val[261] = 15'd101;   // 323-326
+assign val[262] = 15'd100;   // 327-329
+assign val[263] = 15'd99;   // 330-332
+assign val[264] = 15'd98;   // 333-336
+assign val[265] = 15'd97;   // 337-339
+assign val[266] = 15'd96;   // 340-343
+assign val[267] = 15'd95;   // 344-346
+assign val[268] = 15'd94;   // 347-350
+assign val[269] = 15'd93;   // 351-354
+assign val[270] = 15'd92;   // 355-358
+assign val[271] = 15'd91;   // 359-362
+assign val[272] = 15'd90;   // 363-366
+assign val[273] = 15'd89;   // 367-370
+assign val[274] = 15'd88;   // 371-374
+assign val[275] = 15'd87;   // 375-378
+assign val[276] = 15'd86;   // 379-383
+assign val[277] = 15'd85;   // 384-387
+assign val[278] = 15'd84;   // 388-392
+assign val[279] = 15'd83;   // 393-397
+assign val[280] = 15'd82;   // 398-402
+assign val[281] = 15'd81;   // 403-407
+assign val[282] = 15'd80;   // 408-412
+assign val[283] = 15'd79;   // 413-417
+assign val[284] = 15'd78;   // 418-422
+assign val[285] = 15'd77;   // 423-428
+assign val[286] = 15'd76;   // 429-434
+assign val[287] = 15'd75;   // 435-439
+assign val[288] = 15'd74;   // 440-445
+assign val[289] = 15'd73;   // 446-451
+assign val[290] = 15'd72;   // 452-458
+assign val[291] = 15'd71;   // 459-464
+assign val[292] = 15'd70;   // 465-471
+assign val[293] = 15'd69;   // 472-478
+assign val[294] = 15'd68;   // 479-485
+assign val[295] = 15'd67;   // 486-492
+assign val[296] = 15'd66;   // 493-500
+assign val[297] = 15'd65;   // 501-508
+assign val[298] = 15'd64;   // 509-516
+assign val[299] = 15'd63;   // 517-524
+assign val[300] = 15'd62;   // 525-532
+assign val[301] = 15'd61;   // 533-541
+assign val[302] = 15'd60;   // 542-550
+assign val[303] = 15'd59;   // 551-560
+assign val[304] = 15'd58;   // 561-569
+assign val[305] = 15'd57;   // 570-579
+assign val[306] = 15'd56;   // 580-590
+assign val[307] = 15'd55;   // 591-601
+assign val[308] = 15'd54;   // 602-612
+assign val[309] = 15'd53;   // 613-624
+assign val[310] = 15'd52;   // 625-636
+assign val[311] = 15'd51;   // 637-648
+assign val[312] = 15'd50;   // 649-661
+assign val[313] = 15'd49;   // 662-675
+assign val[314] = 15'd48;   // 676-689
+assign val[315] = 15'd47;   // 690-704
+assign val[316] = 15'd46;   // 705-720
+assign val[317] = 15'd45;   // 721-736
+assign val[318] = 15'd44;   // 737-753
+assign val[319] = 15'd43;   // 754-770
+assign val[320] = 15'd42;   // 771-789
+assign val[321] = 15'd41;   // 790-809
+assign val[322] = 15'd40;   // 810-829
+assign val[323] = 15'd39;   // 830-851
+assign val[324] = 15'd38;   // 852-873
+assign val[325] = 15'd37;   // 874-897
+assign val[326] = 15'd36;   // 898-923
+assign val[327] = 15'd35;   // 924-949
+assign val[328] = 15'd34;   // 950-978
+assign val[329] = 15'd33;   // 979-1008
+assign val[330] = 15'd32;   // 1009-1040
+assign val[331] = 15'd31;   // 1041-1074
+assign val[332] = 15'd30;   // 1075-1110
+assign val[333] = 15'd29;   // 1111-1149
+assign val[334] = 15'd28;   // 1150-1191
+assign val[335] = 15'd27;   // 1192-1236
+assign val[336] = 15'd26;   // 1237-1284
+assign val[337] = 15'd25;   // 1285-1337
+assign val[338] = 15'd24;   // 1338-1394
+assign val[339] = 15'd23;   // 1395-1456
+assign val[340] = 15'd22;   // 1457-1524
+assign val[341] = 15'd21;   // 1525-1598
+assign val[342] = 15'd20;   // 1599-1680
+assign val[343] = 15'd19;   // 1681-1771
+assign val[345] = 15'd18;   // 1772-1872
+assign val[346] = 15'd17;   // 1873-1985
+assign val[347] = 15'd16;   // 1986-2114
+assign val[348] = 15'd15;   // 2115-2259
+assign val[349] = 15'd14;   // 2260-2427
+assign val[350] = 15'd13;   // 2428-2621
+assign val[351] = 15'd12;   // 2622-2849
+assign val[352] = 15'd11;   // 2850-3120
+assign val[353] = 15'd10;   // 3121-3449
+assign val[354] = 15'd9;   // 3450-3854
+assign val[355] = 15'd8;   // 3855-4368
+assign val[356] = 15'd7;   // 4369-5041
+assign val[357] = 15'd6;   // 5042-5957
+assign val[358] = 15'd5;   // 5958-7281
+assign val[359] = 15'd4;   // 7282-8190
 
 endmodule
