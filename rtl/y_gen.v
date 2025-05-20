@@ -7,15 +7,26 @@ module y_gen(
 	output wire signed [12:0] y
 );
 
+//增加rst复位信号消除不确定初始态
+reg rst_n;
+always@(posedge clk) begin
+	if(a != 12'd0)
+		rst_n <= 1'b1;
+	else 
+		rst_n <= 1'b0;
+end
+
 //第0级：初始化，寄存变量值，每个时钟周期都可以处理一组新数据,计算a+d的值
 reg [11:0] a_reg, b_reg, c_reg;
-reg  [12:0] apd_reg;
-wire [11:0] d;
+reg [12:0] apd_reg;
+wire [11:0] d;  //例化的输出信号必须连接wire
 d_gen u_d_gen(
     .clk(clk),
     .e(e),
+	.rst_n(rst_n),
     .d(d)
 );
+
 always@(posedge clk) begin 
     a_reg <= a;
     b_reg <= b;
@@ -25,7 +36,6 @@ end
 
 //第1级：cos查表,取绝对值，div查表，同时继续传递a,b的值后面乘法要用
 wire [12:0] cos_wire;
-//reg  [12:0] cos_reg;
 reg  [11:0] a_reg_2;
 reg  [11:0] b_reg_2;
 cos_lut u_cos_lut(
@@ -41,7 +51,6 @@ div_lut u_div_lut(
 always@(posedge clk) begin
    a_reg_2 <= a_reg;
    b_reg_2 <= b_reg;
-   //cos_reg <= cos_wire;
    div_reg <= div_wire;
 end
 
@@ -131,4 +140,5 @@ always@(posedge clk) begin
 end
 assign result_cut = result[26]?(result[38:27]+1'b1):result[38:27];
 assign y = sign_reg_5 ? {1'b1,-result_cut} : {1'b0,result_cut};
+
 endmodule
