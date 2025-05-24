@@ -19,7 +19,7 @@ always@(posedge clk) begin
 			d <= {d[10:0],e};
 		else 
 			d <= d;
-		if(d_cnt > 4'd9) begin
+		if(d_cnt > 4'd10) begin
 			d_ready <= 1'b1;
 			d_cnt <= 4'd0;
 		end else begin

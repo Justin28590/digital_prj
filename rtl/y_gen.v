@@ -7,19 +7,18 @@ module y_gen(
 	output wire signed [12:0] y
 );
 
-//增加rst复位信号消除不确定初始态
 reg rst_n;
-always@(posedge clk) begin
-	if(a != 12'd0)
-		rst_n <= 1'b1;
-	else 
+always@(negedge clk) begin
+	if(a == 12'd0 && b == 12'd0 && c == 12'd0)
 		rst_n <= 1'b0;
+	else 
+		rst_n <= 1'b1;
 end
 
 //第0级：初始化，寄存变量值，每个时钟周期都可以处理一组新数据,计算a+d的值
 reg [11:0] a_reg, b_reg, c_reg;
 reg [12:0] apd_reg;
-wire [11:0] d;  //例化的输出信号必须连接wire
+wire [11:0] d;
 d_gen u_d_gen(
     .clk(clk),
     .e(e),
@@ -140,5 +139,4 @@ always@(posedge clk) begin
 end
 assign result_cut = result[26]?(result[38:27]+1'b1):result[38:27];
 assign y = sign_reg_5 ? {1'b1,-result_cut} : {1'b0,result_cut};
-
 endmodule
