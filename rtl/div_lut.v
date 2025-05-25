@@ -5,178 +5,203 @@ module div_lut(
 );
 
 wire [14:0] val [358:0];
-wire [8:0] idx;
-assign idx = (apd < 190) ? apd :
-    (apd < 192) ? 190 :
-    (apd < 193) ? 191 :
-    (apd < 194) ? 192 :
-    (apd < 195) ? 193 :
-    (apd < 196) ? 194 :
-    (apd < 197) ? 195 :
-    (apd < 198) ? 196 :
-    (apd < 200) ? 197 :
-    (apd < 201) ? 198 :
-    (apd < 202) ? 199 :
-    (apd < 203) ? 200 :
-    (apd < 205) ? 201 :
-    (apd < 206) ? 202 :
-    (apd < 207) ? 203 :
-    (apd < 209) ? 204 :
-    (apd < 210) ? 205 :
-    (apd < 211) ? 206 :
-    (apd < 213) ? 207 :
-    (apd < 214) ? 208 :
-    (apd < 215) ? 209 :
-    (apd < 217) ? 210 :
-    (apd < 218) ? 211 :
-    (apd < 220) ? 212 :
-    (apd < 221) ? 213 :
-    (apd < 223) ? 214 :
-    (apd < 224) ? 215 :
-    (apd < 226) ? 216 :
-    (apd < 227) ? 217 :
-    (apd < 229) ? 218 :
-    (apd < 230) ? 219 :
-    (apd < 232) ? 220 :
-    (apd < 234) ? 221 :
-    (apd < 235) ? 222 :
-    (apd < 237) ? 223 :
-    (apd < 239) ? 224 :
-    (apd < 241) ? 225 :
-    (apd < 242) ? 226 :
-    (apd < 244) ? 227 :
-    (apd < 246) ? 228 :
-    (apd < 248) ? 229 :
-    (apd < 250) ? 230 :
-    (apd < 252) ? 231 :
-    (apd < 254) ? 232 :
-    (apd < 255) ? 233 :
-    (apd < 257) ? 234 :
-    (apd < 260) ? 235 :
-    (apd < 262) ? 236 :
-    (apd < 264) ? 237 :
-    (apd < 266) ? 238 :
-    (apd < 268) ? 239 :
-    (apd < 270) ? 240 :
-    (apd < 272) ? 241 :
-    (apd < 275) ? 242 :
-    (apd < 277) ? 243 :
-    (apd < 279) ? 244 :
-    (apd < 282) ? 245 :
-    (apd < 284) ? 246 :
-    (apd < 287) ? 247 :
-    (apd < 289) ? 248 :
-    (apd < 292) ? 249 :
-    (apd < 294) ? 250 :
-    (apd < 297) ? 251 :
-    (apd < 300) ? 252 :
-    (apd < 302) ? 253 :
-    (apd < 305) ? 254 :
-    (apd < 308) ? 255 :
-    (apd < 311) ? 256 :
-    (apd < 314) ? 257 :
-    (apd < 317) ? 258 :
-    (apd < 320) ? 259 :
-    (apd < 323) ? 260 :
-    (apd < 327) ? 261 :
-    (apd < 330) ? 262 :
-    (apd < 333) ? 263 :
-    (apd < 337) ? 264 :
-    (apd < 340) ? 265 :
-    (apd < 344) ? 266 :
-    (apd < 347) ? 267 :
-    (apd < 351) ? 268 :
-    (apd < 355) ? 269 :
-    (apd < 359) ? 270 :
-    (apd < 363) ? 271 :
-    (apd < 367) ? 272 :
-    (apd < 371) ? 273 :
-    (apd < 375) ? 274 :
-    (apd < 379) ? 275 :
-    (apd < 384) ? 276 :
-    (apd < 388) ? 277 :
-    (apd < 393) ? 278 :
-    (apd < 398) ? 279 :
-    (apd < 403) ? 280 :
-    (apd < 408) ? 281 :
-    (apd < 413) ? 282 :
-    (apd < 418) ? 283 :
-    (apd < 423) ? 284 :
-    (apd < 429) ? 285 :
-    (apd < 435) ? 286 :
-    (apd < 440) ? 287 :
-    (apd < 446) ? 288 :
-    (apd < 452) ? 289 :
-    (apd < 459) ? 290 :
-    (apd < 465) ? 291 :
-    (apd < 472) ? 292 :
-    (apd < 479) ? 293 :
-    (apd < 486) ? 294 :
-    (apd < 493) ? 295 :
-    (apd < 501) ? 296 :
-    (apd < 509) ? 297 :
-    (apd < 517) ? 298 :
-    (apd < 525) ? 299 :
-    (apd < 533) ? 300 :
-    (apd < 542) ? 301 :
-    (apd < 551) ? 302 :
-    (apd < 561) ? 303 :
-    (apd < 570) ? 304 :
-    (apd < 580) ? 305 :
-    (apd < 591) ? 306 :
-    (apd < 602) ? 307 :
-    (apd < 613) ? 308 :
-    (apd < 625) ? 309 :
-    (apd < 637) ? 310 :
-    (apd < 649) ? 311 :
-    (apd < 662) ? 312 :
-    (apd < 676) ? 313 :
-    (apd < 690) ? 314 :
-    (apd < 705) ? 315 :
-    (apd < 721) ? 316 :
-    (apd < 737) ? 317 :
-    (apd < 754) ? 318 :
-    (apd < 771) ? 319 :
-    (apd < 790) ? 320 :
-    (apd < 810) ? 321 :
-    (apd < 830) ? 322 :
-    (apd < 852) ? 323 :
-    (apd < 874) ? 324 :
-    (apd < 898) ? 325 :
-    (apd < 924) ? 326 :
-    (apd < 950) ? 327 :
-    (apd < 979) ? 328 :
-    (apd < 1009) ? 329 :
-    (apd < 1041) ? 330 :
-    (apd < 1075) ? 331 :
-    (apd < 1111) ? 332 :
-    (apd < 1150) ? 333 :
-    (apd < 1192) ? 334 :
-    (apd < 1237) ? 335 :
-    (apd < 1285) ? 336 :
-    (apd < 1338) ? 337 :
-    (apd < 1395) ? 338 :
-    (apd < 1457) ? 339 :
-    (apd < 1525) ? 340 :
-    (apd < 1599) ? 341 :
-    (apd < 1681) ? 342 :
-    (apd < 1772) ? 343 :
-    (apd < 1873) ? 344 :
-    (apd < 1986) ? 345 :
-    (apd < 2115) ? 346 :
-    (apd < 2260) ? 347 :
-    (apd < 2428) ? 348 :
-    (apd < 2622) ? 349 :
-    (apd < 2850) ? 350 :
-    (apd < 3121) ? 351 :
-    (apd < 3450) ? 352 :
-    (apd < 3855) ? 353 :
-    (apd < 4369) ? 354 :
-    (apd < 5042) ? 355 :
-    (apd < 5958) ? 356 :
-    (apd < 7282) ? 357 :
-    (apd < 8191) ? 358 :
-    358;
+reg [8:0] idx;
+always @* begin
+    if (apd < 190) begin
+        idx = apd;
+    end else if (apd < 255) begin
+        // 190~254: 1~2 步一段
+        case (apd)
+            190,191: idx = 190;
+            192:     idx = 191;
+            193:     idx = 192;
+            194:     idx = 193;
+            195:     idx = 194;
+            196:     idx = 195;
+            197:     idx = 196;
+            198,199: idx = 197;
+            200:     idx = 198;
+            201:     idx = 199;
+            202:     idx = 200;
+            203,204: idx = 201;
+            205:     idx = 202;
+            206:     idx = 203;
+            207,208: idx = 204;
+            209:     idx = 205;
+            210:     idx = 206;
+            211,212: idx = 207;
+            213:     idx = 208;
+            214:     idx = 209;
+            215,216: idx = 210;
+            217:     idx = 211;
+            218,219: idx = 212;
+            220:     idx = 213;
+            221,222: idx = 214;
+            223:     idx = 215;
+            224,225: idx = 216;
+            226:     idx = 217;
+            227,228: idx = 218;
+            229:     idx = 219;
+            230,231: idx = 220;
+            232,233: idx = 221;
+            234:     idx = 222;
+            235,236: idx = 223;
+            237,238: idx = 224;
+            239,240: idx = 225;
+            241:     idx = 226;
+            242,243: idx = 227;
+            244,245: idx = 228;
+            246,247: idx = 229;
+            248,249: idx = 230;
+            250,251: idx = 231;
+            252,253: idx = 232;
+            254:     idx = 233;
+            default: idx = 233;
+        endcase
+    end else if (apd < 327) begin
+        // 255~326: 2~4步一段
+        if (apd < 257) idx = 234;
+        else if (apd < 260) idx = 235;
+        else if (apd < 262) idx = 236;
+        else if (apd < 264) idx = 237;
+        else if (apd < 266) idx = 238;
+        else if (apd < 268) idx = 239;
+        else if (apd < 270) idx = 240;
+        else if (apd < 272) idx = 241;
+        else if (apd < 275) idx = 242;
+        else if (apd < 277) idx = 243;
+        else if (apd < 279) idx = 244;
+        else if (apd < 282) idx = 245;
+        else if (apd < 284) idx = 246;
+        else if (apd < 287) idx = 247;
+        else if (apd < 289) idx = 248;
+        else if (apd < 292) idx = 249;
+        else if (apd < 294) idx = 250;
+        else if (apd < 297) idx = 251;
+        else if (apd < 300) idx = 252;
+        else if (apd < 302) idx = 253;
+        else if (apd < 305) idx = 254;
+        else if (apd < 308) idx = 255;
+        else if (apd < 311) idx = 256;
+        else if (apd < 314) idx = 257;
+        else if (apd < 317) idx = 258;
+        else if (apd < 320) idx = 259;
+        else if (apd < 323) idx = 260;
+        else if (apd < 327) idx = 261;
+        else idx = 261;
+    end else if (apd < 435) begin
+        // 327~434: 3~6步一段
+        if (apd < 330) idx = 262;
+        else if (apd < 333) idx = 263;
+        else if (apd < 337) idx = 264;
+        else if (apd < 340) idx = 265;
+        else if (apd < 344) idx = 266;
+        else if (apd < 347) idx = 267;
+        else if (apd < 351) idx = 268;
+        else if (apd < 355) idx = 269;
+        else if (apd < 359) idx = 270;
+        else if (apd < 363) idx = 271;
+        else if (apd < 367) idx = 272;
+        else if (apd < 371) idx = 273;
+        else if (apd < 375) idx = 274;
+        else if (apd < 379) idx = 275;
+        else if (apd < 384) idx = 276;
+        else if (apd < 388) idx = 277;
+        else if (apd < 393) idx = 278;
+        else if (apd < 398) idx = 279;
+        else if (apd < 403) idx = 280;
+        else if (apd < 408) idx = 281;
+        else if (apd < 413) idx = 282;
+        else if (apd < 418) idx = 283;
+        else if (apd < 423) idx = 284;
+        else if (apd < 429) idx = 285;
+        else if (apd < 435) idx = 286;
+        else idx = 286;
+    end else if (apd < 754) begin
+        // 435~753: 6~17步一段
+        if (apd < 440) idx = 287;
+        else if (apd < 446) idx = 288;
+        else if (apd < 452) idx = 289;
+        else if (apd < 459) idx = 290;
+        else if (apd < 465) idx = 291;
+        else if (apd < 472) idx = 292;
+        else if (apd < 479) idx = 293;
+        else if (apd < 486) idx = 294;
+        else if (apd < 493) idx = 295;
+        else if (apd < 501) idx = 296;
+        else if (apd < 509) idx = 297;
+        else if (apd < 517) idx = 298;
+        else if (apd < 525) idx = 299;
+        else if (apd < 533) idx = 300;
+        else if (apd < 542) idx = 301;
+        else if (apd < 551) idx = 302;
+        else if (apd < 561) idx = 303;
+        else if (apd < 570) idx = 304;
+        else if (apd < 580) idx = 305;
+        else if (apd < 591) idx = 306;
+        else if (apd < 602) idx = 307;
+        else if (apd < 613) idx = 308;
+        else if (apd < 625) idx = 309;
+        else if (apd < 637) idx = 310;
+        else if (apd < 649) idx = 311;
+        else if (apd < 662) idx = 312;
+        else if (apd < 676) idx = 313;
+        else if (apd < 690) idx = 314;
+        else if (apd < 705) idx = 315;
+        else if (apd < 721) idx = 316;
+        else if (apd < 737) idx = 317;
+        else if (apd < 754) idx = 318;
+        else idx = 318;
+    end else if (apd < 1599) begin
+        // 754~1598: 17~81步一段
+        if (apd < 771) idx = 319;
+        else if (apd < 790) idx = 320;
+        else if (apd < 810) idx = 321;
+        else if (apd < 830) idx = 322;
+        else if (apd < 852) idx = 323;
+        else if (apd < 874) idx = 324;
+        else if (apd < 898) idx = 325;
+        else if (apd < 924) idx = 326;
+        else if (apd < 950) idx = 327;
+        else if (apd < 979) idx = 328;
+        else if (apd < 1009) idx = 329;
+        else if (apd < 1041) idx = 330;
+        else if (apd < 1075) idx = 331;
+        else if (apd < 1111) idx = 332;
+        else if (apd < 1150) idx = 333;
+        else if (apd < 1192) idx = 334;
+        else if (apd < 1237) idx = 335;
+        else if (apd < 1285) idx = 336;
+        else if (apd < 1338) idx = 337;
+        else if (apd < 1395) idx = 338;
+        else if (apd < 1457) idx = 339;
+        else if (apd < 1525) idx = 340;
+        else if (apd < 1599) idx = 341;
+        else idx = 341;
+    end else if (apd < 8191) begin
+        // 1599~8190: 81~1000步一段
+        if (apd < 1681) idx = 342;
+        else if (apd < 1772) idx = 343;
+        else if (apd < 1873) idx = 344;
+        else if (apd < 1986) idx = 345;
+        else if (apd < 2115) idx = 346;
+        else if (apd < 2260) idx = 347;
+        else if (apd < 2428) idx = 348;
+        else if (apd < 2622) idx = 349;
+        else if (apd < 2850) idx = 350;
+        else if (apd < 3121) idx = 351;
+        else if (apd < 3450) idx = 352;
+        else if (apd < 3855) idx = 353;
+        else if (apd < 4369) idx = 354;
+        else if (apd < 5042) idx = 355;
+        else if (apd < 5958) idx = 356;
+        else if (apd < 7282) idx = 357;
+        else if (apd < 8191) idx = 358;
+        else idx = 358;
+    end else begin
+        idx = 358;
+    end
+end
 
 assign div_val = d_ready ? val[idx] : 15'd0;
 
