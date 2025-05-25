@@ -1,5 +1,6 @@
 module div_lut(
     input [12:0] apd,
+    input wire d_ready,
     output wire [14:0] div_val
 );
 
@@ -177,7 +178,7 @@ assign idx = (apd < 190) ? apd :
     (apd < 8191) ? 358 :
     358;
 
-assign div_val = val[idx];
+assign div_val = d_ready ? val[idx] : 15'd0;
 
 assign val[0] = 15'd32767;   // 0-1
 assign val[1] = 15'd32767;   // 1

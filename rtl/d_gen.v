@@ -2,11 +2,11 @@ module d_gen(
     input   clk 	,
     input   e   	,
 	input 	rst_n	,
-    output reg [11:0] d
+    output reg [11:0] d,
+	output reg d_ready
 );
 
 reg [3:0] d_cnt;
-reg d_ready;
 
 always@(posedge clk) begin
 	if(rst_n == 1'b0) begin
