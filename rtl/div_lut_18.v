@@ -5,7 +5,7 @@ module div_lut(
 );
 
 wire [17:0] val [991:0];
-reg [9:0] idx;
+wire [9:0] idx;
 
 assign idx = (apd < 0) ? apd :
     (apd < 2) ? 0 :
