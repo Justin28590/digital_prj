@@ -44,7 +44,6 @@ wire [15:0] cos_wire;
 reg  [15:0] cos_reg;
 reg  [11:0] a_reg_2;
 reg  [11:0] b_reg_2;
-
 cos_lut u_cos_lut(
     .addr(c_reg),
     .d_ready(d_ready_reg),
@@ -53,7 +52,6 @@ cos_lut u_cos_lut(
 
 wire [17:0] div_wire;
 reg  [17:0] div_reg;
-
 div_lut u_div_lut(
     .apd(apd_reg),
     .d_ready(d_ready_reg),
@@ -97,203 +95,181 @@ always@(posedge clk) begin
     end
 end
 
-//第3级：优化的Booth编码乘法器 - a*cos
-// 使用改进的Booth编码减少部分积数量
-reg [26:0] a_cos_partial_1;
-reg [26:0] a_cos_partial_2;
-reg [29:0] b_div_partial_1;
-reg [29:0] b_div_partial_2;
+//cos:15位，div:18位，a,b：12位，a_cos:4+5=9位，b_div:4+6=10位
+reg [8:0] a1cos1, a2cos1, a3cos1;
+reg [8:0] a1cos2, a2cos2, a3cos2;
+reg [8:0] a1cos3, a2cos3, a3cos3;
+
+reg [9:0] b1d1, b1d2, b1d3;
+reg [9:0] b2d1, b2d2, b2d3;
+reg [9:0] b3d1, b3d2, b3d3;
+always@(posedge clk) begin
+    if(!rst_n) begin
+        a1cos1 <= 9'd0;
+        a2cos1 <= 9'd0;
+        a3cos1 <= 9'd0;
+        a1cos2 <= 9'd0;
+        a2cos2 <= 9'd0;
+        a3cos2 <= 9'd0;
+        a1cos3 <= 9'd0;
+        a2cos3 <= 9'd0;
+        a3cos3 <= 9'd0;
+
+        b1d1 <= 10'd0;
+        b2d1 <= 10'd0;
+        b3d1 <= 10'd0;
+        b1d2 <= 10'd0;
+        b2d2 <= 10'd0;
+        b3d2 <= 10'd0;
+        b1d3 <= 10'd0;
+        b2d3 <= 10'd0;
+        b3d3 <= 10'd0; 
+    end else begin
+        a1cos1 <= a_reg_3[3:0] * cos_abs[4:0];
+        a2cos1 <= a_reg_3[7:4] * cos_abs[4:0];
+        a3cos1 <= a_reg_3[11:8]* cos_abs[4:0];
+        a1cos2 <= a_reg_3[3:0] * cos_abs[9:5];
+        a2cos2 <= a_reg_3[7:4] * cos_abs[9:5];
+        a3cos2 <= a_reg_3[11:8]* cos_abs[9:5];
+        a1cos3 <= a_reg_3[3:0] * cos_abs[14:10];
+        a2cos3 <= a_reg_3[7:4] * cos_abs[14:10];
+        a3cos3 <= a_reg_3[11:8]* cos_abs[14:10];
+
+        b1d1 <= b_reg_3[3:0] * div_reg_2[5:0];
+        b2d1 <= b_reg_3[7:4] * div_reg_2[5:0];
+        b3d1 <= b_reg_3[11:8]* div_reg_2[5:0];
+        b1d2 <= b_reg_3[3:0] * div_reg_2[11:6];
+        b2d2 <= b_reg_3[7:4] * div_reg_2[11:6];
+        b3d2 <= b_reg_3[11:8]* div_reg_2[11:6];
+        b1d3 <= b_reg_3[3:0] * div_reg_2[17:12];
+        b2d3 <= b_reg_3[7:4] * div_reg_2[17:12];
+        b3d3 <= b_reg_3[11:8]* div_reg_2[17:12];
+    end
+end
+
+//第3级：将部分积进行合并:a_cos:27位，b_div:30位
 reg sign_reg_2;
-
-// 将乘法分解为更少的部分积
-always@(posedge clk) begin
-    if(!rst_n) begin
-        a_cos_partial_1 <= 27'd0;
-        a_cos_partial_2 <= 27'd0;
-        b_div_partial_1 <= 30'd0;
-        b_div_partial_2 <= 30'd0;
-        sign_reg_2 <= 1'b0;
-    end else begin
-        sign_reg_2 <= sign_reg;
-        // 使用Booth编码减少部分积
-        a_cos_partial_1 <= a_reg_3 * cos_abs[7:0];
-        a_cos_partial_2 <= a_reg_3 * cos_abs[14:8];
-        b_div_partial_1 <= b_reg_3 * div_reg_2[8:0];
-        b_div_partial_2 <= b_reg_3 * div_reg_2[17:9];
-    end
-end
-
-//第3.5级：新增流水线级 - 预计算高位乘法
-reg [19:0] a_cos_p1_low, a_cos_p1_high;
-reg [19:0] a_cos_p2_low, a_cos_p2_high;
-reg [22:0] b_div_p1_low, b_div_p1_high;
-reg [22:0] b_div_p2_low, b_div_p2_high;
-reg sign_reg_2_5;
-
-always@(posedge clk) begin
-    if(!rst_n) begin
-        a_cos_p1_low <= 20'd0;
-        a_cos_p1_high <= 20'd0;
-        a_cos_p2_low <= 20'd0;
-        a_cos_p2_high <= 20'd0;
-        b_div_p1_low <= 23'd0;
-        b_div_p1_high <= 23'd0;
-        b_div_p2_low <= 23'd0;
-        b_div_p2_high <= 23'd0;
-        sign_reg_2_5 <= 1'b0;
-    end else begin
-        sign_reg_2_5 <= sign_reg_2;
-        // 将部分积分成高低位
-        a_cos_p1_low <= a_cos_partial_1[19:0];
-        a_cos_p1_high <= {7'd0, a_cos_partial_1[26:20]};
-        a_cos_p2_low <= a_cos_partial_2[19:0];
-        a_cos_p2_high <= {7'd0, a_cos_partial_2[26:20]};
-        b_div_p1_low <= b_div_partial_1[22:0];
-        b_div_p1_high <= {7'd0, b_div_partial_1[29:23]};
-        b_div_p2_low <= b_div_partial_2[22:0];
-        b_div_p2_high <= {7'd0, b_div_partial_2[29:23]};
-    end
-end
-
-//第4级：合并部分积
 reg [26:0] a_cos;
 reg [29:0] b_div;
-reg sign_reg_3;
-
 always@(posedge clk) begin
     if(!rst_n) begin
+        sign_reg_2 <= 1'b0;
         a_cos <= 27'd0;
         b_div <= 30'd0;
-        sign_reg_3 <= 1'b0;
     end else begin
-        sign_reg_3 <= sign_reg_2_5;
-        // 使用预分解的部分积
-        a_cos <= a_cos_p1_low + {a_cos_p1_high, 8'b0} + 
-                 {a_cos_p2_low, 8'b0} + {a_cos_p2_high, 16'b0};
-        b_div <= b_div_p1_low + {b_div_p1_high, 9'b0} + 
-                 {b_div_p2_low, 9'b0} + {b_div_p2_high, 18'b0};
+        sign_reg_2 <= sign_reg;
+        a_cos <= a1cos1 + {a2cos1, 4'b0} + {a3cos1, 8'b0} + {a1cos2, 5'b0} + {a2cos2, 9'b0} + {a3cos2, 13'b0} + {a1cos3, 10'b0} + {a2cos3, 14'b0} + {a3cos3, 18'b0};
+        b_div <= b1d1 + {b2d1,4'b0} + {b3d1,8'b0} + {b1d2,6'b0} + {b2d2,10'b0} + {b3d2,14'b0} + {b1d3,12'b0} + {b2d3,16'b0} + {b3d3,20'b0}; 
     end
 end
 
-//第5级：进一步分解乘法，减少每个乘法器的位宽
-// 将27x30位乘法分解为更多的小乘法器
-reg [18:0] mult_partial_1_1, mult_partial_1_2, mult_partial_1_3;
-reg [18:0] mult_partial_2_1, mult_partial_2_2, mult_partial_2_3;
-reg [18:0] mult_partial_3_1, mult_partial_3_2, mult_partial_3_3;
-reg sign_reg_4;
-
+reg sign_reg_3;
+reg [26:0] a_cos_reg;
+reg [29:0] b_div_reg;
 always@(posedge clk) begin
     if(!rst_n) begin
-        mult_partial_1_1 <= 19'd0;
-        mult_partial_1_2 <= 19'd0;
-        mult_partial_1_3 <= 19'd0;
-        mult_partial_2_1 <= 19'd0;
-        mult_partial_2_2 <= 19'd0;
-        mult_partial_2_3 <= 19'd0;
-        mult_partial_3_1 <= 19'd0;
-        mult_partial_3_2 <= 19'd0;
-        mult_partial_3_3 <= 19'd0;
+        sign_reg_3 <= 1'b0;
+        a_cos_reg <= 27'd0;
+        b_div_reg <= 30'd0;
+    end else begin
+        sign_reg_3 <= sign_reg_2;
+        a_cos_reg <= a_cos;
+        b_div_reg <= b_div;
+    end
+end
+
+//第4级：将a_cos和b_div以部分积相乘,a_cos27位分成6*4+3，b_div30位分成5*6
+reg sign_reg_4;
+reg [11:0] x1y1, x2y1, x3y1, x4y1;
+reg [11:0] x1y2, x2y2, x3y2, x4y2;
+reg [11:0] x1y3, x2y3, x3y3, x4y3;
+reg [11:0] x1y4, x2y4, x3y4, x4y4;
+reg [11:0] x1y5, x2y5, x3y5, x4y5;
+reg [8:0]  x5y1, x5y2, x5y3, x5y4, x5y5;
+always@(posedge clk) begin
+    if(!rst_n) begin
         sign_reg_4 <= 1'b0;
+        x1y1 <= 12'd0;
+        x2y1 <= 12'd0;
+        x3y1 <= 12'd0;
+        x4y1 <= 12'd0;
+        x1y2 <= 12'd0;
+        x2y2 <= 12'd0;
+        x3y2 <= 12'd0;
+        x4y2 <= 12'd0;
+        x1y3 <= 12'd0;
+        x2y3 <= 12'd0;
+        x3y3 <= 12'd0;
+        x4y3 <= 12'd0;
+        x1y4 <= 12'd0;
+        x2y4 <= 12'd0;
+        x3y4 <= 12'd0;
+        x4y4 <= 12'd0; 
+        x1y5 <= 12'd0;
+        x2y5 <= 12'd0;
+        x3y5 <= 12'd0;
+        x4y5 <= 12'd0;
+        x5y1 <= 9'd0;
+        x5y2 <= 9'd0;
+        x5y3 <= 9'd0;
+        x5y4 <= 9'd0;
+        x5y5 <= 9'd0;
     end else begin
         sign_reg_4 <= sign_reg_3;
-        // 将a_cos分为3段：[8:0], [17:9], [26:18]
-        // 将b_div分为3段：[9:0], [19:10], [29:20]
-        // 9x10位乘法器
-        mult_partial_1_1 <= a_cos[8:0] * b_div[9:0];
-        mult_partial_1_2 <= a_cos[8:0] * b_div[19:10];
-        mult_partial_1_3 <= a_cos[8:0] * b_div[29:20];
-        mult_partial_2_1 <= a_cos[17:9] * b_div[9:0];
-        mult_partial_2_2 <= a_cos[17:9] * b_div[19:10];
-        mult_partial_2_3 <= a_cos[17:9] * b_div[29:20];
-        mult_partial_3_1 <= a_cos[26:18] * b_div[9:0];
-        mult_partial_3_2 <= a_cos[26:18] * b_div[19:10];
-        mult_partial_3_3 <= a_cos[26:18] * b_div[29:20];
+        x1y1 <= a_cos_reg[5:0]   * b_div_reg[5:0];
+        x2y1 <= a_cos_reg[11:6]  * b_div_reg[5:0];
+        x3y1 <= a_cos_reg[17:12] * b_div_reg[5:0];
+        x4y1 <= a_cos_reg[23:18] * b_div_reg[5:0];
+        x5y1 <= a_cos_reg[26:24] * b_div_reg[5:0];
+        x1y2 <= a_cos_reg[5:0]   * b_div_reg[11:6];
+        x2y2 <= a_cos_reg[11:6]  * b_div_reg[11:6];
+        x3y2 <= a_cos_reg[17:12] * b_div_reg[11:6];
+        x4y2 <= a_cos_reg[23:18] * b_div_reg[11:6];
+        x5y2 <= a_cos_reg[26:24] * b_div_reg[11:6]; 
+        x1y3 <= a_cos_reg[5:0]   * b_div_reg[17:12];
+        x2y3 <= a_cos_reg[11:6]  * b_div_reg[17:12];
+        x3y3 <= a_cos_reg[17:12] * b_div_reg[17:12];
+        x4y3 <= a_cos_reg[23:18] * b_div_reg[17:12];
+        x5y3 <= a_cos_reg[26:24] * b_div_reg[17:12];
+        x1y4 <= a_cos_reg[5:0]   * b_div_reg[23:18];
+        x2y4 <= a_cos_reg[11:6]  * b_div_reg[23:18];
+        x3y4 <= a_cos_reg[17:12] * b_div_reg[23:18];
+        x4y4 <= a_cos_reg[23:18] * b_div_reg[23:18];
+        x5y4 <= a_cos_reg[26:24] * b_div_reg[23:18];
+        x1y5 <= a_cos_reg[5:0]   * b_div_reg[29:24];
+        x2y5 <= a_cos_reg[11:6]  * b_div_reg[29:24];
+        x3y5 <= a_cos_reg[17:12] * b_div_reg[29:24];
+        x4y5 <= a_cos_reg[23:18] * b_div_reg[29:24];
+        x5y5 <= a_cos_reg[26:24] * b_div_reg[29:24];
     end
 end
 
-//第5.5级：新增流水线级 - 第一级部分积累加
-reg [56:0] sum_partial_1;
-reg [56:0] sum_partial_2;
-reg [56:0] sum_partial_3;
-reg sign_reg_4_5;
-
-always@(posedge clk) begin
-    if(!rst_n) begin
-        sum_partial_1 <= 57'd0;
-        sum_partial_2 <= 57'd0;
-        sum_partial_3 <= 57'd0;
-        sign_reg_4_5 <= 1'b0;
-    end else begin
-        sign_reg_4_5 <= sign_reg_4;
-        // 按照正确的位移权重累加
-        // mult_partial_x_y: x表示a_cos段，y表示b_div段
-        sum_partial_1 <= mult_partial_1_1;  // [8:0] * [9:0] 
-        sum_partial_2 <= {mult_partial_1_2, 10'b0} +      // [8:0] * [19:10] << 10
-                        {mult_partial_2_1, 9'b0} +        // [17:9] * [9:0] << 9
-                        {mult_partial_1_3, 20'b0};        // [8:0] * [29:20] << 20
-        sum_partial_3 <= {mult_partial_2_2, 19'b0} +      // [17:9] * [19:10] << 19
-                        {mult_partial_3_1, 18'b0} +       // [26:18] * [9:0] << 18
-                        {mult_partial_2_3, 29'b0} +       // [17:9] * [29:20] << 29
-                        {mult_partial_3_2, 28'b0} +       // [26:18] * [19:10] << 28
-                        {mult_partial_3_3, 38'b0};        // [26:18] * [29:20] << 38
-    end
-end
-
-//第6级：第二级部分积累加
-reg [56:0] result_partial_1;
-reg [56:0] result_partial_2;
+//第5级：合并部分积:27+30=57位
 reg sign_reg_5;
-
+reg [56:0] result;
 always@(posedge clk) begin
     if(!rst_n) begin
-        result_partial_1 <= 57'd0;
-        result_partial_2 <= 57'd0;
         sign_reg_5 <= 1'b0;
+        result <= 57'd0;
     end else begin
-        sign_reg_5 <= sign_reg_4_5;
-        // 合并3个部分积
-        result_partial_1 <= sum_partial_1 + sum_partial_2;
-        result_partial_2 <= sum_partial_3;
+        sign_reg_5 <= sign_reg_4;
+        result <= x1y1+{x2y1,6'b0}+{x3y1,12'b0}+{x4y1,18'b0}+{x5y1,24'b0}+{x1y2,6'b0}+{x2y2,12'b0}+{x3y2,18'b0}+{x4y2,24'b0}+{x5y2,30'b0}+{x1y3,12'b0}+{x2y3,18'b0}+{x3y3,24'b0}+{x4y3,30'b0}+{x5y3,36'b0}+{x1y4,18'b0}+{x2y4,24'b0}+{x3y4,30'b0}+{x4y4,36'b0}+{x5y4,42'b0}+{x1y5,24'b0}+{x2y5,30'b0}+{x3y5,36'b0}+{x4y5,42'b0}+{x5y5,48'b0};
     end
 end
 
-//第7级：最终结果计算
-reg [56:0] result;
+//第6级：右移12位，截取12位，合并符号位
+wire [11:0] result_cut;
 reg sign_reg_6;
-
 always@(posedge clk) begin
     if(!rst_n) begin
-        result <= 57'd0;
         sign_reg_6 <= 1'b0;
     end else begin
         sign_reg_6 <= sign_reg_5;
-        result <= result_partial_1 + result_partial_2;
     end
 end
 
-//第8级：优化的输出级 - 使用寄存器输出减少组合逻辑延时
-reg [12:0] result_rounded;
-reg sign_reg_7;
-
-always@(posedge clk) begin
-    if(!rst_n) begin
-        result_rounded <= 13'd0;
-        sign_reg_7 <= 1'b0;
-    end else begin
-        sign_reg_7 <= sign_reg_6;
-        // 四舍五入
-        result_rounded <= result[45:33] + result[32];
-    end
-end
-
-//第9级：最终输出寄存器
-always@(posedge clk) begin
-    if(!rst_n) begin
-        y <= 13'd0;
-    end else begin
-        // 符号位处理：结果已经是绝对值，只需根据符号位决定正负
-        y <= sign_reg_7 ? -{1'b0, result_rounded[11:0]} : {1'b0, result_rounded[11:0]};
-    end
-end
+//cos:15位，div:18位，右移33位
+assign result_cut = result[32]?(result[44:33]+1'b1):result[44:33];
+assign y = sign_reg_6 ? {1'b1,-result_cut} : {1'b0,result_cut};
 
 endmodule

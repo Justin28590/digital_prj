@@ -1,7 +1,7 @@
 module div_lut(
     input [12:0] apd,
     input wire d_ready,
-    output wire [16:0] div_val
+    output wire [17:0] div_val
 );
 
 wire [17:0] val [991:0];
