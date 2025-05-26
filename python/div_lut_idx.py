@@ -1,7 +1,7 @@
 import re
 
 val_lines = []
-with open('div_lut.v', encoding='utf-8') as f:
+with open('div_lut_18.v', encoding='utf-8') as f:
     for line in f:
         if 'assign val[' in line:
             val_lines.append(line.strip())
