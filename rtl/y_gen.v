@@ -5,7 +5,7 @@ module y_gen(
     input [11:0] c,
     input e,
     input clk,
-    output reg signed [12:0] y
+    output wire signed [12:0] y
 );
 
 //第0级：初始化，寄存变量值
