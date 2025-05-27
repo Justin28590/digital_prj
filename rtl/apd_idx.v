@@ -53,11 +53,11 @@ wire sel_seg8       = (apd > boundaries[8]) && (apd <= boundaries[9]);
 wire sel_seg9       = (apd > boundaries[9]) && (apd <= boundaries[10]);
 wire sel_seg10      = (apd > boundaries[10]) && (apd <= boundaries[11]);
 wire sel_direct     = (apd > boundaries[11]) && (apd <= boundaries[12]);
-wire out_of_range   = (apd == 13'd0)；
+wire out_of_range   = (apd == 13'd0);
 
 
 // 组合逻辑计算段类型和偏移量
-wire [3:0] segment_type_comb;
+reg [3:0] segment_type_comb;
 wire [12:0] offset_comb;    //需要支持后面很大情况下直接查表的13位偏移量
 
 // 使用优先编码器函数 - 更简洁的写法
@@ -112,7 +112,7 @@ end
 */
 
 // 输出逻辑
-assign segment_type = segment_type_comb;
+assign segment_type = segment_type_comb; // 如果d_ready为0，输出错误标志
 assign offset = offset_comb;
 assign valid = !out_of_range;
 

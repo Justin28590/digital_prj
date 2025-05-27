@@ -1309,195 +1309,195 @@ assign base10_offset[147] = 5'd31;  // 253-222
 
 /**********************************/
 //这里开始通过对apd进行判断，直接得出其属于哪一个区间，直接赋值那个区间的初始值
-assign val_base[11] = 18'd221;  // base of segment 11, from line 1184
-assign val_base[12] = 18'd220;  // base of segment 12, from line 1189
-assign val_base[13] = 18'd219;  // base of segment 13, from line 1195
-assign val_base[14] = 18'd218;  // base of segment 14, from line 1200
-assign val_base[15] = 18'd217;  // base of segment 15, from line 1206
-assign val_base[16] = 18'd216;  // base of segment 16, from line 1211
-assign val_base[17] = 18'd215;  // base of segment 17, from line 1217
-assign val_base[18] = 18'd214;  // base of segment 18, from line 1223
-assign val_base[19] = 18'd213;  // base of segment 19, from line 1228
-assign val_base[20] = 18'd212;  // base of segment 20, from line 1234
-assign val_base[21] = 18'd211;  // base of segment 21, from line 1240
-assign val_base[22] = 18'd210;  // base of segment 22, from line 1246
-assign val_base[23] = 18'd209;  // base of segment 23, from line 1252
-assign val_base[24] = 18'd208;  // base of segment 24, from line 1258
-assign val_base[25] = 18'd207;  // base of segment 25, from line 1264
-assign val_base[26] = 18'd206;  // base of segment 26, from line 1270
-assign val_base[27] = 18'd205;  // base of segment 27, from line 1276
-assign val_base[28] = 18'd204;  // base of segment 28, from line 1282
-assign val_base[29] = 18'd203;  // base of segment 29, from line 1289
-assign val_base[30] = 18'd202;  // base of segment 30, from line 1295
-assign val_base[31] = 18'd201;  // base of segment 31, from line 1301
-assign val_base[32] = 18'd200;  // base of segment 32, from line 1308
-assign val_base[33] = 18'd199;  // base of segment 33, from line 1315
-assign val_base[34] = 18'd198;  // base of segment 34, from line 1321
-assign val_base[35] = 18'd197;  // base of segment 35, from line 1328
-assign val_base[36] = 18'd196;  // base of segment 36, from line 1335
-assign val_base[37] = 18'd195;  // base of segment 37, from line 1341
-assign val_base[38] = 18'd194;  // base of segment 38, from line 1348
-assign val_base[39] = 18'd193;  // base of segment 39, from line 1355
-assign val_base[40] = 18'd192;  // base of segment 40, from line 1362
-assign val_base[41] = 18'd191;  // base of segment 41, from line 1369
-assign val_base[42] = 18'd190;  // base of segment 42, from line 1377
-assign val_base[43] = 18'd189;  // base of segment 43, from line 1384
-assign val_base[44] = 18'd188;  // base of segment 44, from line 1391
-assign val_base[45] = 18'd187;  // base of segment 45, from line 1399
-assign val_base[46] = 18'd186;  // base of segment 46, from line 1406
-assign val_base[47] = 18'd185;  // base of segment 47, from line 1414
-assign val_base[48] = 18'd184;  // base of segment 48, from line 1421
-assign val_base[49] = 18'd183;  // base of segment 49, from line 1429
-assign val_base[50] = 18'd182;  // base of segment 50, from line 1437
-assign val_base[51] = 18'd181;  // base of segment 51, from line 1445
-assign val_base[52] = 18'd180;  // base of segment 52, from line 1453
-assign val_base[53] = 18'd179;  // base of segment 53, from line 1461
-assign val_base[54] = 18'd178;  // base of segment 54, from line 1469
-assign val_base[55] = 18'd177;  // base of segment 55, from line 1477
-assign val_base[56] = 18'd176;  // base of segment 56, from line 1486
-assign val_base[57] = 18'd175;  // base of segment 57, from line 1494
-assign val_base[58] = 18'd174;  // base of segment 58, from line 1503
-assign val_base[59] = 18'd173;  // base of segment 59, from line 1511
-assign val_base[60] = 18'd172;  // base of segment 60, from line 1520
-assign val_base[61] = 18'd171;  // base of segment 61, from line 1529
-assign val_base[62] = 18'd170;  // base of segment 62, from line 1538
-assign val_base[63] = 18'd169;  // base of segment 63, from line 1547
-assign val_base[64] = 18'd168;  // base of segment 64, from line 1556
-assign val_base[65] = 18'd167;  // base of segment 65, from line 1566
-assign val_base[66] = 18'd166;  // base of segment 66, from line 1575
-assign val_base[67] = 18'd165;  // base of segment 67, from line 1584
-assign val_base[68] = 18'd164;  // base of segment 68, from line 1594
-assign val_base[69] = 18'd163;  // base of segment 69, from line 1604
-assign val_base[70] = 18'd162;  // base of segment 70, from line 1614
-assign val_base[71] = 18'd161;  // base of segment 71, from line 1624
-assign val_base[72] = 18'd160;  // base of segment 72, from line 1634
-assign val_base[73] = 18'd159;  // base of segment 73, from line 1644
-assign val_base[74] = 18'd158;  // base of segment 74, from line 1654
-assign val_base[75] = 18'd157;  // base of segment 75, from line 1665
-assign val_base[76] = 18'd156;  // base of segment 76, from line 1676
-assign val_base[77] = 18'd155;  // base of segment 77, from line 1686
-assign val_base[78] = 18'd154;  // base of segment 78, from line 1697
-assign val_base[79] = 18'd153;  // base of segment 79, from line 1708
-assign val_base[80] = 18'd152;  // base of segment 80, from line 1719
-assign val_base[81] = 18'd151;  // base of segment 81, from line 1731
-assign val_base[82] = 18'd150;  // base of segment 82, from line 1742
-assign val_base[83] = 18'd149;  // base of segment 83, from line 1754
-assign val_base[84] = 18'd148;  // base of segment 84, from line 1766
-assign val_base[85] = 18'd147;  // base of segment 85, from line 1778
-assign val_base[86] = 18'd146;  // base of segment 86, from line 1790
-assign val_base[87] = 18'd145;  // base of segment 87, from line 1802
-assign val_base[88] = 18'd144;  // base of segment 88, from line 1815
-assign val_base[89] = 18'd143;  // base of segment 89, from line 1827
-assign val_base[90] = 18'd142;  // base of segment 90, from line 1840
-assign val_base[91] = 18'd141;  // base of segment 91, from line 1853
-assign val_base[92] = 18'd140;  // base of segment 92, from line 1866
-assign val_base[93] = 18'd139;  // base of segment 93, from line 1880
-assign val_base[94] = 18'd138;  // base of segment 94, from line 1893
-assign val_base[95] = 18'd137;  // base of segment 95, from line 1907
-assign val_base[96] = 18'd136;  // base of segment 96, from line 1921
-assign val_base[97] = 18'd135;  // base of segment 97, from line 1935
-assign val_base[98] = 18'd134;  // base of segment 98, from line 1950
-assign val_base[99] = 18'd133;  // base of segment 99, from line 1964
-assign val_base[100] = 18'd132;  // base of segment 100, from line 1979
-assign val_base[101] = 18'd131;  // base of segment 101, from line 1994
-assign val_base[102] = 18'd130;  // base of segment 102, from line 2009
-assign val_base[103] = 18'd129;  // base of segment 103, from line 2025
-assign val_base[104] = 18'd128;  // base of segment 104, from line 2041
-assign val_base[105] = 18'd127;  // base of segment 105, from line 2057
-assign val_base[106] = 18'd126;  // base of segment 106, from line 2073
-assign val_base[107] = 18'd125;  // base of segment 107, from line 2089
-assign val_base[108] = 18'd124;  // base of segment 108, from line 2106
-assign val_base[109] = 18'd123;  // base of segment 109, from line 2123
-assign val_base[110] = 18'd122;  // base of segment 110, from line 2140
-assign val_base[111] = 18'd121;  // base of segment 111, from line 2158
-assign val_base[112] = 18'd120;  // base of segment 112, from line 2176
-assign val_base[113] = 18'd119;  // base of segment 113, from line 2194
-assign val_base[114] = 18'd118;  // base of segment 114, from line 2213
-assign val_base[115] = 18'd117;  // base of segment 115, from line 2232
-assign val_base[116] = 18'd116;  // base of segment 116, from line 2251
-assign val_base[117] = 18'd115;  // base of segment 117, from line 2270
-assign val_base[118] = 18'd114;  // base of segment 118, from line 2290
-assign val_base[119] = 18'd113;  // base of segment 119, from line 2310
-assign val_base[120] = 18'd112;  // base of segment 120, from line 2331
-assign val_base[121] = 18'd111;  // base of segment 121, from line 2352
-assign val_base[122] = 18'd110;  // base of segment 122, from line 2373
-assign val_base[123] = 18'd109;  // base of segment 123, from line 2395
-assign val_base[124] = 18'd108;  // base of segment 124, from line 2417
-assign val_base[125] = 18'd107;  // base of segment 125, from line 2439
-assign val_base[126] = 18'd106;  // base of segment 126, from line 2462
-assign val_base[127] = 18'd105;  // base of segment 127, from line 2485
-assign val_base[128] = 18'd104;  // base of segment 128, from line 2509
-assign val_base[129] = 18'd103;  // base of segment 129, from line 2533
-assign val_base[130] = 18'd102;  // base of segment 130, from line 2558
-assign val_base[131] = 18'd101;  // base of segment 131, from line 2583
-assign val_base[132] = 18'd100;  // base of segment 132, from line 2609
-assign val_base[133] = 18'd99;  // base of segment 133, from line 2635
-assign val_base[134] = 18'd98;  // base of segment 134, from line 2662
-assign val_base[135] = 18'd97;  // base of segment 135, from line 2689
-assign val_base[136] = 18'd96;  // base of segment 136, from line 2717
-assign val_base[137] = 18'd95;  // base of segment 137, from line 2745
-assign val_base[138] = 18'd94;  // base of segment 138, from line 2774
-assign val_base[139] = 18'd93;  // base of segment 139, from line 2804
-assign val_base[140] = 18'd92;  // base of segment 140, from line 2834
-assign val_base[141] = 18'd91;  // base of segment 141, from line 2865
-assign val_base[142] = 18'd90;  // base of segment 142, from line 2897
-assign val_base[143] = 18'd89;  // base of segment 143, from line 2929
-assign val_base[144] = 18'd88;  // base of segment 144, from line 2963
-assign val_base[145] = 18'd87;  // base of segment 145, from line 2996
-assign val_base[146] = 18'd86;  // base of segment 146, from line 3031
-assign val_base[147] = 18'd85;  // base of segment 147, from line 3067
-assign val_base[148] = 18'd84;  // base of segment 148, from line 3103
-assign val_base[149] = 18'd83;  // base of segment 149, from line 3140
-assign val_base[150] = 18'd82;  // base of segment 150, from line 3178
-assign val_base[151] = 18'd81;  // base of segment 151, from line 3217
-assign val_base[152] = 18'd80;  // base of segment 152, from line 3257
-assign val_base[153] = 18'd79;  // base of segment 153, from line 3298
-assign val_base[154] = 18'd78;  // base of segment 154, from line 3340
-assign val_base[155] = 18'd77;  // base of segment 155, from line 3383
-assign val_base[156] = 18'd76;  // base of segment 156, from line 3427
-assign val_base[157] = 18'd75;  // base of segment 157, from line 3473
-assign val_base[158] = 18'd74;  // base of segment 158, from line 3519
-assign val_base[159] = 18'd73;  // base of segment 159, from line 3567
-assign val_base[160] = 18'd72;  // base of segment 160, from line 3616
-assign val_base[161] = 18'd71;  // base of segment 161, from line 3667
-assign val_base[162] = 18'd70;  // base of segment 162, from line 3719
-assign val_base[163] = 18'd69;  // base of segment 163, from line 3772
-assign val_base[164] = 18'd68;  // base of segment 164, from line 3827
-assign val_base[165] = 18'd67;  // base of segment 165, from line 3884
-assign val_base[166] = 18'd66;  // base of segment 166, from line 3942
-assign val_base[167] = 18'd65;  // base of segment 167, from line 4003
-assign val_base[168] = 18'd64;  // base of segment 168, from line 4065
-assign val_base[169] = 18'd63;  // base of segment 169, from line 4129
-assign val_base[170] = 18'd62;  // base of segment 170, from line 4195
-assign val_base[171] = 18'd61;  // base of segment 171, from line 4263
-assign val_base[172] = 18'd60;  // base of segment 172, from line 4333
-assign val_base[173] = 18'd59;  // base of segment 173, from line 4406
-assign val_base[174] = 18'd58;  // base of segment 174, from line 4482
-assign val_base[175] = 18'd57;  // base of segment 175, from line 4560
-assign val_base[176] = 18'd56;  // base of segment 176, from line 4640
-assign val_base[177] = 18'd55;  // base of segment 177, from line 4724
-assign val_base[178] = 18'd54;  // base of segment 178, from line 4810
-assign val_base[179] = 18'd53;  // base of segment 179, from line 4900
-assign val_base[180] = 18'd52;  // base of segment 180, from line 4994
-assign val_base[181] = 18'd51;  // base of segment 181, from line 5091
-assign val_base[182] = 18'd50;  // base of segment 182, from line 5191
-assign val_base[183] = 18'd49;  // base of segment 183, from line 5296
-assign val_base[184] = 18'd48;  // base of segment 184, from line 5406
-assign val_base[185] = 18'd47;  // base of segment 185, from line 5519
-assign val_base[186] = 18'd46;  // base of segment 186, from line 5638
-assign val_base[187] = 18'd45;  // base of segment 187, from line 5762
-assign val_base[188] = 18'd44;  // base of segment 188, from line 5891
-assign val_base[189] = 18'd43;  // base of segment 189, from line 6027
-assign val_base[190] = 18'd42;  // base of segment 190, from line 6169
-assign val_base[191] = 18'd41;  // base of segment 191, from line 6317
-assign val_base[192] = 18'd40;  // base of segment 192, from line 6473
-assign val_base[193] = 18'd39;  // base of segment 193, from line 6637
-assign val_base[194] = 18'd38;  // base of segment 194, from line 6809
-assign val_base[195] = 18'd37;  // base of segment 195, from line 6991
-assign val_base[196] = 18'd36;  // base of segment 196, from line 7182
-assign val_base[197] = 18'd35;  // base of segment 197, from line 7385
-assign val_base[198] = 18'd34;  // base of segment 198, from line 7599
-assign val_base[199] = 18'd33;  // base of segment 199, from line 7826
-assign val_base[200] = 18'd32;  // base of segment 200, from line 8066
+assign val_base[11] = 18'd221;  // input = 1184
+assign val_base[12] = 18'd220;  // input = 1189
+assign val_base[13] = 18'd219;  // input = 1195
+assign val_base[14] = 18'd218;  // input = 1200
+assign val_base[15] = 18'd217;  // input = 1206
+assign val_base[16] = 18'd216;  // input = 1211
+assign val_base[17] = 18'd215;  // input = 1217
+assign val_base[18] = 18'd214;  // input = 1223
+assign val_base[19] = 18'd213;  // input = 1228
+assign val_base[20] = 18'd212;  // input = 1234
+assign val_base[21] = 18'd211;  // input = 1240
+assign val_base[22] = 18'd210;  // input = 1246
+assign val_base[23] = 18'd209;  // input = 1252
+assign val_base[24] = 18'd208;  // input = 1258
+assign val_base[25] = 18'd207;  // input = 1264
+assign val_base[26] = 18'd206;  // input = 1270
+assign val_base[27] = 18'd205;  // input = 1276
+assign val_base[28] = 18'd204;  // input = 1282
+assign val_base[29] = 18'd203;  // input = 1289
+assign val_base[30] = 18'd202;  // input = 1295
+assign val_base[31] = 18'd201;  // input = 1301
+assign val_base[32] = 18'd200;  // input = 1308
+assign val_base[33] = 18'd199;  // input = 1315
+assign val_base[34] = 18'd198;  // input = 1321
+assign val_base[35] = 18'd197;  // input = 1328
+assign val_base[36] = 18'd196;  // input = 1335
+assign val_base[37] = 18'd195;  // input = 1341
+assign val_base[38] = 18'd194;  // input = 1348
+assign val_base[39] = 18'd193;  // input = 1355
+assign val_base[40] = 18'd192;  // input = 1362
+assign val_base[41] = 18'd191;  // input = 1369
+assign val_base[42] = 18'd190;  // input = 1377
+assign val_base[43] = 18'd189;  // input = 1384
+assign val_base[44] = 18'd188;  // input = 1391
+assign val_base[45] = 18'd187;  // input = 1399
+assign val_base[46] = 18'd186;  // input = 1406
+assign val_base[47] = 18'd185;  // input = 1414
+assign val_base[48] = 18'd184;  // input = 1421
+assign val_base[49] = 18'd183;  // input = 1429
+assign val_base[50] = 18'd182;  // input = 1437
+assign val_base[51] = 18'd181;  // input = 1445
+assign val_base[52] = 18'd180;  // input = 1453
+assign val_base[53] = 18'd179;  // input = 1461
+assign val_base[54] = 18'd178;  // input = 1469
+assign val_base[55] = 18'd177;  // input = 1477
+assign val_base[56] = 18'd176;  // input = 1486
+assign val_base[57] = 18'd175;  // input = 1494
+assign val_base[58] = 18'd174;  // input = 1503
+assign val_base[59] = 18'd173;  // input = 1511
+assign val_base[60] = 18'd172;  // input = 1520
+assign val_base[61] = 18'd171;  // input = 1529
+assign val_base[62] = 18'd170;  // input = 1538
+assign val_base[63] = 18'd169;  // input = 1547
+assign val_base[64] = 18'd168;  // input = 1556
+assign val_base[65] = 18'd167;  // input = 1566
+assign val_base[66] = 18'd166;  // input = 1575
+assign val_base[67] = 18'd165;  // input = 1584
+assign val_base[68] = 18'd164;  // input = 1594
+assign val_base[69] = 18'd163;  // input = 1604
+assign val_base[70] = 18'd162;  // input = 1614
+assign val_base[71] = 18'd161;  // input = 1624
+assign val_base[72] = 18'd160;  // input = 1634
+assign val_base[73] = 18'd159;  // input = 1644
+assign val_base[74] = 18'd158;  // input = 1654
+assign val_base[75] = 18'd157;  // input = 1665
+assign val_base[76] = 18'd156;  // input = 1676
+assign val_base[77] = 18'd155;  // input = 1686
+assign val_base[78] = 18'd154;  // input = 1697
+assign val_base[79] = 18'd153;  // input = 1708
+assign val_base[80] = 18'd152;  // input = 1719
+assign val_base[81] = 18'd151;  // input = 1731
+assign val_base[82] = 18'd150;  // input = 1742
+assign val_base[83] = 18'd149;  // input = 1754
+assign val_base[84] = 18'd148;  // input = 1766
+assign val_base[85] = 18'd147;  // input = 1778
+assign val_base[86] = 18'd146;  // input = 1790
+assign val_base[87] = 18'd145;  // input = 1802
+assign val_base[88] = 18'd144;  // input = 1815
+assign val_base[89] = 18'd143;  // input = 1827
+assign val_base[90] = 18'd142;  // input = 1840
+assign val_base[91] = 18'd141;  // input = 1853
+assign val_base[92] = 18'd140;  // input = 1866
+assign val_base[93] = 18'd139;  // input = 1880
+assign val_base[94] = 18'd138;  // input = 1893
+assign val_base[95] = 18'd137;  // input = 1907
+assign val_base[96] = 18'd136;  // input = 1921
+assign val_base[97] = 18'd135;  // input = 1935
+assign val_base[98] = 18'd134;  // input = 1950
+assign val_base[99] = 18'd133;  // input = 1964
+assign val_base[100] = 18'd132;  //input = 1979
+assign val_base[101] = 18'd131;  //input = 1994
+assign val_base[102] = 18'd130;  //input = 2009
+assign val_base[103] = 18'd129;  //input = 2025
+assign val_base[104] = 18'd128;  //input = 2041
+assign val_base[105] = 18'd127;  //input = 2057
+assign val_base[106] = 18'd126;  //input = 2073
+assign val_base[107] = 18'd125;  //input = 2089
+assign val_base[108] = 18'd124;  //input = 2106
+assign val_base[109] = 18'd123;  //input = 2123
+assign val_base[110] = 18'd122;  //input = 2140
+assign val_base[111] = 18'd121;  //input = 2158
+assign val_base[112] = 18'd120;  //input = 2176
+assign val_base[113] = 18'd119;  //input = 2194
+assign val_base[114] = 18'd118;  //input = 2213
+assign val_base[115] = 18'd117;  //input = 2232
+assign val_base[116] = 18'd116;  //input = 2251
+assign val_base[117] = 18'd115;  //input = 2270
+assign val_base[118] = 18'd114;  //input = 2290
+assign val_base[119] = 18'd113;  //input = 2310
+assign val_base[120] = 18'd112;  //input = 2331
+assign val_base[121] = 18'd111;  //input = 2352
+assign val_base[122] = 18'd110;  //input = 2373
+assign val_base[123] = 18'd109;  //input = 2395
+assign val_base[124] = 18'd108;  //input = 2417
+assign val_base[125] = 18'd107;  //input = 2439
+assign val_base[126] = 18'd106;  //input = 2462
+assign val_base[127] = 18'd105;  //input = 2485
+assign val_base[128] = 18'd104;  //input = 2509
+assign val_base[129] = 18'd103;  //input = 2533
+assign val_base[130] = 18'd102;  //input = 2558
+assign val_base[131] = 18'd101;  //input = 2583
+assign val_base[132] = 18'd100;  //input = 2609
+assign val_base[133] = 18'd99;  // input = 2635
+assign val_base[134] = 18'd98;  // input = 2662
+assign val_base[135] = 18'd97;  // input = 2689
+assign val_base[136] = 18'd96;  // input = 2717
+assign val_base[137] = 18'd95;  // input = 2745
+assign val_base[138] = 18'd94;  // input = 2774
+assign val_base[139] = 18'd93;  // input = 2804
+assign val_base[140] = 18'd92;  // input = 2834
+assign val_base[141] = 18'd91;  // input = 2865
+assign val_base[142] = 18'd90;  // input = 2897
+assign val_base[143] = 18'd89;  // input = 2929
+assign val_base[144] = 18'd88;  // input = 2963
+assign val_base[145] = 18'd87;  // input = 2996
+assign val_base[146] = 18'd86;  // input = 3031
+assign val_base[147] = 18'd85;  // input = 3067
+assign val_base[148] = 18'd84;  // input = 3103
+assign val_base[149] = 18'd83;  // input = 3140
+assign val_base[150] = 18'd82;  // input = 3178
+assign val_base[151] = 18'd81;  // input = 3217
+assign val_base[152] = 18'd80;  // input = 3257
+assign val_base[153] = 18'd79;  // input = 3298
+assign val_base[154] = 18'd78;  // input = 3340
+assign val_base[155] = 18'd77;  // input = 3383
+assign val_base[156] = 18'd76;  // input = 3427
+assign val_base[157] = 18'd75;  // input = 3473
+assign val_base[158] = 18'd74;  // input = 3519
+assign val_base[159] = 18'd73;  // input = 3567
+assign val_base[160] = 18'd72;  // input = 3616
+assign val_base[161] = 18'd71;  // input = 3667
+assign val_base[162] = 18'd70;  // input = 3719
+assign val_base[163] = 18'd69;  // input = 3772
+assign val_base[164] = 18'd68;  // input = 3827
+assign val_base[165] = 18'd67;  // input = 3884
+assign val_base[166] = 18'd66;  // input = 3942
+assign val_base[167] = 18'd65;  // input = 4003
+assign val_base[168] = 18'd64;  // input = 4065
+assign val_base[169] = 18'd63;  // input = 4129
+assign val_base[170] = 18'd62;  // input = 4195
+assign val_base[171] = 18'd61;  // input = 4263
+assign val_base[172] = 18'd60;  // input = 4333
+assign val_base[173] = 18'd59;  // input = 4406
+assign val_base[174] = 18'd58;  // input = 4482
+assign val_base[175] = 18'd57;  // input = 4560
+assign val_base[176] = 18'd56;  // input = 4640
+assign val_base[177] = 18'd55;  // input = 4724
+assign val_base[178] = 18'd54;  // input = 4810
+assign val_base[179] = 18'd53;  // input = 4900
+assign val_base[180] = 18'd52;  // input = 4994
+assign val_base[181] = 18'd51;  // input = 5091
+assign val_base[182] = 18'd50;  // input = 5191
+assign val_base[183] = 18'd49;  // input = 5296
+assign val_base[184] = 18'd48;  // input = 5406
+assign val_base[185] = 18'd47;  // input = 5519
+assign val_base[186] = 18'd46;  // input = 5638
+assign val_base[187] = 18'd45;  // input = 5762
+assign val_base[188] = 18'd44;  // input = 5891
+assign val_base[189] = 18'd43;  // input = 6027
+assign val_base[190] = 18'd42;  // input = 6169
+assign val_base[191] = 18'd41;  // input = 6317
+assign val_base[192] = 18'd40;  // input = 6473
+assign val_base[193] = 18'd39;  // input = 6637
+assign val_base[194] = 18'd38;  // input = 6809
+assign val_base[195] = 18'd37;  // input = 6991
+assign val_base[196] = 18'd36;  // input = 7182
+assign val_base[197] = 18'd35;  // input = 7385
+assign val_base[198] = 18'd34;  // input = 7599
+assign val_base[199] = 18'd33;  // input = 7826
+assign val_base[200] = 18'd32;  // input = 8066
 
 endmodule

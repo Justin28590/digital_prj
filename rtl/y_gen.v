@@ -50,11 +50,33 @@ cos_lut u_cos_lut(
     .cos_out(cos_wire)
 );
 
+wire [3:0]  segment_type;
+wire [12:0] offset;
+wire valid;
+apd_idx u_apd_idx(
+    .apd(apd_reg),
+    .segment_type(segment_type),
+    .offset(offset),
+    .valid(valid)
+);
+
+reg [3:0] segment_type_reg;
+reg [12:0] offset_reg;
+always@(posedge clk) begin
+    if(!rst_n || !d_ready) begin
+        segment_type_reg <= 4'd0;
+        offset_reg <= 13'd0;
+    end else begin
+        segment_type_reg <= segment_type;
+        offset_reg <= offset;
+    end
+end
+
 wire [17:0] div_wire;
 reg  [17:0] div_reg;
 div_lut u_div_lut(
-    .apd(apd_reg),
-    .d_ready(d_ready_reg),
+    .segment_type(segment_type_reg),
+    .offset(offset_reg),
     .div_val(div_wire)
 );
 
@@ -135,15 +157,15 @@ always@(posedge clk) begin
         a2cos3 <= a_reg_3[7:4] * cos_abs[14:10];
         a3cos3 <= a_reg_3[11:8]* cos_abs[14:10];
 
-        b1d1 <= b_reg_3[3:0] * div_reg_2[5:0];
-        b2d1 <= b_reg_3[7:4] * div_reg_2[5:0];
-        b3d1 <= b_reg_3[11:8]* div_reg_2[5:0];
-        b1d2 <= b_reg_3[3:0] * div_reg_2[11:6];
-        b2d2 <= b_reg_3[7:4] * div_reg_2[11:6];
-        b3d2 <= b_reg_3[11:8]* div_reg_2[11:6];
-        b1d3 <= b_reg_3[3:0] * div_reg_2[17:12];
-        b2d3 <= b_reg_3[7:4] * div_reg_2[17:12];
-        b3d3 <= b_reg_3[11:8]* div_reg_2[17:12];
+        b1d1 <= b_reg_3[3:0] * div_reg[5:0];
+        b2d1 <= b_reg_3[7:4] * div_reg[5:0];
+        b3d1 <= b_reg_3[11:8]* div_reg[5:0];
+        b1d2 <= b_reg_3[3:0] * div_reg[11:6];
+        b2d2 <= b_reg_3[7:4] * div_reg[11:6];
+        b3d2 <= b_reg_3[11:8]* div_reg[11:6];
+        b1d3 <= b_reg_3[3:0] * div_reg[17:12];
+        b2d3 <= b_reg_3[7:4] * div_reg[17:12];
+        b3d3 <= b_reg_3[11:8]* div_reg[17:12];
     end
 end
 

@@ -1,311 +1,1504 @@
-module div_lut(
-    input [12:0] apd,
-    output wire [14:0] div_val
+module div_lut (
+    input wire [3:0] segment_type,  // 段类型输入
+    input wire [12:0] offset,        // 偏移量输入
+    output reg [17:0] div_val
 );
 
-wire [14:0] val [358:0];
-wire [8:0] idx;
-assign idx = (apd < 190) ? apd :
-    (apd < 192) ? 190 :
-    (apd < 193) ? 191 :
-    (apd < 194) ? 192 :
-    (apd < 195) ? 193 :
-    (apd < 196) ? 194 :
-    (apd < 197) ? 195 :
-    (apd < 198) ? 196 :
-    (apd < 200) ? 197 :
-    (apd < 201) ? 198 :
-    (apd < 202) ? 199 :
-    (apd < 203) ? 200 :
-    (apd < 205) ? 201 :
-    (apd < 206) ? 202 :
-    (apd < 207) ? 203 :
-    (apd < 209) ? 204 :
-    (apd < 210) ? 205 :
-    (apd < 211) ? 206 :
-    (apd < 213) ? 207 :
-    (apd < 214) ? 208 :
-    (apd < 215) ? 209 :
-    (apd < 217) ? 210 :
-    (apd < 218) ? 211 :
-    (apd < 220) ? 212 :
-    (apd < 221) ? 213 :
-    (apd < 223) ? 214 :
-    (apd < 224) ? 215 :
-    (apd < 226) ? 216 :
-    (apd < 227) ? 217 :
-    (apd < 229) ? 218 :
-    (apd < 230) ? 219 :
-    (apd < 232) ? 220 :
-    (apd < 234) ? 221 :
-    (apd < 235) ? 222 :
-    (apd < 237) ? 223 :
-    (apd < 239) ? 224 :
-    (apd < 241) ? 225 :
-    (apd < 242) ? 226 :
-    (apd < 244) ? 227 :
-    (apd < 246) ? 228 :
-    (apd < 248) ? 229 :
-    (apd < 250) ? 230 :
-    (apd < 252) ? 231 :
-    (apd < 254) ? 232 :
-    (apd < 255) ? 233 :
-    (apd < 257) ? 234 :
-    (apd < 260) ? 235 :
-    (apd < 262) ? 236 :
-    (apd < 264) ? 237 :
-    (apd < 266) ? 238 :
-    (apd < 268) ? 239 :
-    (apd < 270) ? 240 :
-    (apd < 272) ? 241 :
-    (apd < 275) ? 242 :
-    (apd < 277) ? 243 :
-    (apd < 279) ? 244 :
-    (apd < 282) ? 245 :
-    (apd < 284) ? 246 :
-    (apd < 287) ? 247 :
-    (apd < 289) ? 248 :
-    (apd < 292) ? 249 :
-    (apd < 294) ? 250 :
-    (apd < 297) ? 251 :
-    (apd < 300) ? 252 :
-    (apd < 302) ? 253 :
-    (apd < 305) ? 254 :
-    (apd < 308) ? 255 :
-    (apd < 311) ? 256 :
-    (apd < 314) ? 257 :
-    (apd < 317) ? 258 :
-    (apd < 320) ? 259 :
-    (apd < 323) ? 260 :
-    (apd < 327) ? 261 :
-    (apd < 330) ? 262 :
-    (apd < 333) ? 263 :
-    (apd < 337) ? 264 :
-    (apd < 340) ? 265 :
-    (apd < 344) ? 266 :
-    (apd < 347) ? 267 :
-    (apd < 351) ? 268 :
-    (apd < 355) ? 269 :
-    (apd < 359) ? 270 :
-    (apd < 363) ? 271 :
-    (apd < 367) ? 272 :
-    (apd < 371) ? 273 :
-    (apd < 375) ? 274 :
-    (apd < 379) ? 275 :
-    (apd < 384) ? 276 :
-    (apd < 388) ? 277 :
-    (apd < 393) ? 278 :
-    (apd < 398) ? 279 :
-    (apd < 403) ? 280 :
-    (apd < 408) ? 281 :
-    (apd < 413) ? 282 :
-    (apd < 418) ? 283 :
-    (apd < 423) ? 284 :
-    (apd < 429) ? 285 :
-    (apd < 435) ? 286 :
-    (apd < 440) ? 287 :
-    (apd < 446) ? 288 :
-    (apd < 452) ? 289 :
-    (apd < 459) ? 290 :
-    (apd < 465) ? 291 :
-    (apd < 472) ? 292 :
-    (apd < 479) ? 293 :
-    (apd < 486) ? 294 :
-    (apd < 493) ? 295 :
-    (apd < 501) ? 296 :
-    (apd < 509) ? 297 :
-    (apd < 517) ? 298 :
-    (apd < 525) ? 299 :
-    (apd < 533) ? 300 :
-    (apd < 542) ? 301 :
-    (apd < 551) ? 302 :
-    (apd < 561) ? 303 :
-    (apd < 570) ? 304 :
-    (apd < 580) ? 305 :
-    (apd < 591) ? 306 :
-    (apd < 602) ? 307 :
-    (apd < 613) ? 308 :
-    (apd < 625) ? 309 :
-    (apd < 637) ? 310 :
-    (apd < 649) ? 311 :
-    (apd < 662) ? 312 :
-    (apd < 676) ? 313 :
-    (apd < 690) ? 314 :
-    (apd < 705) ? 315 :
-    (apd < 721) ? 316 :
-    (apd < 737) ? 317 :
-    (apd < 754) ? 318 :
-    (apd < 771) ? 319 :
-    (apd < 790) ? 320 :
-    (apd < 810) ? 321 :
-    (apd < 830) ? 322 :
-    (apd < 852) ? 323 :
-    (apd < 874) ? 324 :
-    (apd < 898) ? 325 :
-    (apd < 924) ? 326 :
-    (apd < 950) ? 327 :
-    (apd < 979) ? 328 :
-    (apd < 1009) ? 329 :
-    (apd < 1041) ? 330 :
-    (apd < 1075) ? 331 :
-    (apd < 1111) ? 332 :
-    (apd < 1150) ? 333 :
-    (apd < 1192) ? 334 :
-    (apd < 1237) ? 335 :
-    (apd < 1285) ? 336 :
-    (apd < 1338) ? 337 :
-    (apd < 1395) ? 338 :
-    (apd < 1457) ? 339 :
-    (apd < 1525) ? 340 :
-    (apd < 1599) ? 341 :
-    (apd < 1681) ? 342 :
-    (apd < 1772) ? 343 :
-    (apd < 1873) ? 344 :
-    (apd < 1986) ? 345 :
-    (apd < 2115) ? 346 :
-    (apd < 2260) ? 347 :
-    (apd < 2428) ? 348 :
-    (apd < 2622) ? 349 :
-    (apd < 2850) ? 350 :
-    (apd < 3121) ? 351 :
-    (apd < 3450) ? 352 :
-    (apd < 3855) ? 353 :
-    (apd < 4369) ? 354 :
-    (apd < 5042) ? 355 :
-    (apd < 5958) ? 356 :
-    (apd < 7282) ? 357 :
-    (apd < 8191) ? 358 :
-    358;
 
-assign div_val = d_ready ? val[idx] : 15'd0;
+wire [17:0] val_base_self [0:124];
+assign val_base_self[0] = 18'd262143;
+assign val_base_self[1] = 18'd131072;
+assign val_base_self[2] = 18'd87381;
+assign val_base_self[3] = 18'd65536;
+assign val_base_self[4] = 18'd52429;
+assign val_base_self[5] = 18'd43690;
+assign val_base_self[6] = 18'd37449;
+assign val_base_self[7] = 18'd32768;
+assign val_base_self[8] = 18'd29127;
+assign val_base_self[9] = 18'd26214;
+assign val_base_self[10] = 18'd23831;
+assign val_base_self[11] = 18'd21845;
+assign val_base_self[12] = 18'd20165;
+assign val_base_self[13] = 18'd18724;
+assign val_base_self[14] = 18'd17476;
+assign val_base_self[15] = 18'd16384;
+assign val_base_self[16] = 18'd15420;
+assign val_base_self[17] = 18'd14564;
+assign val_base_self[18] = 18'd13797;
+assign val_base_self[19] = 18'd13107;
+assign val_base_self[20] = 18'd12483;
+assign val_base_self[21] = 18'd11916;
+assign val_base_self[22] = 18'd11398;
+assign val_base_self[23] = 18'd10923;
+assign val_base_self[24] = 18'd10486;
+assign val_base_self[25] = 18'd10082;
+assign val_base_self[26] = 18'd9709;
+assign val_base_self[27] = 18'd9362;
+assign val_base_self[28] = 18'd9039;
+assign val_base_self[29] = 18'd8738;
+assign val_base_self[30] = 18'd8456;
+assign val_base_self[31] = 18'd8192;
+assign val_base_self[32] = 18'd7944;
+assign val_base_self[33] = 18'd7710;
+assign val_base_self[34] = 18'd7490;
+assign val_base_self[35] = 18'd7282;
+assign val_base_self[36] = 18'd7085;
+assign val_base_self[37] = 18'd6898;
+assign val_base_self[38] = 18'd6722;
+assign val_base_self[39] = 18'd6554;
+assign val_base_self[40] = 18'd6394;
+assign val_base_self[41] = 18'd6242;
+assign val_base_self[42] = 18'd6096;
+assign val_base_self[43] = 18'd5958;
+assign val_base_self[44] = 18'd5825;
+assign val_base_self[45] = 18'd5699;
+assign val_base_self[46] = 18'd5578;
+assign val_base_self[47] = 18'd5461;
+assign val_base_self[48] = 18'd5350;
+assign val_base_self[49] = 18'd5243;
+assign val_base_self[50] = 18'd5140;
+assign val_base_self[51] = 18'd5041;
+assign val_base_self[52] = 18'd4946;
+assign val_base_self[53] = 18'd4854;
+assign val_base_self[54] = 18'd4766;
+assign val_base_self[55] = 18'd4681;
+assign val_base_self[56] = 18'd4599;
+assign val_base_self[57] = 18'd4520;
+assign val_base_self[58] = 18'd4443;
+assign val_base_self[59] = 18'd4369;
+assign val_base_self[60] = 18'd4297;
+assign val_base_self[61] = 18'd4228;
+assign val_base_self[62] = 18'd4161;
+assign val_base_self[63] = 18'd4096;
+assign val_base_self[64] = 18'd4033;
+assign val_base_self[65] = 18'd3972;
+assign val_base_self[66] = 18'd3913;
+assign val_base_self[67] = 18'd3855;
+assign val_base_self[68] = 18'd3799;
+assign val_base_self[69] = 18'd3745;
+assign val_base_self[70] = 18'd3692;
+assign val_base_self[71] = 18'd3641;
+assign val_base_self[72] = 18'd3591;
+assign val_base_self[73] = 18'd3542;
+assign val_base_self[74] = 18'd3495;
+assign val_base_self[75] = 18'd3449;
+assign val_base_self[76] = 18'd3404;
+assign val_base_self[77] = 18'd3361;
+assign val_base_self[78] = 18'd3318;
+assign val_base_self[79] = 18'd3277;
+assign val_base_self[80] = 18'd3236;
+assign val_base_self[81] = 18'd3197;
+assign val_base_self[82] = 18'd3158;
+assign val_base_self[83] = 18'd3121;
+assign val_base_self[84] = 18'd3084;
+assign val_base_self[85] = 18'd3048;
+assign val_base_self[86] = 18'd3013;
+assign val_base_self[87] = 18'd2979;
+assign val_base_self[88] = 18'd2945;
+assign val_base_self[89] = 18'd2913;
+assign val_base_self[90] = 18'd2881;
+assign val_base_self[91] = 18'd2849;
+assign val_base_self[92] = 18'd2819;
+assign val_base_self[93] = 18'd2789;
+assign val_base_self[94] = 18'd2759;
+assign val_base_self[95] = 18'd2731;
+assign val_base_self[96] = 18'd2703;
+assign val_base_self[97] = 18'd2675;
+assign val_base_self[98] = 18'd2648;
+assign val_base_self[99] = 18'd2621;
+assign val_base_self[100] = 18'd2595;
+assign val_base_self[101] = 18'd2570;
+assign val_base_self[102] = 18'd2545;
+assign val_base_self[103] = 18'd2521;
+assign val_base_self[104] = 18'd2497;
+assign val_base_self[105] = 18'd2473;
+assign val_base_self[106] = 18'd2450;
+assign val_base_self[107] = 18'd2427;
+assign val_base_self[108] = 18'd2405;
+assign val_base_self[109] = 18'd2383;
+assign val_base_self[110] = 18'd2362;
+assign val_base_self[111] = 18'd2341;
+assign val_base_self[112] = 18'd2320;
+assign val_base_self[113] = 18'd2300;
+assign val_base_self[114] = 18'd2280;
+assign val_base_self[115] = 18'd2260;
+assign val_base_self[116] = 18'd2241;
+assign val_base_self[117] = 18'd2222;
+assign val_base_self[118] = 18'd2203;
+assign val_base_self[119] = 18'd2185;
+assign val_base_self[120] = 18'd2166;
+assign val_base_self[121] = 18'd2149;
+assign val_base_self[122] = 18'd2131;
+assign val_base_self[123] = 18'd2114;
+assign val_base_self[124] = 18'd2097;   //对应apd=125
+/***********************************/
+//下面开始分段
+wire [17:0] val_base [0:200];
+wire [7:0]  base0_offset [0:15];  // 16项
+assign val_base[0] = 18'd2080;  // base of segment 0, from line 126  
+assign base0_offset[0] = 8'd16;    //2080-2064
+assign base0_offset[1] = 8'd32;    //2080-2048
+assign base0_offset[2] = 8'd48;    //2080-2032
+assign base0_offset[3] = 8'd64;    //2080-2016
+assign base0_offset[4] = 8'd79;    //2080-2001
+assign base0_offset[5] = 8'd94;  // 2080-1986
+assign base0_offset[6] = 8'd109;  // 2080-1971
+assign base0_offset[7] = 8'd124;  // 2080-1956
+assign base0_offset[8] = 8'd138;  // 2080-1942
+assign base0_offset[9] = 8'd152;  // 2080-1928
+assign base0_offset[10] = 8'd167;  // 2080-1913
+assign base0_offset[11] = 8'd180;  // 2080-1900
+assign base0_offset[12] = 8'd194;  // 2080-1886
+assign base0_offset[13] = 8'd208;  // 2080-1872
+assign base0_offset[14] = 8'd221;  // 2080-1859
+assign base0_offset[15] = 8'd234;  // 2080-1846
 
-assign val[0] = 12'd4095;   // 0
-assign val[1] = 12'd4095;   // 1
-assign val[2] = 12'd2048;   // 2
-assign val[3] = 12'd1365;   // 3
-assign val[4] = 12'd1024;   // 4
-assign val[5] = 12'd819;   // 5
-assign val[6] = 12'd682;   // 6
-assign val[7] = 12'd585;   // 7
-assign val[8] = 12'd512;   // 8
-assign val[9] = 12'd455;   // 9
-assign val[10] = 12'd410;   // 10
-assign val[11] = 12'd372;   // 11
-assign val[12] = 12'd341;   // 12
-assign val[13] = 12'd315;   // 13
-assign val[14] = 12'd292;   // 14
-assign val[15] = 12'd273;   // 15
-assign val[16] = 12'd256;   // 16
-assign val[17] = 12'd241;   // 17
-assign val[18] = 12'd228;   // 18
-assign val[19] = 12'd216;   // 19
-assign val[20] = 12'd205;   // 20
-assign val[21] = 12'd195;   // 21
-assign val[22] = 12'd186;   // 22
-assign val[23] = 12'd178;   // 23
-assign val[24] = 12'd171;   // 24
-assign val[25] = 12'd164;   // 25
-assign val[26] = 12'd158;   // 26
-assign val[27] = 12'd152;   // 27
-assign val[28] = 12'd146;   // 28
-assign val[29] = 12'd141;   // 29
-assign val[30] = 12'd136;   // 30
-assign val[31] = 12'd132;   // 31
-assign val[32] = 12'd128;   // 32
-assign val[33] = 12'd124;   // 33
-assign val[34] = 12'd120;   // 34
-assign val[35] = 12'd117;   // 35
-assign val[36] = 12'd114;   // 36
-assign val[37] = 12'd111;   // 37
-assign val[38] = 12'd108;   // 38
-assign val[39] = 12'd105;   // 39
-assign val[40] = 12'd102;   // 40
-assign val[41] = 12'd100;   // 41
-assign val[42] = 12'd98;   // 42
-assign val[43] = 12'd95;   // 43
-assign val[44] = 12'd93;   // 44
-assign val[45] = 12'd91;   // 45
-assign val[46] = 12'd89;   // 46
-assign val[47] = 12'd87;   // 47
-assign val[48] = 12'd85;   // 48
-assign val[49] = 12'd84;   // 49
-assign val[50] = 12'd82;   // 50
-assign val[51] = 12'd80;   // 51
-assign val[52] = 12'd79;   // 52
-assign val[53] = 12'd77;   // 53
-assign val[54] = 12'd76;   // 54
-assign val[55] = 12'd74;   // 55
-assign val[56] = 12'd73;   // 56
-assign val[57] = 12'd72;   // 57
-assign val[58] = 12'd71;   // 58
-assign val[59] = 12'd69;   // 59
-assign val[60] = 12'd68;   // 60
-assign val[61] = 12'd67;   // 61
-assign val[62] = 12'd66;   // 62
-assign val[63] = 12'd65;   // 63
-assign val[64] = 12'd64;   // 64
-assign val[65] = 12'd63;   // 65
-assign val[66] = 12'd62;   // 66
-assign val[67] = 12'd61;   // 67
-assign val[68] = 12'd60;   // 68
-assign val[69] = 12'd59;   // 69
-assign val[70] = 12'd58;   // 70-71
-assign val[71] = 12'd57;   // 72
-assign val[72] = 12'd56;   // 73
-assign val[73] = 12'd55;   // 74-75
-assign val[74] = 12'd54;   // 76
-assign val[75] = 12'd53;   // 77
-assign val[76] = 12'd52;   // 78-79
-assign val[77] = 12'd51;   // 80-81
-assign val[78] = 12'd50;   // 82
-assign val[79] = 12'd49;   // 83-84
-assign val[80] = 12'd48;   // 85-86
-assign val[81] = 12'd47;   // 87-88
-assign val[82] = 12'd46;   // 89-90
-assign val[83] = 12'd45;   // 91-92
-assign val[84] = 12'd44;   // 93-94
-assign val[85] = 12'd43;   // 95-96
-assign val[86] = 12'd42;   // 97-98
-assign val[87] = 12'd41;   // 99-101
-assign val[88] = 12'd40;   // 102-103
-assign val[89] = 12'd39;   // 104-106
-assign val[90] = 12'd38;   // 107-109
-assign val[91] = 12'd37;   // 110-112
-assign val[92] = 12'd36;   // 113-115
-assign val[93] = 12'd35;   // 116-118
-assign val[94] = 12'd34;   // 119-122
-assign val[95] = 12'd33;   // 123-125
-assign val[96] = 12'd32;   // 126-130
-assign val[97] = 12'd31;   // 131-134
-assign val[98] = 12'd30;   // 135-138
-assign val[99] = 12'd29;   // 139-143
-assign val[100] = 12'd28;   // 144-148
-assign val[101] = 12'd27;   // 149-154
-assign val[102] = 12'd26;   // 155-160
-assign val[103] = 12'd25;   // 161-167
-assign val[104] = 12'd24;   // 168-174
-assign val[105] = 12'd23;   // 175-181
-assign val[106] = 12'd22;   // 182-190
-assign val[107] = 12'd21;   // 191-199
-assign val[108] = 12'd20;   // 200-210
-assign val[109] = 12'd19;   // 211-221
-assign val[110] = 12'd18;   // 222-234
-assign val[111] = 12'd17;   // 235-248
-assign val[112] = 12'd16;   // 249-264
-assign val[113] = 12'd15;   // 265-282
-assign val[114] = 12'd14;   // 283-303
-assign val[115] = 12'd13;   // 304-327
-assign val[116] = 12'd12;   // 328-356
-assign val[117] = 12'd11;   // 357-389
-assign val[118] = 12'd10;   // 390-431
-assign val[119] = 12'd9;   // 432-481
-assign val[120] = 12'd8;   // 482-546
-assign val[121] = 12'd7;   // 547-629
-assign val[122] = 12'd6;   // 630-744
-assign val[123] = 12'd5;   // 745-909
-assign val[124] = 12'd4;   // 910-1170
-assign val[125] = 12'd3;   // 1171-1637
-assign val[126] = 12'd2;   // 1638-2730
-assign val[127] = 12'd1;   // 2731-8190
+wire [7:0]  base1_offset [0:22];  
+assign val_base[1] = 18'd1833;  // base of segment 1, from line 143
+assign base1_offset[0] = 8'd13;  // 1833-1820
+assign base1_offset[1] = 8'd25;  // 1833-1808
+assign base1_offset[2] = 8'd37;  // 1833-1796
+assign base1_offset[3] = 8'd50;  // 1833-1783
+assign base1_offset[4] = 8'd62;  // 1833-1771
+assign base1_offset[5] = 8'd74;  // 1833-1759
+assign base1_offset[6] = 8'd85;  // 1833-1748
+assign base1_offset[7] = 8'd97;  // 1833-1736
+assign base1_offset[8] = 8'd108;  // 1833-1725
+assign base1_offset[9] = 8'd120;  // 1833-1713
+assign base1_offset[10] = 8'd131;  // 1833-1702
+assign base1_offset[11] = 8'd142;  // 1833-1691
+assign base1_offset[12] = 8'd153;  // 1833-1680
+assign base1_offset[13] = 8'd163;  // 1833-1670
+assign base1_offset[14] = 8'd174;  // 1833-1659
+assign base1_offset[15] = 8'd184;  // 1833-1649
+assign base1_offset[16] = 8'd195;  // 1833-1638
+assign base1_offset[17] = 8'd205;  // 1833-1628
+assign base1_offset[18] = 8'd215;  // 1833-1618
+assign base1_offset[19] = 8'd225;  // 1833-1608
+assign base1_offset[20] = 8'd235;  // 1833-1598
+assign base1_offset[21] = 8'd244;  // 1833-1589
+assign base1_offset[22] = 8'd254;  // 1833-1579
+
+wire [7:0]  base2_offset [0:31];  
+assign val_base[2] = 18'd1570;  // base of segment 2, from line 167
+assign base2_offset[0] = 8'd10;  // 1570-1560
+assign base2_offset[1] = 8'd19;  // 1570-1551
+assign base2_offset[2] = 8'd28;  // 1570-1542
+assign base2_offset[3] = 8'd37;  // 1570-1533
+assign base2_offset[4] = 8'd46;  // 1570-1524
+assign base2_offset[5] = 8'd55;  // 1570-1515
+assign base2_offset[6] = 8'd63;  // 1570-1507
+assign base2_offset[7] = 8'd72;  // 1570-1498
+assign base2_offset[8] = 8'd81;  // 1570-1489
+assign base2_offset[9] = 8'd89;  // 1570-1481
+assign base2_offset[10] = 8'd97;  // 1570-1473
+assign base2_offset[11] = 8'd106;  // 1570-1464
+assign base2_offset[12] = 8'd114;  // 1570-1456
+assign base2_offset[13] = 8'd122;  // 1570-1448
+assign base2_offset[14] = 8'd130;  // 1570-1440
+assign base2_offset[15] = 8'd138;  // 1570-1432
+assign base2_offset[16] = 8'd145;  // 1570-1425
+assign base2_offset[17] = 8'd153;  // 1570-1417
+assign base2_offset[18] = 8'd161;  // 1570-1409
+assign base2_offset[19] = 8'd168;  // 1570-1402
+assign base2_offset[20] = 8'd176;  // 1570-1394
+assign base2_offset[21] = 8'd183;  // 1570-1387
+assign base2_offset[22] = 8'd190;  // 1570-1380
+assign base2_offset[23] = 8'd198;  // 1570-1372
+assign base2_offset[24] = 8'd205;  // 1570-1365
+assign base2_offset[25] = 8'd212;  // 1570-1358
+assign base2_offset[26] = 8'd219;  // 1570-1351
+assign base2_offset[27] = 8'd226;  // 1570-1344
+assign base2_offset[28] = 8'd233;  // 1570-1337
+assign base2_offset[29] = 8'd239;  // 1570-1331
+assign base2_offset[30] = 8'd246;  // 1570-1324
+assign base2_offset[31] = 8'd253;  // 1570-1317
+
+wire [7:0]  base3_offset [0:47];  
+assign val_base[3] = 18'd1311;  // base of segment 3, from line 200
+assign base3_offset[0] = 8'd7;  // 1311-1304
+assign base3_offset[1] = 8'd13;  // 1311-1298
+assign base3_offset[2] = 8'd20;  // 1311-1291
+assign base3_offset[3] = 8'd26;  // 1311-1285
+assign base3_offset[4] = 8'd32;  // 1311-1279
+assign base3_offset[5] = 8'd38;  // 1311-1273
+assign base3_offset[6] = 8'd45;  // 1311-1266
+assign base3_offset[7] = 8'd51;  // 1311-1260
+assign base3_offset[8] = 8'd57;  // 1311-1254
+assign base3_offset[9] = 8'd63;  // 1311-1248
+assign base3_offset[10] = 8'd69;  // 1311-1242
+assign base3_offset[11] = 8'd74;  // 1311-1237
+assign base3_offset[12] = 8'd80;  // 1311-1231
+assign base3_offset[13] = 8'd86;  // 1311-1225
+assign base3_offset[14] = 8'd92;  // 1311-1219
+assign base3_offset[15] = 8'd97;  // 1311-1214
+assign base3_offset[16] = 8'd103;  // 1311-1208
+assign base3_offset[17] = 8'd109;  // 1311-1202
+assign base3_offset[18] = 8'd114;  // 1311-1197
+assign base3_offset[19] = 8'd119;  // 1311-1192
+assign base3_offset[20] = 8'd125;  // 1311-1186
+assign base3_offset[21] = 8'd130;  // 1311-1181
+assign base3_offset[22] = 8'd135;  // 1311-1176
+assign base3_offset[23] = 8'd141;  // 1311-1170
+assign base3_offset[24] = 8'd146;  // 1311-1165
+assign base3_offset[25] = 8'd151;  // 1311-1160
+assign base3_offset[26] = 8'd156;  // 1311-1155
+assign base3_offset[27] = 8'd161;  // 1311-1150
+assign base3_offset[28] = 8'd166;  // 1311-1145
+assign base3_offset[29] = 8'd171;  // 1311-1140
+assign base3_offset[30] = 8'd176;  // 1311-1135
+assign base3_offset[31] = 8'd181;  // 1311-1130
+assign base3_offset[32] = 8'd186;  // 1311-1125
+assign base3_offset[33] = 8'd191;  // 1311-1120
+assign base3_offset[34] = 8'd195;  // 1311-1116
+assign base3_offset[35] = 8'd200;  // 1311-1111
+assign base3_offset[36] = 8'd205;  // 1311-1106
+assign base3_offset[37] = 8'd210;  // 1311-1101
+assign base3_offset[38] = 8'd214;  // 1311-1097
+assign base3_offset[39] = 8'd219;  // 1311-1092
+assign base3_offset[40] = 8'd223;  // 1311-1088
+assign base3_offset[41] = 8'd228;  // 1311-1083
+assign base3_offset[42] = 8'd232;  // 1311-1079
+assign base3_offset[43] = 8'd237;  // 1311-1074
+assign base3_offset[44] = 8'd241;  // 1311-1070
+assign base3_offset[45] = 8'd245;  // 1311-1066
+assign base3_offset[46] = 8'd250;  // 1311-1061
+assign base3_offset[47] = 8'd254;  // 1311-1057
+
+wire [7:0]  base4_offset [0:78];
+assign val_base[4] = 18'd1053;  // base of segment 4, from line 249
+assign base4_offset[0] = 8'd4;  // 1053-1049
+assign base4_offset[1] = 8'd9;  // 1053-1044
+assign base4_offset[2] = 8'd13;  // 1053-1040
+assign base4_offset[3] = 8'd17;  // 1053-1036
+assign base4_offset[4] = 8'd21;  // 1053-1032
+assign base4_offset[5] = 8'd25;  // 1053-1028
+assign base4_offset[6] = 8'd29;  // 1053-1024
+assign base4_offset[7] = 8'd33;  // 1053-1020
+assign base4_offset[8] = 8'd37;  // 1053-1016
+assign base4_offset[9] = 8'd41;  // 1053-1012
+assign base4_offset[10] = 8'd45;  // 1053-1008
+assign base4_offset[11] = 8'd49;  // 1053-1004
+assign base4_offset[12] = 8'd52;  // 1053-1001
+assign base4_offset[13] = 8'd56;  // 1053-997
+assign base4_offset[14] = 8'd60;  // 1053-993
+assign base4_offset[15] = 8'd64;  // 1053-989
+assign base4_offset[16] = 8'd67;  // 1053-986
+assign base4_offset[17] = 8'd71;  // 1053-982
+assign base4_offset[18] = 8'd75;  // 1053-978
+assign base4_offset[19] = 8'd78;  // 1053-975
+assign base4_offset[20] = 8'd82;  // 1053-971
+assign base4_offset[21] = 8'd86;  // 1053-967
+assign base4_offset[22] = 8'd89;  // 1053-964
+assign base4_offset[23] = 8'd93;  // 1053-960
+assign base4_offset[24] = 8'd96;  // 1053-957
+assign base4_offset[25] = 8'd100;  // 1053-953
+assign base4_offset[26] = 8'd103;  // 1053-950
+assign base4_offset[27] = 8'd107;  // 1053-946
+assign base4_offset[28] = 8'd110;  // 1053-943
+assign base4_offset[29] = 8'd113;  // 1053-940
+assign base4_offset[30] = 8'd117;  // 1053-936
+assign base4_offset[31] = 8'd120;  // 1053-933
+assign base4_offset[32] = 8'd123;  // 1053-930
+assign base4_offset[33] = 8'd127;  // 1053-926
+assign base4_offset[34] = 8'd130;  // 1053-923
+assign base4_offset[35] = 8'd133;  // 1053-920
+assign base4_offset[36] = 8'd136;  // 1053-917
+assign base4_offset[37] = 8'd140;  // 1053-913
+assign base4_offset[38] = 8'd143;  // 1053-910
+assign base4_offset[39] = 8'd146;  // 1053-907
+assign base4_offset[40] = 8'd149;  // 1053-904
+assign base4_offset[41] = 8'd152;  // 1053-901
+assign base4_offset[42] = 8'd155;  // 1053-898
+assign base4_offset[43] = 8'd158;  // 1053-895
+assign base4_offset[44] = 8'd161;  // 1053-892
+assign base4_offset[45] = 8'd164;  // 1053-889
+assign base4_offset[46] = 8'd167;  // 1053-886
+assign base4_offset[47] = 8'd170;  // 1053-883
+assign base4_offset[48] = 8'd173;  // 1053-880
+assign base4_offset[49] = 8'd176;  // 1053-877
+assign base4_offset[50] = 8'd179;  // 1053-874
+assign base4_offset[51] = 8'd182;  // 1053-871
+assign base4_offset[52] = 8'd185;  // 1053-868
+assign base4_offset[53] = 8'd188;  // 1053-865
+assign base4_offset[54] = 8'd191;  // 1053-862
+assign base4_offset[55] = 8'd194;  // 1053-859
+assign base4_offset[56] = 8'd196;  // 1053-857
+assign base4_offset[57] = 8'd199;  // 1053-854
+assign base4_offset[58] = 8'd202;  // 1053-851
+assign base4_offset[59] = 8'd205;  // 1053-848
+assign base4_offset[60] = 8'd207;  // 1053-846
+assign base4_offset[61] = 8'd210;  // 1053-843
+assign base4_offset[62] = 8'd213;  // 1053-840
+assign base4_offset[63] = 8'd215;  // 1053-838
+assign base4_offset[64] = 8'd218;  // 1053-835
+assign base4_offset[65] = 8'd221;  // 1053-832
+assign base4_offset[66] = 8'd223;  // 1053-830
+assign base4_offset[67] = 8'd226;  // 1053-827
+assign base4_offset[68] = 8'd229;  // 1053-824
+assign base4_offset[69] = 8'd231;  // 1053-822
+assign base4_offset[70] = 8'd234;  // 1053-819
+assign base4_offset[71] = 8'd236;  // 1053-817
+assign base4_offset[72] = 8'd239;  // 1053-814
+assign base4_offset[73] = 8'd241;  // 1053-812
+assign base4_offset[74] = 8'd244;  // 1053-809
+assign base4_offset[75] = 8'd246;  // 1053-807
+assign base4_offset[76] = 8'd249;  // 1053-804
+assign base4_offset[77] = 8'd251;  // 1053-802
+assign base4_offset[78] = 8'd254;  // 1053-799
+
+wire [7:0]  base5_offset [0:154];
+assign val_base[5] = 18'd797;  // base of segment 5, from line 329
+assign base5_offset[0] = 8'd3;  // 797-794
+assign base5_offset[1] = 8'd5;  // 797-792
+assign base5_offset[2] = 8'd7;  // 797-790
+assign base5_offset[3] = 8'd10;  // 797-787
+assign base5_offset[4] = 8'd12;  // 797-785
+assign base5_offset[5] = 8'd14;  // 797-783
+assign base5_offset[6] = 8'd17;  // 797-780
+assign base5_offset[7] = 8'd19;  // 797-778
+assign base5_offset[8] = 8'd21;  // 797-776
+assign base5_offset[9] = 8'd24;  // 797-773
+assign base5_offset[10] = 8'd26;  // 797-771
+assign base5_offset[11] = 8'd28;  // 797-769
+assign base5_offset[12] = 8'd31;  // 797-766
+assign base5_offset[13] = 8'd33;  // 797-764
+assign base5_offset[14] = 8'd35;  // 797-762
+assign base5_offset[15] = 8'd37;  // 797-760
+assign base5_offset[16] = 8'd39;  // 797-758
+assign base5_offset[17] = 8'd42;  // 797-755
+assign base5_offset[18] = 8'd44;  // 797-753
+assign base5_offset[19] = 8'd46;  // 797-751
+assign base5_offset[20] = 8'd48;  // 797-749
+assign base5_offset[21] = 8'd50;  // 797-747
+assign base5_offset[22] = 8'd52;  // 797-745
+assign base5_offset[23] = 8'd54;  // 797-743
+assign base5_offset[24] = 8'd56;  // 797-741
+assign base5_offset[25] = 8'd59;  // 797-738
+assign base5_offset[26] = 8'd61;  // 797-736
+assign base5_offset[27] = 8'd63;  // 797-734
+assign base5_offset[28] = 8'd65;  // 797-732
+assign base5_offset[29] = 8'd67;  // 797-730
+assign base5_offset[30] = 8'd69;  // 797-728
+assign base5_offset[31] = 8'd71;  // 797-726
+assign base5_offset[32] = 8'd73;  // 797-724
+assign base5_offset[33] = 8'd75;  // 797-722
+assign base5_offset[34] = 8'd77;  // 797-720
+assign base5_offset[35] = 8'd79;  // 797-718
+assign base5_offset[36] = 8'd81;  // 797-716
+assign base5_offset[37] = 8'd83;  // 797-714
+assign base5_offset[38] = 8'd85;  // 797-712
+assign base5_offset[39] = 8'd87;  // 797-710
+assign base5_offset[40] = 8'd89;  // 797-708
+assign base5_offset[41] = 8'd90;  // 797-707
+assign base5_offset[42] = 8'd92;  // 797-705
+assign base5_offset[43] = 8'd94;  // 797-703
+assign base5_offset[44] = 8'd96;  // 797-701
+assign base5_offset[45] = 8'd98;  // 797-699
+assign base5_offset[46] = 8'd100;  // 797-697
+assign base5_offset[47] = 8'd102;  // 797-695
+assign base5_offset[48] = 8'd103;  // 797-694
+assign base5_offset[49] = 8'd105;  // 797-692
+assign base5_offset[50] = 8'd107;  // 797-690
+assign base5_offset[51] = 8'd109;  // 797-688
+assign base5_offset[52] = 8'd111;  // 797-686
+assign base5_offset[53] = 8'd113;  // 797-684
+assign base5_offset[54] = 8'd114;  // 797-683
+assign base5_offset[55] = 8'd116;  // 797-681
+assign base5_offset[56] = 8'd118;  // 797-679
+assign base5_offset[57] = 8'd120;  // 797-677
+assign base5_offset[58] = 8'd121;  // 797-676
+assign base5_offset[59] = 8'd123;  // 797-674
+assign base5_offset[60] = 8'd125;  // 797-672
+assign base5_offset[61] = 8'd127;  // 797-670
+assign base5_offset[62] = 8'd128;  // 797-669
+assign base5_offset[63] = 8'd130;  // 797-667
+assign base5_offset[64] = 8'd132;  // 797-665
+assign base5_offset[65] = 8'd133;  // 797-664
+assign base5_offset[66] = 8'd135;  // 797-662
+assign base5_offset[67] = 8'd137;  // 797-660
+assign base5_offset[68] = 8'd138;  // 797-659
+assign base5_offset[69] = 8'd140;  // 797-657
+assign base5_offset[70] = 8'd142;  // 797-655
+assign base5_offset[71] = 8'd143;  // 797-654
+assign base5_offset[72] = 8'd145;  // 797-652
+assign base5_offset[73] = 8'd147;  // 797-650
+assign base5_offset[74] = 8'd148;  // 797-649
+assign base5_offset[75] = 8'd150;  // 797-647
+assign base5_offset[76] = 8'd151;  // 797-646
+assign base5_offset[77] = 8'd153;  // 797-644
+assign base5_offset[78] = 8'd154;  // 797-643
+assign base5_offset[79] = 8'd156;  // 797-641
+assign base5_offset[80] = 8'd158;  // 797-639
+assign base5_offset[81] = 8'd159;  // 797-638
+assign base5_offset[82] = 8'd161;  // 797-636
+assign base5_offset[83] = 8'd162;  // 797-635
+assign base5_offset[84] = 8'd164;  // 797-633
+assign base5_offset[85] = 8'd165;  // 797-632
+assign base5_offset[86] = 8'd167;  // 797-630
+assign base5_offset[87] = 8'd168;  // 797-629
+assign base5_offset[88] = 8'd170;  // 797-627
+assign base5_offset[89] = 8'd171;  // 797-626
+assign base5_offset[90] = 8'd173;  // 797-624
+assign base5_offset[91] = 8'd174;  // 797-623
+assign base5_offset[92] = 8'd176;  // 797-621
+assign base5_offset[93] = 8'd177;  // 797-620
+assign base5_offset[94] = 8'd179;  // 797-618
+assign base5_offset[95] = 8'd180;  // 797-617
+assign base5_offset[96] = 8'd182;  // 797-615
+assign base5_offset[97] = 8'd183;  // 797-614
+assign base5_offset[98] = 8'd185;  // 797-612
+assign base5_offset[99] = 8'd186;  // 797-611
+assign base5_offset[100] = 8'd187;  // 797-610
+assign base5_offset[101] = 8'd189;  // 797-608
+assign base5_offset[102] = 8'd190;  // 797-607
+assign base5_offset[103] = 8'd192;  // 797-605
+assign base5_offset[104] = 8'd193;  // 797-604
+assign base5_offset[105] = 8'd194;  // 797-603
+assign base5_offset[106] = 8'd196;  // 797-601
+assign base5_offset[107] = 8'd197;  // 797-600
+assign base5_offset[108] = 8'd199;  // 797-598
+assign base5_offset[109] = 8'd200;  // 797-597
+assign base5_offset[110] = 8'd201;  // 797-596
+assign base5_offset[111] = 8'd203;  // 797-594
+assign base5_offset[112] = 8'd204;  // 797-593
+assign base5_offset[113] = 8'd205;  // 797-592
+assign base5_offset[114] = 8'd207;  // 797-590
+assign base5_offset[115] = 8'd208;  // 797-589
+assign base5_offset[116] = 8'd209;  // 797-588
+assign base5_offset[117] = 8'd211;  // 797-586
+assign base5_offset[118] = 8'd212;  // 797-585
+assign base5_offset[119] = 8'd213;  // 797-584
+assign base5_offset[120] = 8'd214;  // 797-583
+assign base5_offset[121] = 8'd216;  // 797-581
+assign base5_offset[122] = 8'd217;  // 797-580
+assign base5_offset[123] = 8'd218;  // 797-579
+assign base5_offset[124] = 8'd220;  // 797-577
+assign base5_offset[125] = 8'd221;  // 797-576
+assign base5_offset[126] = 8'd222;  // 797-575
+assign base5_offset[127] = 8'd223;  // 797-574
+assign base5_offset[128] = 8'd225;  // 797-572
+assign base5_offset[129] = 8'd226;  // 797-571
+assign base5_offset[130] = 8'd227;  // 797-570
+assign base5_offset[131] = 8'd228;  // 797-569
+assign base5_offset[132] = 8'd230;  // 797-567
+assign base5_offset[133] = 8'd231;  // 797-566
+assign base5_offset[134] = 8'd232;  // 797-565
+assign base5_offset[135] = 8'd233;  // 797-564
+assign base5_offset[136] = 8'd234;  // 797-563
+assign base5_offset[137] = 8'd236;  // 797-561
+assign base5_offset[138] = 8'd237;  // 797-560
+assign base5_offset[139] = 8'd238;  // 797-559
+assign base5_offset[140] = 8'd239;  // 797-558
+assign base5_offset[141] = 8'd240;  // 797-557
+assign base5_offset[142] = 8'd242;  // 797-555
+assign base5_offset[143] = 8'd243;  // 797-554
+assign base5_offset[144] = 8'd244;  // 797-553
+assign base5_offset[145] = 8'd245;  // 797-552
+assign base5_offset[146] = 8'd246;  // 797-551
+assign base5_offset[147] = 8'd247;  // 797-550
+assign base5_offset[148] = 8'd249;  // 797-548
+assign base5_offset[149] = 8'd250;  // 797-547
+assign base5_offset[150] = 8'd251;  // 797-546
+assign base5_offset[151] = 8'd252;  // 797-545
+assign base5_offset[152] = 8'd253;  // 797-544
+assign base5_offset[153] = 8'd254;  // 797-543
+assign base5_offset[154] = 8'd255;  // 797-542
+
+/**********************************/
+//这里开始差值位宽为127
+wire [6:0]  base6_offset [0:147];
+assign val_base[6] = 18'd541;  // base of segment 6, from line 485
+assign base6_offset[0] = 7'd2;  // 541-539
+assign base6_offset[1] = 7'd3;  // 541-538
+assign base6_offset[2] = 7'd4;  // 541-537
+assign base6_offset[3] = 7'd5;  // 541-536
+assign base6_offset[4] = 7'd6;  // 541-535
+assign base6_offset[5] = 7'd7;  // 541-534
+assign base6_offset[6] = 7'd8;  // 541-533
+assign base6_offset[7] = 7'd9;  // 541-532
+assign base6_offset[8] = 7'd10;  // 541-531
+assign base6_offset[9] = 7'd11;  // 541-530
+assign base6_offset[10] = 7'd12;  // 541-529
+assign base6_offset[11] = 7'd14;  // 541-527
+assign base6_offset[12] = 7'd15;  // 541-526
+assign base6_offset[13] = 7'd16;  // 541-525
+assign base6_offset[14] = 7'd17;  // 541-524
+assign base6_offset[15] = 7'd18;  // 541-523
+assign base6_offset[16] = 7'd19;  // 541-522
+assign base6_offset[17] = 7'd20;  // 541-521
+assign base6_offset[18] = 7'd21;  // 541-520
+assign base6_offset[19] = 7'd22;  // 541-519
+assign base6_offset[20] = 7'd23;  // 541-518
+assign base6_offset[21] = 7'd24;  // 541-517
+assign base6_offset[22] = 7'd25;  // 541-516
+assign base6_offset[23] = 7'd26;  // 541-515
+assign base6_offset[24] = 7'd27;  // 541-514
+assign base6_offset[25] = 7'd28;  // 541-513
+assign base6_offset[26] = 7'd29;  // 541-512
+assign base6_offset[27] = 7'd30;  // 541-511
+assign base6_offset[28] = 7'd31;  // 541-510
+assign base6_offset[29] = 7'd32;  // 541-509
+assign base6_offset[30] = 7'd33;  // 541-508
+assign base6_offset[31] = 7'd34;  // 541-507
+assign base6_offset[32] = 7'd35;  // 541-506
+assign base6_offset[33] = 7'd36;  // 541-505
+assign base6_offset[34] = 7'd37;  // 541-504
+assign base6_offset[35] = 7'd38;  // 541-503
+assign base6_offset[36] = 7'd39;  // 541-502
+assign base6_offset[37] = 7'd40;  // 541-501
+assign base6_offset[38] = 7'd41;  // 541-500
+assign base6_offset[39] = 7'd42;  // 541-499
+assign base6_offset[40] = 7'd43;  // 541-498
+assign base6_offset[41] = 7'd44;  // 541-497
+assign base6_offset[42] = 7'd45;  // 541-496
+assign base6_offset[43] = 7'd45;  // 541-496
+assign base6_offset[44] = 7'd46;  // 541-495
+assign base6_offset[45] = 7'd47;  // 541-494
+assign base6_offset[46] = 7'd48;  // 541-493
+assign base6_offset[47] = 7'd49;  // 541-492
+assign base6_offset[48] = 7'd50;  // 541-491
+assign base6_offset[49] = 7'd51;  // 541-490
+assign base6_offset[50] = 7'd52;  // 541-489
+assign base6_offset[51] = 7'd53;  // 541-488
+assign base6_offset[52] = 7'd54;  // 541-487
+assign base6_offset[53] = 7'd55;  // 541-486
+assign base6_offset[54] = 7'd56;  // 541-485
+assign base6_offset[55] = 7'd56;  // 541-485
+assign base6_offset[56] = 7'd57;  // 541-484
+assign base6_offset[57] = 7'd58;  // 541-483
+assign base6_offset[58] = 7'd59;  // 541-482
+assign base6_offset[59] = 7'd60;  // 541-481
+assign base6_offset[60] = 7'd61;  // 541-480
+assign base6_offset[61] = 7'd62;  // 541-479
+assign base6_offset[62] = 7'd63;  // 541-478
+assign base6_offset[63] = 7'd64;  // 541-477
+assign base6_offset[64] = 7'd64;  // 541-477
+assign base6_offset[65] = 7'd65;  // 541-476
+assign base6_offset[66] = 7'd66;  // 541-475
+assign base6_offset[67] = 7'd67;  // 541-474
+assign base6_offset[68] = 7'd68;  // 541-473
+assign base6_offset[69] = 7'd69;  // 541-472
+assign base6_offset[70] = 7'd70;  // 541-471
+assign base6_offset[71] = 7'd70;  // 541-471
+assign base6_offset[72] = 7'd71;  // 541-470
+assign base6_offset[73] = 7'd72;  // 541-469
+assign base6_offset[74] = 7'd73;  // 541-468
+assign base6_offset[75] = 7'd74;  // 541-467
+assign base6_offset[76] = 7'd75;  // 541-466
+assign base6_offset[77] = 7'd75;  // 541-466
+assign base6_offset[78] = 7'd76;  // 541-465
+assign base6_offset[79] = 7'd77;  // 541-464
+assign base6_offset[80] = 7'd78;  // 541-463
+assign base6_offset[81] = 7'd79;  // 541-462
+assign base6_offset[82] = 7'd79;  // 541-462
+assign base6_offset[83] = 7'd80;  // 541-461
+assign base6_offset[84] = 7'd81;  // 541-460
+assign base6_offset[85] = 7'd82;  // 541-459
+assign base6_offset[86] = 7'd83;  // 541-458
+assign base6_offset[87] = 7'd84;  // 541-457
+assign base6_offset[88] = 7'd84;  // 541-457
+assign base6_offset[89] = 7'd85;  // 541-456
+assign base6_offset[90] = 7'd86;  // 541-455
+assign base6_offset[91] = 7'd87;  // 541-454
+assign base6_offset[92] = 7'd87;  // 541-454
+assign base6_offset[93] = 7'd88;  // 541-453
+assign base6_offset[94] = 7'd89;  // 541-452
+assign base6_offset[95] = 7'd90;  // 541-451
+assign base6_offset[96] = 7'd91;  // 541-450
+assign base6_offset[97] = 7'd91;  // 541-450
+assign base6_offset[98] = 7'd92;  // 541-449
+assign base6_offset[99] = 7'd93;  // 541-448
+assign base6_offset[100] = 7'd94;  // 541-447
+assign base6_offset[101] = 7'd94;  // 541-447
+assign base6_offset[102] = 7'd95;  // 541-446
+assign base6_offset[103] = 7'd96;  // 541-445
+assign base6_offset[104] = 7'd97;  // 541-444
+assign base6_offset[105] = 7'd97;  // 541-444
+assign base6_offset[106] = 7'd98;  // 541-443
+assign base6_offset[107] = 7'd99;  // 541-442
+assign base6_offset[108] = 7'd100;  // 541-441
+assign base6_offset[109] = 7'd100;  // 541-441
+assign base6_offset[110] = 7'd101;  // 541-440
+assign base6_offset[111] = 7'd102;  // 541-439
+assign base6_offset[112] = 7'd103;  // 541-438
+assign base6_offset[113] = 7'd103;  // 541-438
+assign base6_offset[114] = 7'd104;  // 541-437
+assign base6_offset[115] = 7'd105;  // 541-436
+assign base6_offset[116] = 7'd106;  // 541-435
+assign base6_offset[117] = 7'd106;  // 541-435
+assign base6_offset[118] = 7'd107;  // 541-434
+assign base6_offset[119] = 7'd108;  // 541-433
+assign base6_offset[120] = 7'd108;  // 541-433
+assign base6_offset[121] = 7'd109;  // 541-432
+assign base6_offset[122] = 7'd110;  // 541-431
+assign base6_offset[123] = 7'd111;  // 541-430
+assign base6_offset[124] = 7'd111;  // 541-430
+assign base6_offset[125] = 7'd112;  // 541-429
+assign base6_offset[126] = 7'd113;  // 541-428
+assign base6_offset[127] = 7'd113;  // 541-428
+assign base6_offset[128] = 7'd114;  // 541-427
+assign base6_offset[129] = 7'd115;  // 541-426
+assign base6_offset[130] = 7'd115;  // 541-426
+assign base6_offset[131] = 7'd116;  // 541-425
+assign base6_offset[132] = 7'd117;  // 541-424
+assign base6_offset[133] = 7'd118;  // 541-423
+assign base6_offset[134] = 7'd118;  // 541-423
+assign base6_offset[135] = 7'd119;  // 541-422
+assign base6_offset[136] = 7'd120;  // 541-421
+assign base6_offset[137] = 7'd120;  // 541-421
+assign base6_offset[138] = 7'd121;  // 541-420
+assign base6_offset[139] = 7'd122;  // 541-419
+assign base6_offset[140] = 7'd122;  // 541-419
+assign base6_offset[141] = 7'd123;  // 541-418
+assign base6_offset[142] = 7'd124;  // 541-417
+assign base6_offset[143] = 7'd124;  // 541-417
+assign base6_offset[144] = 7'd125;  // 541-416
+assign base6_offset[145] = 7'd126;  // 541-415
+assign base6_offset[146] = 7'd126;  // 541-415
+assign base6_offset[147] = 7'd127;  // 541-414
+
+/**********************************/
+//差值为63
+wire [5:0]  base7_offset [0:115];
+assign val_base[7] = 18'd413;  // base of segment 7, from line 634
+assign base7_offset[0] = 6'd0;  // 413-413
+assign base7_offset[1] = 6'd1;  // 413-412
+assign base7_offset[2] = 6'd1;  // 413-412
+assign base7_offset[3] = 6'd2;  // 413-411
+assign base7_offset[4] = 6'd3;  // 413-410
+assign base7_offset[5] = 6'd3;  // 413-410
+assign base7_offset[6] = 6'd4;  // 413-409
+assign base7_offset[7] = 6'd5;  // 413-408
+assign base7_offset[8] = 6'd5;  // 413-408
+assign base7_offset[9] = 6'd6;  // 413-407
+assign base7_offset[10] = 6'd7;  // 413-406
+assign base7_offset[11] = 6'd7;  // 413-406
+assign base7_offset[12] = 6'd8;  // 413-405
+assign base7_offset[13] = 6'd8;  // 413-405
+assign base7_offset[14] = 6'd9;  // 413-404
+assign base7_offset[15] = 6'd10;  // 413-403
+assign base7_offset[16] = 6'd10;  // 413-403
+assign base7_offset[17] = 6'd11;  // 413-402
+assign base7_offset[18] = 6'd12;  // 413-401
+assign base7_offset[19] = 6'd12;  // 413-401
+assign base7_offset[20] = 6'd13;  // 413-400
+assign base7_offset[21] = 6'd13;  // 413-400
+assign base7_offset[22] = 6'd14;  // 413-399
+assign base7_offset[23] = 6'd15;  // 413-398
+assign base7_offset[24] = 6'd15;  // 413-398
+assign base7_offset[25] = 6'd16;  // 413-397
+assign base7_offset[26] = 6'd16;  // 413-397
+assign base7_offset[27] = 6'd17;  // 413-396
+assign base7_offset[28] = 6'd18;  // 413-395
+assign base7_offset[29] = 6'd18;  // 413-395
+assign base7_offset[30] = 6'd19;  // 413-394
+assign base7_offset[31] = 6'd19;  // 413-394
+assign base7_offset[32] = 6'd20;  // 413-393
+assign base7_offset[33] = 6'd21;  // 413-392
+assign base7_offset[34] = 6'd21;  // 413-392
+assign base7_offset[35] = 6'd22;  // 413-391
+assign base7_offset[36] = 6'd22;  // 413-391
+assign base7_offset[37] = 6'd23;  // 413-390
+assign base7_offset[38] = 6'd23;  // 413-390
+assign base7_offset[39] = 6'd24;  // 413-389
+assign base7_offset[40] = 6'd25;  // 413-388
+assign base7_offset[41] = 6'd25;  // 413-388
+assign base7_offset[42] = 6'd26;  // 413-387
+assign base7_offset[43] = 6'd26;  // 413-387
+assign base7_offset[44] = 6'd27;  // 413-386
+assign base7_offset[45] = 6'd27;  // 413-386
+assign base7_offset[46] = 6'd28;  // 413-385
+assign base7_offset[47] = 6'd29;  // 413-384
+assign base7_offset[48] = 6'd29;  // 413-384
+assign base7_offset[49] = 6'd30;  // 413-383
+assign base7_offset[50] = 6'd30;  // 413-383
+assign base7_offset[51] = 6'd31;  // 413-382
+assign base7_offset[52] = 6'd31;  // 413-382
+assign base7_offset[53] = 6'd32;  // 413-381
+assign base7_offset[54] = 6'd33;  // 413-380
+assign base7_offset[55] = 6'd33;  // 413-380
+assign base7_offset[56] = 6'd34;  // 413-379
+assign base7_offset[57] = 6'd34;  // 413-379
+assign base7_offset[58] = 6'd35;  // 413-378
+assign base7_offset[59] = 6'd35;  // 413-378
+assign base7_offset[60] = 6'd36;  // 413-377
+assign base7_offset[61] = 6'd36;  // 413-377
+assign base7_offset[62] = 6'd37;  // 413-376
+assign base7_offset[63] = 6'd37;  // 413-376
+assign base7_offset[64] = 6'd38;  // 413-375
+assign base7_offset[65] = 6'd39;  // 413-374
+assign base7_offset[66] = 6'd39;  // 413-374
+assign base7_offset[67] = 6'd40;  // 413-373
+assign base7_offset[68] = 6'd40;  // 413-373
+assign base7_offset[69] = 6'd41;  // 413-372
+assign base7_offset[70] = 6'd41;  // 413-372
+assign base7_offset[71] = 6'd42;  // 413-371
+assign base7_offset[72] = 6'd42;  // 413-371
+assign base7_offset[73] = 6'd43;  // 413-370
+assign base7_offset[74] = 6'd43;  // 413-370
+assign base7_offset[75] = 6'd44;  // 413-369
+assign base7_offset[76] = 6'd44;  // 413-369
+assign base7_offset[77] = 6'd45;  // 413-368
+assign base7_offset[78] = 6'd45;  // 413-368
+assign base7_offset[79] = 6'd46;  // 413-367
+assign base7_offset[80] = 6'd46;  // 413-367
+assign base7_offset[81] = 6'd47;  // 413-366
+assign base7_offset[82] = 6'd47;  // 413-366
+assign base7_offset[83] = 6'd48;  // 413-365
+assign base7_offset[84] = 6'd48;  // 413-365
+assign base7_offset[85] = 6'd49;  // 413-364
+assign base7_offset[86] = 6'd49;  // 413-364
+assign base7_offset[87] = 6'd50;  // 413-363
+assign base7_offset[88] = 6'd50;  // 413-363
+assign base7_offset[89] = 6'd51;  // 413-362
+assign base7_offset[90] = 6'd51;  // 413-362
+assign base7_offset[91] = 6'd52;  // 413-361
+assign base7_offset[92] = 6'd52;  // 413-361
+assign base7_offset[93] = 6'd53;  // 413-360
+assign base7_offset[94] = 6'd53;  // 413-360
+assign base7_offset[95] = 6'd54;  // 413-359
+assign base7_offset[96] = 6'd54;  // 413-359
+assign base7_offset[97] = 6'd55;  // 413-358
+assign base7_offset[98] = 6'd55;  // 413-358
+assign base7_offset[99] = 6'd56;  // 413-357
+assign base7_offset[100] = 6'd56;  // 413-357
+assign base7_offset[101] = 6'd57;  // 413-356
+assign base7_offset[102] = 6'd57;  // 413-356
+assign base7_offset[103] = 6'd58;  // 413-355
+assign base7_offset[104] = 6'd58;  // 413-355
+assign base7_offset[105] = 6'd59;  // 413-354
+assign base7_offset[106] = 6'd59;  // 413-354
+assign base7_offset[107] = 6'd60;  // 413-353
+assign base7_offset[108] = 6'd60;  // 413-353
+assign base7_offset[109] = 6'd61;  // 413-352
+assign base7_offset[110] = 6'd61;  // 413-352
+assign base7_offset[111] = 6'd62;  // 413-351
+assign base7_offset[112] = 6'd62;  // 413-351
+assign base7_offset[113] = 6'd63;  // 413-350
+assign base7_offset[114] = 6'd63;  // 413-350
+assign base7_offset[115] = 6'd63;  // 413-350
+
+wire [5:0]  base8_offset [0:166];
+assign val_base[8] = 18'd349;  // base of segment 8, from line 751
+assign base8_offset[0] = 6'd0;  // 349-349
+assign base8_offset[1] = 6'd1;  // 349-348
+assign base8_offset[2] = 6'd1;  // 349-348
+assign base8_offset[3] = 6'd2;  // 349-347
+assign base8_offset[4] = 6'd2;  // 349-347
+assign base8_offset[5] = 6'd3;  // 349-346
+assign base8_offset[6] = 6'd3;  // 349-346
+assign base8_offset[7] = 6'd4;  // 349-345
+assign base8_offset[8] = 6'd4;  // 349-345
+assign base8_offset[9] = 6'd5;  // 349-344
+assign base8_offset[10] = 6'd5;  // 349-344
+assign base8_offset[11] = 6'd5;  // 349-344
+assign base8_offset[12] = 6'd6;  // 349-343
+assign base8_offset[13] = 6'd6;  // 349-343
+assign base8_offset[14] = 6'd7;  // 349-342
+assign base8_offset[15] = 6'd7;  // 349-342
+assign base8_offset[16] = 6'd8;  // 349-341
+assign base8_offset[17] = 6'd8;  // 349-341
+assign base8_offset[18] = 6'd9;  // 349-340
+assign base8_offset[19] = 6'd9;  // 349-340
+assign base8_offset[20] = 6'd9;  // 349-340
+assign base8_offset[21] = 6'd10;  // 349-339
+assign base8_offset[22] = 6'd10;  // 349-339
+assign base8_offset[23] = 6'd11;  // 349-338
+assign base8_offset[24] = 6'd11;  // 349-338
+assign base8_offset[25] = 6'd12;  // 349-337
+assign base8_offset[26] = 6'd12;  // 349-337
+assign base8_offset[27] = 6'd12;  // 349-337
+assign base8_offset[28] = 6'd13;  // 349-336
+assign base8_offset[29] = 6'd13;  // 349-336
+assign base8_offset[30] = 6'd14;  // 349-335
+assign base8_offset[31] = 6'd14;  // 349-335
+assign base8_offset[32] = 6'd15;  // 349-334
+assign base8_offset[33] = 6'd15;  // 349-334
+assign base8_offset[34] = 6'd15;  // 349-334
+assign base8_offset[35] = 6'd16;  // 349-333
+assign base8_offset[36] = 6'd16;  // 349-333
+assign base8_offset[37] = 6'd17;  // 349-332
+assign base8_offset[38] = 6'd17;  // 349-332
+assign base8_offset[39] = 6'd18;  // 349-331
+assign base8_offset[40] = 6'd18;  // 349-331
+assign base8_offset[41] = 6'd18;  // 349-331
+assign base8_offset[42] = 6'd19;  // 349-330
+assign base8_offset[43] = 6'd19;  // 349-330
+assign base8_offset[44] = 6'd20;  // 349-329
+assign base8_offset[45] = 6'd20;  // 349-329
+assign base8_offset[46] = 6'd21;  // 349-328
+assign base8_offset[47] = 6'd21;  // 349-328
+assign base8_offset[48] = 6'd21;  // 349-328
+assign base8_offset[49] = 6'd22;  // 349-327
+assign base8_offset[50] = 6'd22;  // 349-327
+assign base8_offset[51] = 6'd23;  // 349-326
+assign base8_offset[52] = 6'd23;  // 349-326
+assign base8_offset[53] = 6'd23;  // 349-326
+assign base8_offset[54] = 6'd24;  // 349-325
+assign base8_offset[55] = 6'd24;  // 349-325
+assign base8_offset[56] = 6'd25;  // 349-324
+assign base8_offset[57] = 6'd25;  // 349-324
+assign base8_offset[58] = 6'd25;  // 349-324
+assign base8_offset[59] = 6'd26;  // 349-323
+assign base8_offset[60] = 6'd26;  // 349-323
+assign base8_offset[61] = 6'd27;  // 349-322
+assign base8_offset[62] = 6'd27;  // 349-322
+assign base8_offset[63] = 6'd27;  // 349-322
+assign base8_offset[64] = 6'd28;  // 349-321
+assign base8_offset[65] = 6'd28;  // 349-321
+assign base8_offset[66] = 6'd29;  // 349-320
+assign base8_offset[67] = 6'd29;  // 349-320
+assign base8_offset[68] = 6'd29;  // 349-320
+assign base8_offset[69] = 6'd30;  // 349-319
+assign base8_offset[70] = 6'd30;  // 349-319
+assign base8_offset[71] = 6'd30;  // 349-319
+assign base8_offset[72] = 6'd31;  // 349-318
+assign base8_offset[73] = 6'd31;  // 349-318
+assign base8_offset[74] = 6'd32;  // 349-317
+assign base8_offset[75] = 6'd32;  // 349-317
+assign base8_offset[76] = 6'd32;  // 349-317
+assign base8_offset[77] = 6'd33;  // 349-316
+assign base8_offset[78] = 6'd33;  // 349-316
+assign base8_offset[79] = 6'd34;  // 349-315
+assign base8_offset[80] = 6'd34;  // 349-315
+assign base8_offset[81] = 6'd34;  // 349-315
+assign base8_offset[82] = 6'd35;  // 349-314
+assign base8_offset[83] = 6'd35;  // 349-314
+assign base8_offset[84] = 6'd35;  // 349-314
+assign base8_offset[85] = 6'd36;  // 349-313
+assign base8_offset[86] = 6'd36;  // 349-313
+assign base8_offset[87] = 6'd37;  // 349-312
+assign base8_offset[88] = 6'd37;  // 349-312
+assign base8_offset[89] = 6'd37;  // 349-312
+assign base8_offset[90] = 6'd38;  // 349-311
+assign base8_offset[91] = 6'd38;  // 349-311
+assign base8_offset[92] = 6'd38;  // 349-311
+assign base8_offset[93] = 6'd39;  // 349-310
+assign base8_offset[94] = 6'd39;  // 349-310
+assign base8_offset[95] = 6'd40;  // 349-309
+assign base8_offset[96] = 6'd40;  // 349-309
+assign base8_offset[97] = 6'd40;  // 349-309
+assign base8_offset[98] = 6'd41;  // 349-308
+assign base8_offset[99] = 6'd41;  // 349-308
+assign base8_offset[100] = 6'd41;  // 349-308
+assign base8_offset[101] = 6'd42;  // 349-307
+assign base8_offset[102] = 6'd42;  // 349-307
+assign base8_offset[103] = 6'd42;  // 349-307
+assign base8_offset[104] = 6'd43;  // 349-306
+assign base8_offset[105] = 6'd43;  // 349-306
+assign base8_offset[106] = 6'd43;  // 349-306
+assign base8_offset[107] = 6'd44;  // 349-305
+assign base8_offset[108] = 6'd44;  // 349-305
+assign base8_offset[109] = 6'd45;  // 349-304
+assign base8_offset[110] = 6'd45;  // 349-304
+assign base8_offset[111] = 6'd45;  // 349-304
+assign base8_offset[112] = 6'd46;  // 349-303
+assign base8_offset[113] = 6'd46;  // 349-303
+assign base8_offset[114] = 6'd46;  // 349-303
+assign base8_offset[115] = 6'd47;  // 349-302
+assign base8_offset[116] = 6'd47;  // 349-302
+assign base8_offset[117] = 6'd47;  // 349-302
+assign base8_offset[118] = 6'd48;  // 349-301
+assign base8_offset[119] = 6'd48;  // 349-301
+assign base8_offset[120] = 6'd48;  // 349-301
+assign base8_offset[121] = 6'd49;  // 349-300
+assign base8_offset[122] = 6'd49;  // 349-300
+assign base8_offset[123] = 6'd49;  // 349-300
+assign base8_offset[124] = 6'd50;  // 349-299
+assign base8_offset[125] = 6'd50;  // 349-299
+assign base8_offset[126] = 6'd50;  // 349-299
+assign base8_offset[127] = 6'd51;  // 349-298
+assign base8_offset[128] = 6'd51;  // 349-298
+assign base8_offset[129] = 6'd51;  // 349-298
+assign base8_offset[130] = 6'd52;  // 349-297
+assign base8_offset[131] = 6'd52;  // 349-297
+assign base8_offset[132] = 6'd52;  // 349-297
+assign base8_offset[133] = 6'd53;  // 349-296
+assign base8_offset[134] = 6'd53;  // 349-296
+assign base8_offset[135] = 6'd53;  // 349-296
+assign base8_offset[136] = 6'd54;  // 349-295
+assign base8_offset[137] = 6'd54;  // 349-295
+assign base8_offset[138] = 6'd54;  // 349-295
+assign base8_offset[139] = 6'd55;  // 349-294
+assign base8_offset[140] = 6'd55;  // 349-294
+assign base8_offset[141] = 6'd55;  // 349-294
+assign base8_offset[142] = 6'd56;  // 349-293
+assign base8_offset[143] = 6'd56;  // 349-293
+assign base8_offset[144] = 6'd56;  // 349-293
+assign base8_offset[145] = 6'd57;  // 349-292
+assign base8_offset[146] = 6'd57;  // 349-292
+assign base8_offset[147] = 6'd57;  // 349-292
+assign base8_offset[148] = 6'd58;  // 349-291
+assign base8_offset[149] = 6'd58;  // 349-291
+assign base8_offset[150] = 6'd58;  // 349-291
+assign base8_offset[151] = 6'd59;  // 349-290
+assign base8_offset[152] = 6'd59;  // 349-290
+assign base8_offset[153] = 6'd59;  // 349-290
+assign base8_offset[154] = 6'd60;  // 349-289
+assign base8_offset[155] = 6'd60;  // 349-289
+assign base8_offset[156] = 6'd60;  // 349-289
+assign base8_offset[157] = 6'd61;  // 349-288
+assign base8_offset[158] = 6'd61;  // 349-288
+assign base8_offset[159] = 6'd61;  // 349-288
+assign base8_offset[160] = 6'd62;  // 349-287
+assign base8_offset[161] = 6'd62;  // 349-287
+assign base8_offset[162] = 6'd62;  // 349-287
+assign base8_offset[163] = 6'd63;  // 349-286
+assign base8_offset[164] = 6'd63;  // 349-286
+assign base8_offset[165] = 6'd63;  // 349-286
+assign base8_offset[166] = 6'd63;  // 349-286
+
+/**********************************/
+//差值为31
+wire [4:0]  base9_offset [0:114];
+assign val_base[9] = 18'd285;  // base of segment 9, from line 919
+assign base9_offset[0] = 5'd0;  // 285-285
+assign base9_offset[1] = 5'd0;  // 285-285
+assign base9_offset[2] = 5'd1;  // 285-284
+assign base9_offset[3] = 5'd1;  // 285-284
+assign base9_offset[4] = 5'd1;  // 285-284
+assign base9_offset[5] = 5'd2;  // 285-283
+assign base9_offset[6] = 5'd2;  // 285-283
+assign base9_offset[7] = 5'd2;  // 285-283
+assign base9_offset[8] = 5'd3;  // 285-282
+assign base9_offset[9] = 5'd3;  // 285-282
+assign base9_offset[10] = 5'd3;  // 285-282
+assign base9_offset[11] = 5'd3;  // 285-282
+assign base9_offset[12] = 5'd4;  // 285-281
+assign base9_offset[13] = 5'd4;  // 285-281
+assign base9_offset[14] = 5'd4;  // 285-281
+assign base9_offset[15] = 5'd5;  // 285-280
+assign base9_offset[16] = 5'd5;  // 285-280
+assign base9_offset[17] = 5'd5;  // 285-280
+assign base9_offset[18] = 5'd6;  // 285-279
+assign base9_offset[19] = 5'd6;  // 285-279
+assign base9_offset[20] = 5'd6;  // 285-279
+assign base9_offset[21] = 5'd6;  // 285-279
+assign base9_offset[22] = 5'd7;  // 285-278
+assign base9_offset[23] = 5'd7;  // 285-278
+assign base9_offset[24] = 5'd7;  // 285-278
+assign base9_offset[25] = 5'd8;  // 285-277
+assign base9_offset[26] = 5'd8;  // 285-277
+assign base9_offset[27] = 5'd8;  // 285-277
+assign base9_offset[28] = 5'd8;  // 285-277
+assign base9_offset[29] = 5'd9;  // 285-276
+assign base9_offset[30] = 5'd9;  // 285-276
+assign base9_offset[31] = 5'd9;  // 285-276
+assign base9_offset[32] = 5'd10;  // 285-275
+assign base9_offset[33] = 5'd10;  // 285-275
+assign base9_offset[34] = 5'd10;  // 285-275
+assign base9_offset[35] = 5'd11;  // 285-274
+assign base9_offset[36] = 5'd11;  // 285-274
+assign base9_offset[37] = 5'd11;  // 285-274
+assign base9_offset[38] = 5'd11;  // 285-274
+assign base9_offset[39] = 5'd12;  // 285-273
+assign base9_offset[40] = 5'd12;  // 285-273
+assign base9_offset[41] = 5'd12;  // 285-273
+assign base9_offset[42] = 5'd13;  // 285-272
+assign base9_offset[43] = 5'd13;  // 285-272
+assign base9_offset[44] = 5'd13;  // 285-272
+assign base9_offset[45] = 5'd13;  // 285-272
+assign base9_offset[46] = 5'd14;  // 285-271
+assign base9_offset[47] = 5'd14;  // 285-271
+assign base9_offset[48] = 5'd14;  // 285-271
+assign base9_offset[49] = 5'd14;  // 285-271
+assign base9_offset[50] = 5'd15;  // 285-270
+assign base9_offset[51] = 5'd15;  // 285-270
+assign base9_offset[52] = 5'd15;  // 285-270
+assign base9_offset[53] = 5'd16;  // 285-269
+assign base9_offset[54] = 5'd16;  // 285-269
+assign base9_offset[55] = 5'd16;  // 285-269
+assign base9_offset[56] = 5'd16;  // 285-269
+assign base9_offset[57] = 5'd17;  // 285-268
+assign base9_offset[58] = 5'd17;  // 285-268
+assign base9_offset[59] = 5'd17;  // 285-268
+assign base9_offset[60] = 5'd18;  // 285-267
+assign base9_offset[61] = 5'd18;  // 285-267
+assign base9_offset[62] = 5'd18;  // 285-267
+assign base9_offset[63] = 5'd18;  // 285-267
+assign base9_offset[64] = 5'd19;  // 285-266
+assign base9_offset[65] = 5'd19;  // 285-266
+assign base9_offset[66] = 5'd19;  // 285-266
+assign base9_offset[67] = 5'd19;  // 285-266
+assign base9_offset[68] = 5'd20;  // 285-265
+assign base9_offset[69] = 5'd20;  // 285-265
+assign base9_offset[70] = 5'd20;  // 285-265
+assign base9_offset[71] = 5'd20;  // 285-265
+assign base9_offset[72] = 5'd21;  // 285-264
+assign base9_offset[73] = 5'd21;  // 285-264
+assign base9_offset[74] = 5'd21;  // 285-264
+assign base9_offset[75] = 5'd22;  // 285-263
+assign base9_offset[76] = 5'd22;  // 285-263
+assign base9_offset[77] = 5'd22;  // 285-263
+assign base9_offset[78] = 5'd22;  // 285-263
+assign base9_offset[79] = 5'd23;  // 285-262
+assign base9_offset[80] = 5'd23;  // 285-262
+assign base9_offset[81] = 5'd23;  // 285-262
+assign base9_offset[82] = 5'd23;  // 285-262
+assign base9_offset[83] = 5'd24;  // 285-261
+assign base9_offset[84] = 5'd24;  // 285-261
+assign base9_offset[85] = 5'd24;  // 285-261
+assign base9_offset[86] = 5'd24;  // 285-261
+assign base9_offset[87] = 5'd25;  // 285-260
+assign base9_offset[88] = 5'd25;  // 285-260
+assign base9_offset[89] = 5'd25;  // 285-260
+assign base9_offset[90] = 5'd25;  // 285-260
+assign base9_offset[91] = 5'd26;  // 285-259
+assign base9_offset[92] = 5'd26;  // 285-259
+assign base9_offset[93] = 5'd26;  // 285-259
+assign base9_offset[94] = 5'd26;  // 285-259
+assign base9_offset[95] = 5'd27;  // 285-258
+assign base9_offset[96] = 5'd27;  // 285-258
+assign base9_offset[97] = 5'd27;  // 285-258
+assign base9_offset[98] = 5'd27;  // 285-258
+assign base9_offset[99] = 5'd28;  // 285-257
+assign base9_offset[100] = 5'd28;  // 285-257
+assign base9_offset[101] = 5'd28;  // 285-257
+assign base9_offset[102] = 5'd29;  // 285-256
+assign base9_offset[103] = 5'd29;  // 285-256
+assign base9_offset[104] = 5'd29;  // 285-256
+assign base9_offset[105] = 5'd29;  // 285-256
+assign base9_offset[106] = 5'd29;  // 285-256
+assign base9_offset[107] = 5'd30;  // 285-255
+assign base9_offset[108] = 5'd30;  // 285-255
+assign base9_offset[109] = 5'd30;  // 285-255
+assign base9_offset[110] = 5'd30;  // 285-255
+assign base9_offset[111] = 5'd31;  // 285-254
+assign base9_offset[112] = 5'd31;  // 285-254
+assign base9_offset[113] = 5'd31;  // 285-254
+assign base9_offset[114] = 5'd31;  // 285-254
+
+wire [4:0]  base10_offset [0:147];
+assign val_base[10] = 18'd253;  // base of segment 10, from line 1035
+assign base10_offset[0] = 5'd0;  // 253-253
+assign base10_offset[1] = 5'd0;  // 253-253
+assign base10_offset[2] = 5'd0;  // 253-253
+assign base10_offset[3] = 5'd1;  // 253-252
+assign base10_offset[4] = 5'd1;  // 253-252
+assign base10_offset[5] = 5'd1;  // 253-252
+assign base10_offset[6] = 5'd1;  // 253-252
+assign base10_offset[7] = 5'd2;  // 253-251
+assign base10_offset[8] = 5'd2;  // 253-251
+assign base10_offset[9] = 5'd2;  // 253-251
+assign base10_offset[10] = 5'd2;  // 253-251
+assign base10_offset[11] = 5'd3;  // 253-250
+assign base10_offset[12] = 5'd3;  // 253-250
+assign base10_offset[13] = 5'd3;  // 253-250
+assign base10_offset[14] = 5'd3;  // 253-250
+assign base10_offset[15] = 5'd4;  // 253-249
+assign base10_offset[16] = 5'd4;  // 253-249
+assign base10_offset[17] = 5'd4;  // 253-249
+assign base10_offset[18] = 5'd4;  // 253-249
+assign base10_offset[19] = 5'd5;  // 253-248
+assign base10_offset[20] = 5'd5;  // 253-248
+assign base10_offset[21] = 5'd5;  // 253-248
+assign base10_offset[22] = 5'd5;  // 253-248
+assign base10_offset[23] = 5'd5;  // 253-248
+assign base10_offset[24] = 5'd6;  // 253-247
+assign base10_offset[25] = 5'd6;  // 253-247
+assign base10_offset[26] = 5'd6;  // 253-247
+assign base10_offset[27] = 5'd6;  // 253-247
+assign base10_offset[28] = 5'd7;  // 253-246
+assign base10_offset[29] = 5'd7;  // 253-246
+assign base10_offset[30] = 5'd7;  // 253-246
+assign base10_offset[31] = 5'd7;  // 253-246
+assign base10_offset[32] = 5'd8;  // 253-245
+assign base10_offset[33] = 5'd8;  // 253-245
+assign base10_offset[34] = 5'd8;  // 253-245
+assign base10_offset[35] = 5'd8;  // 253-245
+assign base10_offset[36] = 5'd8;  // 253-245
+assign base10_offset[37] = 5'd9;  // 253-244
+assign base10_offset[38] = 5'd9;  // 253-244
+assign base10_offset[39] = 5'd9;  // 253-244
+assign base10_offset[40] = 5'd9;  // 253-244
+assign base10_offset[41] = 5'd10;  // 253-243
+assign base10_offset[42] = 5'd10;  // 253-243
+assign base10_offset[43] = 5'd10;  // 253-243
+assign base10_offset[44] = 5'd10;  // 253-243
+assign base10_offset[45] = 5'd10;  // 253-243
+assign base10_offset[46] = 5'd11;  // 253-242
+assign base10_offset[47] = 5'd11;  // 253-242
+assign base10_offset[48] = 5'd11;  // 253-242
+assign base10_offset[49] = 5'd11;  // 253-242
+assign base10_offset[50] = 5'd12;  // 253-241
+assign base10_offset[51] = 5'd12;  // 253-241
+assign base10_offset[52] = 5'd12;  // 253-241
+assign base10_offset[53] = 5'd12;  // 253-241
+assign base10_offset[54] = 5'd13;  // 253-240
+assign base10_offset[55] = 5'd13;  // 253-240
+assign base10_offset[56] = 5'd13;  // 253-240
+assign base10_offset[57] = 5'd13;  // 253-240
+assign base10_offset[58] = 5'd13;  // 253-240
+assign base10_offset[59] = 5'd14;  // 253-239
+assign base10_offset[60] = 5'd14;  // 253-239
+assign base10_offset[61] = 5'd14;  // 253-239
+assign base10_offset[62] = 5'd14;  // 253-239
+assign base10_offset[63] = 5'd14;  // 253-239
+assign base10_offset[64] = 5'd15;  // 253-238
+assign base10_offset[65] = 5'd15;  // 253-238
+assign base10_offset[66] = 5'd15;  // 253-238
+assign base10_offset[67] = 5'd15;  // 253-238
+assign base10_offset[68] = 5'd16;  // 253-237
+assign base10_offset[69] = 5'd16;  // 253-237
+assign base10_offset[70] = 5'd16;  // 253-237
+assign base10_offset[71] = 5'd16;  // 253-237
+assign base10_offset[72] = 5'd16;  // 253-237
+assign base10_offset[73] = 5'd17;  // 253-236
+assign base10_offset[74] = 5'd17;  // 253-236
+assign base10_offset[75] = 5'd17;  // 253-236
+assign base10_offset[76] = 5'd17;  // 253-236
+assign base10_offset[77] = 5'd17;  // 253-236
+assign base10_offset[78] = 5'd18;  // 253-235
+assign base10_offset[79] = 5'd18;  // 253-235
+assign base10_offset[80] = 5'd18;  // 253-235
+assign base10_offset[81] = 5'd18;  // 253-235
+assign base10_offset[82] = 5'd19;  // 253-234
+assign base10_offset[83] = 5'd19;  // 253-234
+assign base10_offset[84] = 5'd19;  // 253-234
+assign base10_offset[85] = 5'd19;  // 253-234
+assign base10_offset[86] = 5'd19;  // 253-234
+assign base10_offset[87] = 5'd20;  // 253-233
+assign base10_offset[88] = 5'd20;  // 253-233
+assign base10_offset[89] = 5'd20;  // 253-233
+assign base10_offset[90] = 5'd20;  // 253-233
+assign base10_offset[91] = 5'd20;  // 253-233
+assign base10_offset[92] = 5'd21;  // 253-232
+assign base10_offset[93] = 5'd21;  // 253-232
+assign base10_offset[94] = 5'd21;  // 253-232
+assign base10_offset[95] = 5'd21;  // 253-232
+assign base10_offset[96] = 5'd21;  // 253-232
+assign base10_offset[97] = 5'd22;  // 253-231
+assign base10_offset[98] = 5'd22;  // 253-231
+assign base10_offset[99] = 5'd22;  // 253-231
+assign base10_offset[100] = 5'd22;  // 253-231
+assign base10_offset[101] = 5'd22;  // 253-231
+assign base10_offset[102] = 5'd23;  // 253-230
+assign base10_offset[103] = 5'd23;  // 253-230
+assign base10_offset[104] = 5'd23;  // 253-230
+assign base10_offset[105] = 5'd23;  // 253-230
+assign base10_offset[106] = 5'd23;  // 253-230
+assign base10_offset[107] = 5'd24;  // 253-229
+assign base10_offset[108] = 5'd24;  // 253-229
+assign base10_offset[109] = 5'd24;  // 253-229
+assign base10_offset[110] = 5'd24;  // 253-229
+assign base10_offset[111] = 5'd24;  // 253-229
+assign base10_offset[112] = 5'd25;  // 253-228
+assign base10_offset[113] = 5'd25;  // 253-228
+assign base10_offset[114] = 5'd25;  // 253-228
+assign base10_offset[115] = 5'd25;  // 253-228
+assign base10_offset[116] = 5'd25;  // 253-228
+assign base10_offset[117] = 5'd26;  // 253-227
+assign base10_offset[118] = 5'd26;  // 253-227
+assign base10_offset[119] = 5'd26;  // 253-227
+assign base10_offset[120] = 5'd26;  // 253-227
+assign base10_offset[121] = 5'd26;  // 253-227
+assign base10_offset[122] = 5'd27;  // 253-226
+assign base10_offset[123] = 5'd27;  // 253-226
+assign base10_offset[124] = 5'd27;  // 253-226
+assign base10_offset[125] = 5'd27;  // 253-226
+assign base10_offset[126] = 5'd27;  // 253-226
+assign base10_offset[127] = 5'd28;  // 253-225
+assign base10_offset[128] = 5'd28;  // 253-225
+assign base10_offset[129] = 5'd28;  // 253-225
+assign base10_offset[130] = 5'd28;  // 253-225
+assign base10_offset[131] = 5'd28;  // 253-225
+assign base10_offset[132] = 5'd29;  // 253-224
+assign base10_offset[133] = 5'd29;  // 253-224
+assign base10_offset[134] = 5'd29;  // 253-224
+assign base10_offset[135] = 5'd29;  // 253-224
+assign base10_offset[136] = 5'd29;  // 253-224
+assign base10_offset[137] = 5'd30;  // 253-223
+assign base10_offset[138] = 5'd30;  // 253-223
+assign base10_offset[139] = 5'd30;  // 253-223
+assign base10_offset[140] = 5'd30;  // 253-223
+assign base10_offset[141] = 5'd30;  // 253-223
+assign base10_offset[142] = 5'd30;  // 253-223
+assign base10_offset[143] = 5'd31;  // 253-222
+assign base10_offset[144] = 5'd31;  // 253-222
+assign base10_offset[145] = 5'd31;  // 253-222
+assign base10_offset[146] = 5'd31;  // 253-222
+assign base10_offset[147] = 5'd31;  // 253-222
+
+/**********************************/
+//这里开始通过对apd进行判断，直接得出其属于哪一个区间，直接赋值那个区间的初始值
+assign val_base[11] = 18'd221;  // base of segment 11, from line 1184
+assign val_base[12] = 18'd220;  // base of segment 12, from line 1189
+assign val_base[13] = 18'd219;  // base of segment 13, from line 1195
+assign val_base[14] = 18'd218;  // base of segment 14, from line 1200
+assign val_base[15] = 18'd217;  // base of segment 15, from line 1206
+assign val_base[16] = 18'd216;  // base of segment 16, from line 1211
+assign val_base[17] = 18'd215;  // base of segment 17, from line 1217
+assign val_base[18] = 18'd214;  // base of segment 18, from line 1223
+assign val_base[19] = 18'd213;  // base of segment 19, from line 1228
+assign val_base[20] = 18'd212;  // base of segment 20, from line 1234
+assign val_base[21] = 18'd211;  // base of segment 21, from line 1240
+assign val_base[22] = 18'd210;  // base of segment 22, from line 1246
+assign val_base[23] = 18'd209;  // base of segment 23, from line 1252
+assign val_base[24] = 18'd208;  // base of segment 24, from line 1258
+assign val_base[25] = 18'd207;  // base of segment 25, from line 1264
+assign val_base[26] = 18'd206;  // base of segment 26, from line 1270
+assign val_base[27] = 18'd205;  // base of segment 27, from line 1276
+assign val_base[28] = 18'd204;  // base of segment 28, from line 1282
+assign val_base[29] = 18'd203;  // base of segment 29, from line 1289
+assign val_base[30] = 18'd202;  // base of segment 30, from line 1295
+assign val_base[31] = 18'd201;  // base of segment 31, from line 1301
+assign val_base[32] = 18'd200;  // base of segment 32, from line 1308
+assign val_base[33] = 18'd199;  // base of segment 33, from line 1315
+assign val_base[34] = 18'd198;  // base of segment 34, from line 1321
+assign val_base[35] = 18'd197;  // base of segment 35, from line 1328
+assign val_base[36] = 18'd196;  // base of segment 36, from line 1335
+assign val_base[37] = 18'd195;  // base of segment 37, from line 1341
+assign val_base[38] = 18'd194;  // base of segment 38, from line 1348
+assign val_base[39] = 18'd193;  // base of segment 39, from line 1355
+assign val_base[40] = 18'd192;  // base of segment 40, from line 1362
+assign val_base[41] = 18'd191;  // base of segment 41, from line 1369
+assign val_base[42] = 18'd190;  // base of segment 42, from line 1377
+assign val_base[43] = 18'd189;  // base of segment 43, from line 1384
+assign val_base[44] = 18'd188;  // base of segment 44, from line 1391
+assign val_base[45] = 18'd187;  // base of segment 45, from line 1399
+assign val_base[46] = 18'd186;  // base of segment 46, from line 1406
+assign val_base[47] = 18'd185;  // base of segment 47, from line 1414
+assign val_base[48] = 18'd184;  // base of segment 48, from line 1421
+assign val_base[49] = 18'd183;  // base of segment 49, from line 1429
+assign val_base[50] = 18'd182;  // base of segment 50, from line 1437
+assign val_base[51] = 18'd181;  // base of segment 51, from line 1445
+assign val_base[52] = 18'd180;  // base of segment 52, from line 1453
+assign val_base[53] = 18'd179;  // base of segment 53, from line 1461
+assign val_base[54] = 18'd178;  // base of segment 54, from line 1469
+assign val_base[55] = 18'd177;  // base of segment 55, from line 1477
+assign val_base[56] = 18'd176;  // base of segment 56, from line 1486
+assign val_base[57] = 18'd175;  // base of segment 57, from line 1494
+assign val_base[58] = 18'd174;  // base of segment 58, from line 1503
+assign val_base[59] = 18'd173;  // base of segment 59, from line 1511
+assign val_base[60] = 18'd172;  // base of segment 60, from line 1520
+assign val_base[61] = 18'd171;  // base of segment 61, from line 1529
+assign val_base[62] = 18'd170;  // base of segment 62, from line 1538
+assign val_base[63] = 18'd169;  // base of segment 63, from line 1547
+assign val_base[64] = 18'd168;  // base of segment 64, from line 1556
+assign val_base[65] = 18'd167;  // base of segment 65, from line 1566
+assign val_base[66] = 18'd166;  // base of segment 66, from line 1575
+assign val_base[67] = 18'd165;  // base of segment 67, from line 1584
+assign val_base[68] = 18'd164;  // base of segment 68, from line 1594
+assign val_base[69] = 18'd163;  // base of segment 69, from line 1604
+assign val_base[70] = 18'd162;  // base of segment 70, from line 1614
+assign val_base[71] = 18'd161;  // base of segment 71, from line 1624
+assign val_base[72] = 18'd160;  // base of segment 72, from line 1634
+assign val_base[73] = 18'd159;  // base of segment 73, from line 1644
+assign val_base[74] = 18'd158;  // base of segment 74, from line 1654
+assign val_base[75] = 18'd157;  // base of segment 75, from line 1665
+assign val_base[76] = 18'd156;  // base of segment 76, from line 1676
+assign val_base[77] = 18'd155;  // base of segment 77, from line 1686
+assign val_base[78] = 18'd154;  // base of segment 78, from line 1697
+assign val_base[79] = 18'd153;  // base of segment 79, from line 1708
+assign val_base[80] = 18'd152;  // base of segment 80, from line 1719
+assign val_base[81] = 18'd151;  // base of segment 81, from line 1731
+assign val_base[82] = 18'd150;  // base of segment 82, from line 1742
+assign val_base[83] = 18'd149;  // base of segment 83, from line 1754
+assign val_base[84] = 18'd148;  // base of segment 84, from line 1766
+assign val_base[85] = 18'd147;  // base of segment 85, from line 1778
+assign val_base[86] = 18'd146;  // base of segment 86, from line 1790
+assign val_base[87] = 18'd145;  // base of segment 87, from line 1802
+assign val_base[88] = 18'd144;  // base of segment 88, from line 1815
+assign val_base[89] = 18'd143;  // base of segment 89, from line 1827
+assign val_base[90] = 18'd142;  // base of segment 90, from line 1840
+assign val_base[91] = 18'd141;  // base of segment 91, from line 1853
+assign val_base[92] = 18'd140;  // base of segment 92, from line 1866
+assign val_base[93] = 18'd139;  // base of segment 93, from line 1880
+assign val_base[94] = 18'd138;  // base of segment 94, from line 1893
+assign val_base[95] = 18'd137;  // base of segment 95, from line 1907
+assign val_base[96] = 18'd136;  // base of segment 96, from line 1921
+assign val_base[97] = 18'd135;  // base of segment 97, from line 1935
+assign val_base[98] = 18'd134;  // base of segment 98, from line 1950
+assign val_base[99] = 18'd133;  // base of segment 99, from line 1964
+assign val_base[100] = 18'd132;  // base of segment 100, from line 1979
+assign val_base[101] = 18'd131;  // base of segment 101, from line 1994
+assign val_base[102] = 18'd130;  // base of segment 102, from line 2009
+assign val_base[103] = 18'd129;  // base of segment 103, from line 2025
+assign val_base[104] = 18'd128;  // base of segment 104, from line 2041
+assign val_base[105] = 18'd127;  // base of segment 105, from line 2057
+assign val_base[106] = 18'd126;  // base of segment 106, from line 2073
+assign val_base[107] = 18'd125;  // base of segment 107, from line 2089
+assign val_base[108] = 18'd124;  // base of segment 108, from line 2106
+assign val_base[109] = 18'd123;  // base of segment 109, from line 2123
+assign val_base[110] = 18'd122;  // base of segment 110, from line 2140
+assign val_base[111] = 18'd121;  // base of segment 111, from line 2158
+assign val_base[112] = 18'd120;  // base of segment 112, from line 2176
+assign val_base[113] = 18'd119;  // base of segment 113, from line 2194
+assign val_base[114] = 18'd118;  // base of segment 114, from line 2213
+assign val_base[115] = 18'd117;  // base of segment 115, from line 2232
+assign val_base[116] = 18'd116;  // base of segment 116, from line 2251
+assign val_base[117] = 18'd115;  // base of segment 117, from line 2270
+assign val_base[118] = 18'd114;  // base of segment 118, from line 2290
+assign val_base[119] = 18'd113;  // base of segment 119, from line 2310
+assign val_base[120] = 18'd112;  // base of segment 120, from line 2331
+assign val_base[121] = 18'd111;  // base of segment 121, from line 2352
+assign val_base[122] = 18'd110;  // base of segment 122, from line 2373
+assign val_base[123] = 18'd109;  // base of segment 123, from line 2395
+assign val_base[124] = 18'd108;  // base of segment 124, from line 2417
+assign val_base[125] = 18'd107;  // base of segment 125, from line 2439
+assign val_base[126] = 18'd106;  // base of segment 126, from line 2462
+assign val_base[127] = 18'd105;  // base of segment 127, from line 2485
+assign val_base[128] = 18'd104;  // base of segment 128, from line 2509
+assign val_base[129] = 18'd103;  // base of segment 129, from line 2533
+assign val_base[130] = 18'd102;  // base of segment 130, from line 2558
+assign val_base[131] = 18'd101;  // base of segment 131, from line 2583
+assign val_base[132] = 18'd100;  // base of segment 132, from line 2609
+assign val_base[133] = 18'd99;  // base of segment 133, from line 2635
+assign val_base[134] = 18'd98;  // base of segment 134, from line 2662
+assign val_base[135] = 18'd97;  // base of segment 135, from line 2689
+assign val_base[136] = 18'd96;  // base of segment 136, from line 2717
+assign val_base[137] = 18'd95;  // base of segment 137, from line 2745
+assign val_base[138] = 18'd94;  // base of segment 138, from line 2774
+assign val_base[139] = 18'd93;  // base of segment 139, from line 2804
+assign val_base[140] = 18'd92;  // base of segment 140, from line 2834
+assign val_base[141] = 18'd91;  // base of segment 141, from line 2865
+assign val_base[142] = 18'd90;  // base of segment 142, from line 2897
+assign val_base[143] = 18'd89;  // base of segment 143, from line 2929
+assign val_base[144] = 18'd88;  // base of segment 144, from line 2963
+assign val_base[145] = 18'd87;  // base of segment 145, from line 2996
+assign val_base[146] = 18'd86;  // base of segment 146, from line 3031
+assign val_base[147] = 18'd85;  // base of segment 147, from line 3067
+assign val_base[148] = 18'd84;  // base of segment 148, from line 3103
+assign val_base[149] = 18'd83;  // base of segment 149, from line 3140
+assign val_base[150] = 18'd82;  // base of segment 150, from line 3178
+assign val_base[151] = 18'd81;  // base of segment 151, from line 3217
+assign val_base[152] = 18'd80;  // base of segment 152, from line 3257
+assign val_base[153] = 18'd79;  // base of segment 153, from line 3298
+assign val_base[154] = 18'd78;  // base of segment 154, from line 3340
+assign val_base[155] = 18'd77;  // base of segment 155, from line 3383
+assign val_base[156] = 18'd76;  // base of segment 156, from line 3427
+assign val_base[157] = 18'd75;  // base of segment 157, from line 3473
+assign val_base[158] = 18'd74;  // base of segment 158, from line 3519
+assign val_base[159] = 18'd73;  // base of segment 159, from line 3567
+assign val_base[160] = 18'd72;  // base of segment 160, from line 3616
+assign val_base[161] = 18'd71;  // base of segment 161, from line 3667
+assign val_base[162] = 18'd70;  // base of segment 162, from line 3719
+assign val_base[163] = 18'd69;  // base of segment 163, from line 3772
+assign val_base[164] = 18'd68;  // base of segment 164, from line 3827
+assign val_base[165] = 18'd67;  // base of segment 165, from line 3884
+assign val_base[166] = 18'd66;  // base of segment 166, from line 3942
+assign val_base[167] = 18'd65;  // base of segment 167, from line 4003
+assign val_base[168] = 18'd64;  // base of segment 168, from line 4065
+assign val_base[169] = 18'd63;  // base of segment 169, from line 4129
+assign val_base[170] = 18'd62;  // base of segment 170, from line 4195
+assign val_base[171] = 18'd61;  // base of segment 171, from line 4263
+assign val_base[172] = 18'd60;  // base of segment 172, from line 4333
+assign val_base[173] = 18'd59;  // base of segment 173, from line 4406
+assign val_base[174] = 18'd58;  // base of segment 174, from line 4482
+assign val_base[175] = 18'd57;  // base of segment 175, from line 4560
+assign val_base[176] = 18'd56;  // base of segment 176, from line 4640
+assign val_base[177] = 18'd55;  // base of segment 177, from line 4724
+assign val_base[178] = 18'd54;  // base of segment 178, from line 4810
+assign val_base[179] = 18'd53;  // base of segment 179, from line 4900
+assign val_base[180] = 18'd52;  // base of segment 180, from line 4994
+assign val_base[181] = 18'd51;  // base of segment 181, from line 5091
+assign val_base[182] = 18'd50;  // base of segment 182, from line 5191
+assign val_base[183] = 18'd49;  // base of segment 183, from line 5296
+assign val_base[184] = 18'd48;  // base of segment 184, from line 5406
+assign val_base[185] = 18'd47;  // base of segment 185, from line 5519
+assign val_base[186] = 18'd46;  // base of segment 186, from line 5638
+assign val_base[187] = 18'd45;  // base of segment 187, from line 5762
+assign val_base[188] = 18'd44;  // base of segment 188, from line 5891
+assign val_base[189] = 18'd43;  // base of segment 189, from line 6027
+assign val_base[190] = 18'd42;  // base of segment 190, from line 6169
+assign val_base[191] = 18'd41;  // base of segment 191, from line 6317
+assign val_base[192] = 18'd40;  // base of segment 192, from line 6473
+assign val_base[193] = 18'd39;  // base of segment 193, from line 6637
+assign val_base[194] = 18'd38;  // base of segment 194, from line 6809
+assign val_base[195] = 18'd37;  // base of segment 195, from line 6991
+assign val_base[196] = 18'd36;  // base of segment 196, from line 7182
+assign val_base[197] = 18'd35;  // base of segment 197, from line 7385
+assign val_base[198] = 18'd34;  // base of segment 198, from line 7599
+assign val_base[199] = 18'd33;  // base of segment 199, from line 7826
+assign val_base[200] = 18'd32;  // base of segment 200, from line 8066
+
+// div_lut_18模块实现逻辑 - 使用val_base数组版本
+// 每个段的第一个APD值等于基值，后续值等于基值减去偏移
+always @(*) begin
+    case (segment_type)
+        4'd0:  div_val = val_base_self[offset];  // 直接索引查表
+        
+        4'd1: begin // SEG_0: APD 126-142
+            if (offset == 13'd0)
+                div_val = val_base[0];  // APD=126直接等于基值
+            else
+                div_val = val_base[0] - {10'd0, base0_offset[offset-1]};  // APD=127开始用偏移
+        end
+        
+        4'd2: begin // SEG_1: APD 143-166  
+            if (offset == 13'd0)
+                div_val = val_base[1];  // APD=142直接等于基值
+            else
+                div_val = val_base[1] - {10'd0, base1_offset[offset-1]};
+        end
+        
+        4'd3: begin // SEG_2: APD 167-199
+            if (offset == 13'd0)
+                div_val = val_base[2];
+            else
+                div_val = val_base[2] - {10'd0, base2_offset[offset-1]};
+        end
+        
+        4'd4: begin // SEG_3: APD 200-248
+            if (offset == 13'd0)
+                div_val = val_base[3];
+            else
+                div_val = val_base[3] - {10'd0, base3_offset[offset-1]};
+        end
+        
+        4'd5: begin // SEG_4: APD 249-328
+            if (offset == 13'd0)
+                div_val = val_base[4];
+            else
+                div_val = val_base[4] - {10'd0, base4_offset[offset-1]};
+        end
+        
+        4'd6: begin // SEG_5: APD 329-484
+            if (offset == 13'd0)
+                div_val = val_base[5];
+            else
+                div_val = val_base[5] - {10'd0, base5_offset[offset-1]};
+        end
+        
+        4'd7: begin // SEG_6: APD 485-633
+            if (offset == 13'd0)
+                div_val = val_base[6];
+            else
+                div_val = val_base[6] - {11'd0, base6_offset[offset-1]};
+        end
+        
+        4'd8: begin // SEG_7: APD 634-750
+            if (offset == 13'd0)
+                div_val = val_base[7];
+            else
+                div_val = val_base[7] - {12'd0, base7_offset[offset-1]};
+        end
+        
+        4'd9: begin // SEG_8: APD 751-918
+            if (offset == 13'd0)
+                div_val = val_base[8];
+            else
+                div_val = val_base[8] - {12'd0, base8_offset[offset-1]};
+        end
+        
+        4'd10: begin // SEG_9: APD 919-1034
+            if (offset == 13'd0)
+                div_val = val_base[9];
+            else
+                div_val = val_base[9] - {13'd0, base9_offset[offset-1]};
+        end
+        
+        4'd11: begin // SEG_10: APD 1035-1183
+            if (offset == 13'd0)
+                div_val = val_base[10];
+            else
+                div_val = val_base[10] - {13'd0, base10_offset[offset-1]};
+        end
+        
+        4'd12: div_val = val_base[offset + 13'd11];  // 1184-8190
+        default: div_val = 18'd0;
+    endcase
+end
 
 endmodule
