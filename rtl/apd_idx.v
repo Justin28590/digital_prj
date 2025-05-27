@@ -1,4 +1,4 @@
-module apd_to_idx_mapper (
+module apd_idx(
     //input wire clk,
     //input wire rst_n,
     input wire [12:0] apd,          // APD输入值 (1-8190)
