@@ -15,13 +15,13 @@ with open('div_lut_18.v', 'w') as f:
             start_idx = i
         elif val != last_val:
             if start_idx == i-1:
-                f.write(f"assign val[{start_idx}] = 18'd{last_val};   // {start_idx}\n")
+                f.write(f"assign val_base[{start_idx}] = 18'd{last_val};   // {start_idx}\n")
             else:
-                f.write(f"assign val[{start_idx}] = 18'd{last_val};   // {start_idx}-{i-1}\n")
+                f.write(f"assign val_base[{start_idx}] = 18'd{last_val};   // {start_idx}-{i-1}\n")
             last_val = val
             start_idx = i
     # 写最后一段
     if start_idx == DEPTH-1:
-        f.write(f"assign val[{start_idx}] = 18'd{last_val};   // {start_idx}\n")
+        f.write(f"assign val_base[{start_idx}] = 18'd{last_val};   // {start_idx}\n")
     else:
-        f.write(f"assign val[{start_idx}] = 18'd{last_val};   // {start_idx}-{DEPTH-1}\n")
+        f.write(f"assign val_base[{start_idx}] = 18'd{last_val};   // {start_idx}-{DEPTH-1}\n")

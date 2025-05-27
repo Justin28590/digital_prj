@@ -1,96 +1,7 @@
 module div_lut_18 (
-    input wire [3:0] segment_type,  // 段类型输入
-    input wire [12:0] offset,        // 偏移量输入
+    input [N-1:0] idx,
     output reg [17:0] div_val
 );
-
-// div_lut_18模块实现逻辑 - 使用val_base数组版本
-// 每个段的第一个APD值等于基值，后续值等于基值减去偏移
-always @(*) begin
-    case (segment_type)
-        4'd0:  div_val = val_base_self[offset];  // 直接索引查表
-        
-        4'd1: begin // SEG_0: APD 126-142
-            if (offset == 13'd0)
-                div_val = val_base[0];  // APD=126直接等于基值
-            else
-                div_val = val_base[0] - {10'd0, base0_offset[offset-1]};  // APD=127开始用偏移
-        end
-        
-        4'd2: begin // SEG_1: APD 143-166  
-            if (offset == 13'd0)
-                div_val = val_base[1];  // APD=142直接等于基值
-            else
-                div_val = val_base[1] - {10'd0, base1_offset[offset-1]};
-        end
-        
-        4'd3: begin // SEG_2: APD 167-199
-            if (offset == 13'd0)
-                div_val = val_base[2];
-            else
-                div_val = val_base[2] - {10'd0, base2_offset[offset-1]};
-        end
-        
-        4'd4: begin // SEG_3: APD 200-248
-            if (offset == 13'd0)
-                div_val = val_base[3];
-            else
-                div_val = val_base[3] - {10'd0, base3_offset[offset-1]};
-        end
-        
-        4'd5: begin // SEG_4: APD 249-328
-            if (offset == 13'd0)
-                div_val = val_base[4];
-            else
-                div_val = val_base[4] - {10'd0, base4_offset[offset-1]};
-        end
-        
-        4'd6: begin // SEG_5: APD 329-484
-            if (offset == 13'd0)
-                div_val = val_base[5];
-            else
-                div_val = val_base[5] - {10'd0, base5_offset[offset-1]};
-        end
-        
-        4'd7: begin // SEG_6: APD 485-633
-            if (offset == 13'd0)
-                div_val = val_base[6];
-            else
-                div_val = val_base[6] - {11'd0, base6_offset[offset-1]};
-        end
-        
-        4'd8: begin // SEG_7: APD 634-750
-            if (offset == 13'd0)
-                div_val = val_base[7];
-            else
-                div_val = val_base[7] - {12'd0, base7_offset[offset-1]};
-        end
-        
-        4'd9: begin // SEG_8: APD 751-918
-            if (offset == 13'd0)
-                div_val = val_base[8];
-            else
-                div_val = val_base[8] - {12'd0, base8_offset[offset-1]};
-        end
-        
-        4'd10: begin // SEG_9: APD 919-1034
-            if (offset == 13'd0)
-                div_val = val_base[9];
-            else
-                div_val = val_base[9] - {13'd0, base9_offset[offset-1]};
-        end
-        
-        4'd11: begin // SEG_10: APD 1035-1183
-            if (offset == 13'd0)
-                div_val = val_base[10];
-            else
-                div_val = val_base[10] - {13'd0, base10_offset[offset-1]};
-        end
-        
-        4'd12: div_val = val_base[offset + 13'd11];  // 1184-8190
-        default: div_val = 18'd0;
-    endcase
-end
 
 wire [17:0] val_base_self [0:124];
 assign val_base_self[0] = 18'd262143;
@@ -217,28 +128,28 @@ assign val_base_self[120] = 18'd2166;
 assign val_base_self[121] = 18'd2149;
 assign val_base_self[122] = 18'd2131;
 assign val_base_self[123] = 18'd2114;
-assign val_base_self[124] = 18'd2097;   //对应apd=125
+assign val_base_self[124] = 18'd2097;
 /***********************************/
 //下面开始分段
 wire [17:0] val_base [0:200];
 wire [7:0]  base0_offset [0:15];  // 16项
-assign val_base[0] = 18'd2080;  // base of segment 0, from line 126  
-assign base0_offset[0] = 8'd16;    //2080-2064
-assign base0_offset[1] = 8'd32;    //2080-2048
-assign base0_offset[2] = 8'd48;    //2080-2032
-assign base0_offset[3] = 8'd64;    //2080-2016
-assign base0_offset[4] = 8'd79;    //2080-2001
-assign base0_offset[5] = 8'd94;  // 2080-1986
-assign base0_offset[6] = 8'd109;  // 2080-1971
-assign base0_offset[7] = 8'd124;  // 2080-1956
-assign base0_offset[8] = 8'd138;  // 2080-1942
-assign base0_offset[9] = 8'd152;  // 2080-1928
-assign base0_offset[10] = 8'd167;  // 2080-1913
-assign base0_offset[11] = 8'd180;  // 2080-1900
-assign base0_offset[12] = 8'd194;  // 2080-1886
-assign base0_offset[13] = 8'd208;  // 2080-1872
-assign base0_offset[14] = 8'd221;  // 2080-1859
-assign base0_offset[15] = 8'd234;  // 2080-1846
+assign val_base[0] = 18'd2080;
+assign val_offset[0] = 8'd16;    //2080-2064
+assign val_offset[1] = 8'd32;    //2080-2048
+assign val_offset[2] = 8'd48;    //2080-2032
+assign val_offset[3] = 8'd64;    //2080-2016
+assign val_offset[4] = 8'd79;    //2080-2001
+assign val_offset[5] = 8'd94;  // 2080-1986
+assign val_offset[6] = 8'd109;  // 2080-1971
+assign val_offset[7] = 8'd124;  // 2080-1956
+assign val_offset[8] = 8'd138;  // 2080-1942
+assign val_offset[9] = 8'd152;  // 2080-1928
+assign val_offset[10] = 8'd167;  // 2080-1913
+assign val_offset[11] = 8'd180;  // 2080-1900
+assign val_offset[12] = 8'd194;  // 2080-1886
+assign val_offset[13] = 8'd208;  // 2080-1872
+assign val_offset[14] = 8'd221;  // 2080-1859
+assign val_offset[15] = 8'd234;  // 2080-1846
 
 wire [7:0]  base1_offset [0:22];  
 assign val_base[1] = 18'd1833;  // base of segment 1, from line 143
