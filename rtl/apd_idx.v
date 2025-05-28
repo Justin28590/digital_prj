@@ -260,6 +260,38 @@ assign val_seg[177] = 13'd7490;
 assign val_seg[178] = 13'd7944;
 
 
+
+// Method 1: Direct interval checking (your suggestion, optimized)
+// This creates 179 parallel comparisons but with simpler logic
+wire [178:0] interval_match;
+wire [7:0] idx_direct [0:178];
+
+// Generate interval checks in parallel
+genvar j;
+generate
+    for (j = 0; j < 178; j = j + 1) begin : gen_interval
+        // Check if apd is in interval [val_seg[j], val_seg[j+1])
+        assign interval_match[j] = (apd >= val_seg[j]) && (apd < val_seg[j+1]);
+        assign idx_direct[j] = j;
+    end
+    // Special case for last interval
+    assign interval_match[178] = (apd >= val_seg[178]);
+    assign idx_direct[178] = 178;
+endgenerate
+
+integer i;
+// Priority encoder for Method 1 (Direct interval checking)
+always @(*) begin
+    idx_out = 0;
+    // Alternative: Use a for loop that synthesizes to parallel logic    
+    for (i = 178; i >= 0; i = i - 1) begin
+        if (interval_match[i]) begin
+            idx_out = i[7:0];
+        end
+    end
+end
+
+/*
 // 假设N=179，分成13段，段界点如下（示例索引）
 localparam Q0 = 0;
 localparam Q1 = 13;
@@ -279,103 +311,255 @@ localparam Q13 = 178;  // 最后一段结尾
 integer i;
 reg found_flag;
 
+//这里的组合逻辑太长了：
+//用wire同时判断先
+// 分层比较方法 - 完整实现
+// 这种方法将13个区间分成4个大区间，每个大区间内部再细分
+
+
+// ===== 第一层：粗分区间 (4个大区间) =====
+wire [7:0] coarse_cmp;
+assign coarse_cmp[0] = (apd >= val_seg[Q1]);   // >= 13
+assign coarse_cmp[1] = (apd >= val_seg[Q3]);   // >= 39
+assign coarse_cmp[2] = (apd >= val_seg[Q5]);   // >= 65
+assign coarse_cmp[3] = (apd >= val_seg[Q7]);   // >= 91
+assign coarse_cmp[4] = (apd >= val_seg[Q9]);   // >= 117
+assign coarse_cmp[5] = (apd >= val_seg[Q10]);  // >= 130
+assign coarse_cmp[6] = (apd >= val_seg[Q11]);  // >= 143
+assign coarse_cmp[7] = (apd >= val_seg[Q12]);  // >= 156
+
+// ===== 第二层：每个大区间内的细分比较 =====
+// 区间0: [Q0, Q3] - 包含4个子区间
+wire [3:0] fine_cmp0;
+assign fine_cmp0[0] = (apd >= val_seg[Q0]);
+assign fine_cmp0[1] = (apd >= val_seg[Q1]);
+assign fine_cmp0[2] = (apd >= val_seg[Q2]);
+assign fine_cmp0[3] = (apd >= val_seg[Q3]);
+
+// 区间1: [Q4, Q6] - 包含3个子区间  
+wire [2:0] fine_cmp1;
+assign fine_cmp1[0] = (apd >= val_seg[Q4]);
+assign fine_cmp1[1] = (apd >= val_seg[Q5]);
+assign fine_cmp1[2] = (apd >= val_seg[Q6]);
+
+// 区间2: [Q7, Q9] - 包含3个子区间
+wire [2:0] fine_cmp2;
+assign fine_cmp2[0] = (apd >= val_seg[Q7]);
+assign fine_cmp2[1] = (apd >= val_seg[Q8]);
+assign fine_cmp2[2] = (apd >= val_seg[Q9]);
+
+// 区间3: [Q10, Q12] - 包含3个子区间
+wire [2:0] fine_cmp3;
+assign fine_cmp3[0] = (apd >= val_seg[Q10]);
+assign fine_cmp3[1] = (apd >= val_seg[Q11]);
+assign fine_cmp3[2] = (apd >= val_seg[Q12]);
+
+// ===== 主要逻辑：分层选择 =====
 always @(*) begin
-    idx_out = 0; 
+    idx_out = 0;
     found_flag = 0;
-
-    if (apd < val_seg[Q1]) begin
-        for (i = Q0; i <= Q1; i = i + 1) begin
-            if (!found_flag && val_seg[i] >= apd) begin
-                idx_out = i-1;
-                found_flag = 1;
-            end
+    
+    case (coarse_cmp)
+        // ===== 大区间0: apd < Q3 =====
+        4'b0000: begin 
+            case (fine_cmp0)
+                // apd < Q0 - 在最开始的区间搜索
+                4'b0000: begin
+                    for (i = 0; i < Q0; i = i + 1) begin
+                        if (!found_flag && val_seg[i] >= apd) begin
+                            idx_out = (i > 0) ? i-1 : 0;
+                            found_flag = 1;
+                        end
+                    end
+                    if (!found_flag) idx_out = Q0-1;
+                end
+                
+                // Q0 <= apd < Q1
+                4'b0001: begin
+                    for (i = Q0; i <= Q1; i = i + 1) begin
+                        if (!found_flag && val_seg[i] >= apd) begin
+                            idx_out = (i > 0) ? i-1 : 0;
+                            found_flag = 1;
+                        end
+                    end
+                    if (!found_flag) idx_out = Q1-1;
+                end
+                
+                // Q1 <= apd < Q2  
+                4'b0011: begin
+                    for (i = Q1 + 1; i <= Q2; i = i + 1) begin
+                        if (!found_flag && val_seg[i] >= apd) begin
+                            idx_out = i-1;
+                            found_flag = 1;
+                        end
+                    end
+                    if (!found_flag) idx_out = Q2-1;
+                end
+                
+                // Q2 <= apd < Q3
+                4'b0111: begin
+                    for (i = Q2 + 1; i <= Q3; i = i + 1) begin
+                        if (!found_flag && val_seg[i] >= apd) begin
+                            idx_out = i-1;
+                            found_flag = 1;
+                        end
+                    end
+                    if (!found_flag) idx_out = Q3-1;
+                end
+                
+                default: idx_out = 0;
+            endcase
         end
-    end else if (apd < val_seg[Q2]) begin
-        for (i = Q1 + 1; i <= Q2; i = i + 1) begin
-            if (!found_flag && val_seg[i] >= apd) begin
-                idx_out = i-1;
-                found_flag = 1;
-            end
+        
+        // ===== 大区间1: Q3 <= apd < Q6 =====
+        4'b0001: begin
+            case (fine_cmp1)
+                // Q3 <= apd < Q4
+                3'b000: begin
+                    for (i = Q3 + 1; i <= Q4; i = i + 1) begin
+                        if (!found_flag && val_seg[i] >= apd) begin
+                            idx_out = i-1;
+                            found_flag = 1;
+                        end
+                    end
+                    if (!found_flag) idx_out = Q4-1;
+                end
+                
+                // Q4 <= apd < Q5
+                3'b001: begin
+                    for (i = Q4 + 1; i <= Q5; i = i + 1) begin
+                        if (!found_flag && val_seg[i] >= apd) begin
+                            idx_out = i-1;
+                            found_flag = 1;
+                        end
+                    end
+                    if (!found_flag) idx_out = Q5-1;
+                end
+                
+                // Q5 <= apd < Q6
+                3'b011: begin
+                    for (i = Q5 + 1; i <= Q6; i = i + 1) begin
+                        if (!found_flag && val_seg[i] >= apd) begin
+                            idx_out = i-1;
+                            found_flag = 1;
+                        end
+                    end
+                    if (!found_flag) idx_out = Q6-1;
+                end
+                
+                // Q6 <= apd (但 apd < Q6，这种情况不应该出现)
+                3'b111: begin
+                    idx_out = Q6-1;  // 边界情况处理
+                end
+                
+                default: idx_out = Q3;
+            endcase
         end
-    end else if (apd < val_seg[Q3]) begin
-        for (i = Q2 + 1; i <= Q3; i = i + 1) begin
-            if (!found_flag && val_seg[i] >= apd) begin
-                idx_out = i-1;
-                found_flag = 1;
-            end
+        
+        // ===== 大区间2: Q6 <= apd < Q9 =====  
+        4'b0011: begin
+            case (fine_cmp2)
+                // Q6 <= apd < Q7
+                3'b000: begin
+                    for (i = Q6 + 1; i <= Q7; i = i + 1) begin
+                        if (!found_flag && val_seg[i] >= apd) begin
+                            idx_out = i-1;
+                            found_flag = 1;
+                        end
+                    end
+                    if (!found_flag) idx_out = Q7-1;
+                end
+                
+                // Q7 <= apd < Q8
+                3'b001: begin
+                    for (i = Q7 + 1; i <= Q8; i = i + 1) begin
+                        if (!found_flag && val_seg[i] >= apd) begin
+                            idx_out = i-1;
+                            found_flag = 1;
+                        end
+                    end
+                    if (!found_flag) idx_out = Q8-1;
+                end
+                
+                // Q8 <= apd < Q9
+                3'b011: begin
+                    for (i = Q8 + 1; i <= Q9; i = i + 1) begin
+                        if (!found_flag && val_seg[i] >= apd) begin
+                            idx_out = i-1;
+                            found_flag = 1;
+                        end
+                    end
+                    if (!found_flag) idx_out = Q9-1;
+                end
+                
+                // Q9 <= apd (但 apd < Q9，这种情况不应该出现)
+                3'b111: begin
+                    idx_out = Q9-1;  // 边界情况处理
+                end
+                
+                default: idx_out = Q6;
+            endcase
         end
-    end else if (apd < val_seg[Q4]) begin
-        for (i = Q3 + 1; i <= Q4; i = i + 1) begin
-            if (!found_flag && val_seg[i] >= apd) begin
-                idx_out = i-1;
-                found_flag = 1;
-            end
+        
+        // ===== 大区间3: Q9 <= apd < Q12 =====
+        4'b0111: begin
+            case (fine_cmp3)
+                // Q9 <= apd < Q10
+                3'b000: begin
+                    for (i = Q9 + 1; i <= Q10; i = i + 1) begin
+                        if (!found_flag && val_seg[i] >= apd) begin
+                            idx_out = i-1;
+                            found_flag = 1;
+                        end
+                    end
+                    if (!found_flag) idx_out = Q10-1;
+                end
+                
+                // Q10 <= apd < Q11
+                3'b001: begin
+                    for (i = Q10 + 1; i <= Q11; i = i + 1) begin
+                        if (!found_flag && val_seg[i] >= apd) begin
+                            idx_out = i-1;
+                            found_flag = 1;
+                        end
+                    end
+                    if (!found_flag) idx_out = Q11-1;
+                end
+                
+                // Q11 <= apd < Q12
+                3'b011: begin
+                    for (i = Q11 + 1; i <= Q12; i = i + 1) begin
+                        if (!found_flag && val_seg[i] >= apd) begin
+                            idx_out = i-1;
+                            found_flag = 1;
+                        end
+                    end
+                    if (!found_flag) idx_out = Q12-1;
+                end
+                
+                // Q12 <= apd (但 apd < Q12，这种情况不应该出现)
+                3'b111: begin
+                    idx_out = Q12-1;  // 边界情况处理
+                end
+                
+                default: idx_out = Q9;
+            endcase
         end
-    end else if (apd < val_seg[Q5]) begin
-        for (i = Q4 + 1; i <= Q5; i = i + 1) begin
-            if (!found_flag && val_seg[i] >= apd) begin
-                idx_out = i-1;
-                found_flag = 1;
+        
+        // ===== 大区间4: apd >= Q12 =====
+        4'b1111: begin
+            // 在最后一个区间搜索
+            for (i = Q12 + 1; i <= Q13; i = i + 1) begin
+                if (!found_flag && val_seg[i] >= apd) begin
+                    idx_out = i-1;
+                    found_flag = 1;
+                end
             end
+            if (!found_flag) idx_out = Q13-1;  // 如果没找到，返回最后一个索引
         end
-    end else if (apd < val_seg[Q6]) begin
-        for (i = Q5 + 1; i <= Q6; i = i + 1) begin
-            if (!found_flag && val_seg[i] >= apd) begin
-                idx_out = i-1;
-                found_flag = 1;
-            end
-        end
-    end else if (apd < val_seg[Q7]) begin
-        for (i = Q6 + 1; i <= Q7; i = i + 1) begin
-            if (!found_flag && val_seg[i] >= apd) begin
-                idx_out = i-1;
-                found_flag = 1;
-            end
-        end
-    end else if (apd < val_seg[Q8]) begin
-        for (i = Q7 + 1; i <= Q8; i = i + 1) begin
-            if (!found_flag && val_seg[i] >= apd) begin
-                idx_out = i-1;
-                found_flag = 1;
-            end
-        end
-    end else if (apd < val_seg[Q9]) begin
-        for (i = Q8 + 1; i <= Q9; i = i + 1) begin
-            if (!found_flag && val_seg[i] >= apd) begin
-                idx_out = i-1;
-                found_flag = 1;
-            end
-        end
-    end else if (apd < val_seg[Q10]) begin
-        for (i = Q9 + 1; i <= Q10; i = i + 1) begin
-            if (!found_flag && val_seg[i] >= apd) begin
-                idx_out = i-1;
-                found_flag = 1;
-            end
-        end
-    end else if (apd < val_seg[Q11]) begin
-        for (i = Q10 + 1; i <= Q11; i = i + 1) begin
-            if (!found_flag && val_seg[i] >= apd) begin
-                idx_out = i-1;
-                found_flag = 1;
-            end
-        end
-    end else if (apd < val_seg[Q12]) begin
-        for (i = Q11 + 1; i <= Q12; i = i + 1) begin
-            if (!found_flag && val_seg[i] >= apd) begin
-                idx_out = i-1;
-                found_flag = 1;
-            end
-        end
-    end else begin
-        for (i = Q12 + 1; i <= Q13; i = i + 1) begin
-            if (!found_flag && val_seg[i] >= apd) begin
-                idx_out = i-1;
-                found_flag = 1;
-            end
-        end
-    end
+        
+        default: idx_out = 0;
+    endcase
 end
-
-
+*/
 endmodule
