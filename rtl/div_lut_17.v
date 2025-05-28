@@ -1,6 +1,7 @@
 module div_lut (
-    input wire [3:0] segment_type,  // 段类型输入
-    input wire [12:0] offset,        // 偏移量输入
+    input [3:0] segment_type,  // 段类型输入
+    input [6:0] offset,        // 偏移量输入 
+    input [7:0] idx_out,       //二分法索引值
     output reg [16:0] div_val
 );
 
@@ -104,71 +105,71 @@ assign val_base_self[90] = 17'd1440; //对应apd=91
 //第1段
 assign val_base[1] = 17'd1440;  // 91
 
-wire [7:0] base1_offset [0:63];  // 64项
-assign base1_offset[0] = 8'd0;  // 1440-1440, 91
-assign base1_offset[1] = 8'd15;  // 1440-1425, 92
-assign base1_offset[2] = 8'd31;  // 1440-1409, 93
-assign base1_offset[3] = 8'd46;  // 1440-1394, 94
-assign base1_offset[4] = 8'd60;  // 1440-1380, 95
-assign base1_offset[5] = 8'd75;  // 1440-1365, 96
-assign base1_offset[6] = 8'd89;  // 1440-1351, 97
-assign base1_offset[7] = 8'd103;  // 1440-1337, 98
-assign base1_offset[8] = 8'd116;  // 1440-1324, 99
-assign base1_offset[9] = 8'd129;  // 1440-1311, 100
-assign base1_offset[10] = 8'd142;  // 1440-1298, 101
-assign base1_offset[11] = 8'd155;  // 1440-1285, 102
-assign base1_offset[12] = 8'd167;  // 1440-1273, 103
-assign base1_offset[13] = 8'd180;  // 1440-1260, 104
-assign base1_offset[14] = 8'd192;  // 1440-1248, 105
-assign base1_offset[15] = 8'd203;  // 1440-1237, 106
-assign base1_offset[16] = 8'd215;  // 1440-1225, 107
-assign base1_offset[17] = 8'd226;  // 1440-1214, 108
-assign base1_offset[18] = 8'd238;  // 1440-1202, 109
-assign base1_offset[19] = 8'd248;  // 1440-1192, 110
-assign base1_offset[20] = 8'd259;  // 1440-1181, 111
-assign base1_offset[21] = 8'd270;  // 1440-1170, 112
-assign base1_offset[22] = 8'd280;  // 1440-1160, 113
-assign base1_offset[23] = 8'd290;  // 1440-1150, 114
-assign base1_offset[24] = 8'd300;  // 1440-1140, 115
-assign base1_offset[25] = 8'd310;  // 1440-1130, 116
-assign base1_offset[26] = 8'd320;  // 1440-1120, 117
-assign base1_offset[27] = 8'd329;  // 1440-1111, 118
-assign base1_offset[28] = 8'd339;  // 1440-1101, 119
-assign base1_offset[29] = 8'd348;  // 1440-1092, 120
-assign base1_offset[30] = 8'd357;  // 1440-1083, 121
-assign base1_offset[31] = 8'd366;  // 1440-1074, 122
-assign base1_offset[32] = 8'd374;  // 1440-1066, 123
-assign base1_offset[33] = 8'd383;  // 1440-1057, 124
-assign base1_offset[34] = 8'd391;  // 1440-1049, 125
-assign base1_offset[35] = 8'd400;  // 1440-1040, 126
-assign base1_offset[36] = 8'd408;  // 1440-1032, 127
-assign base1_offset[37] = 8'd416;  // 1440-1024, 128
-assign base1_offset[38] = 8'd424;  // 1440-1016, 129
-assign base1_offset[39] = 8'd432;  // 1440-1008, 130
-assign base1_offset[40] = 8'd439;  // 1440-1001, 131
-assign base1_offset[41] = 8'd447;  // 1440-993, 132
-assign base1_offset[42] = 8'd455;  // 1440-985, 133
-assign base1_offset[43] = 8'd462;  // 1440-978, 134
-assign base1_offset[44] = 8'd469;  // 1440-971, 135
-assign base1_offset[45] = 8'd476;  // 1440-964, 136
-assign base1_offset[46] = 8'd483;  // 1440-957, 137
-assign base1_offset[47] = 8'd490;  // 1440-950, 138
-assign base1_offset[48] = 8'd497;  // 1440-943, 139
-assign base1_offset[49] = 8'd504;  // 1440-936, 140
-assign base1_offset[50] = 8'd510;  // 1440-930, 141
-assign base1_offset[51] = 8'd517;  // 1440-923, 142
-assign base1_offset[52] = 8'd523;  // 1440-917, 143
-assign base1_offset[53] = 8'd530;  // 1440-910, 144
-assign base1_offset[54] = 8'd536;  // 1440-904, 145
-assign base1_offset[55] = 8'd542;  // 1440-898, 146
-assign base1_offset[56] = 8'd548;  // 1440-892, 147
-assign base1_offset[57] = 8'd554;  // 1440-886, 148
-assign base1_offset[58] = 8'd560;  // 1440-880, 149
-assign base1_offset[59] = 8'd566;  // 1440-874, 150
-assign base1_offset[60] = 8'd572;  // 1440-868, 151
-assign base1_offset[61] = 8'd578;  // 1440-862, 152
-assign base1_offset[62] = 8'd583;  // 1440-857, 153
-assign base1_offset[63] = 8'd589;  // 1440-851, 154
+wire [9:0] base1_offset [0:63];  // 64项
+assign base1_offset[0] = 10'd0;  // 1440-1440, 91
+assign base1_offset[1] = 10'd15;  // 1440-1425, 92
+assign base1_offset[2] = 10'd31;  // 1440-1409, 93
+assign base1_offset[3] = 10'd46;  // 1440-1394, 94
+assign base1_offset[4] = 10'd60;  // 1440-1380, 95
+assign base1_offset[5] = 10'd75;  // 1440-1365, 96
+assign base1_offset[6] = 10'd89;  // 1440-1351, 97
+assign base1_offset[7] = 10'd103;  // 1440-1337, 98
+assign base1_offset[8] = 10'd116;  // 1440-1324, 99
+assign base1_offset[9] = 10'd129;  // 1440-1311, 100
+assign base1_offset[10] = 10'd142;  // 1440-1298, 101
+assign base1_offset[11] = 10'd155;  // 1440-1285, 102
+assign base1_offset[12] = 10'd167;  // 1440-1273, 103
+assign base1_offset[13] = 10'd180;  // 1440-1260, 104
+assign base1_offset[14] = 10'd192;  // 1440-1248, 105
+assign base1_offset[15] = 10'd203;  // 1440-1237, 106
+assign base1_offset[16] = 10'd215;  // 1440-1225, 107
+assign base1_offset[17] = 10'd226;  // 1440-1214, 108
+assign base1_offset[18] = 10'd238;  // 1440-1202, 109
+assign base1_offset[19] = 10'd248;  // 1440-1192, 110
+assign base1_offset[20] = 10'd259;  // 1440-1181, 111
+assign base1_offset[21] = 10'd270;  // 1440-1170, 112
+assign base1_offset[22] = 10'd280;  // 1440-1160, 113
+assign base1_offset[23] = 10'd290;  // 1440-1150, 114
+assign base1_offset[24] = 10'd300;  // 1440-1140, 115
+assign base1_offset[25] = 10'd310;  // 1440-1130, 116
+assign base1_offset[26] = 10'd320;  // 1440-1120, 117
+assign base1_offset[27] = 10'd329;  // 1440-1111, 118
+assign base1_offset[28] = 10'd339;  // 1440-1101, 119
+assign base1_offset[29] = 10'd348;  // 1440-1092, 120
+assign base1_offset[30] = 10'd357;  // 1440-1083, 121
+assign base1_offset[31] = 10'd366;  // 1440-1074, 122
+assign base1_offset[32] = 10'd374;  // 1440-1066, 123
+assign base1_offset[33] = 10'd383;  // 1440-1057, 124
+assign base1_offset[34] = 10'd391;  // 1440-1049, 125
+assign base1_offset[35] = 10'd400;  // 1440-1040, 126
+assign base1_offset[36] = 10'd408;  // 1440-1032, 127
+assign base1_offset[37] = 10'd416;  // 1440-1024, 128
+assign base1_offset[38] = 10'd424;  // 1440-1016, 129
+assign base1_offset[39] = 10'd432;  // 1440-1008, 130
+assign base1_offset[40] = 10'd439;  // 1440-1001, 131
+assign base1_offset[41] = 10'd447;  // 1440-993, 132
+assign base1_offset[42] = 10'd455;  // 1440-985, 133
+assign base1_offset[43] = 10'd462;  // 1440-978, 134
+assign base1_offset[44] = 10'd469;  // 1440-971, 135
+assign base1_offset[45] = 10'd476;  // 1440-964, 136
+assign base1_offset[46] = 10'd483;  // 1440-957, 137
+assign base1_offset[47] = 10'd490;  // 1440-950, 138
+assign base1_offset[48] = 10'd497;  // 1440-943, 139
+assign base1_offset[49] = 10'd504;  // 1440-936, 140
+assign base1_offset[50] = 10'd510;  // 1440-930, 141
+assign base1_offset[51] = 10'd517;  // 1440-923, 142
+assign base1_offset[52] = 10'd523;  // 1440-917, 143
+assign base1_offset[53] = 10'd530;  // 1440-910, 144
+assign base1_offset[54] = 10'd536;  // 1440-904, 145
+assign base1_offset[55] = 10'd542;  // 1440-898, 146
+assign base1_offset[56] = 10'd548;  // 1440-892, 147
+assign base1_offset[57] = 10'd554;  // 1440-886, 148
+assign base1_offset[58] = 10'd560;  // 1440-880, 149
+assign base1_offset[59] = 10'd566;  // 1440-874, 150
+assign base1_offset[60] = 10'd572;  // 1440-868, 151
+assign base1_offset[61] = 10'd578;  // 1440-862, 152
+assign base1_offset[62] = 10'd583;  // 1440-857, 153
+assign base1_offset[63] = 10'd589;  // 1440-851, 154
 
 /********************************************************************************/
 //第2段
@@ -920,5 +921,20 @@ assign seg_start[176] = 8'd18;  // 7085
 assign seg_start[177] = 8'd17;  // 7490
 assign seg_start[178] = 8'd16;  // 7944
 
-
+always @(*) begin
+    case (segment_type)
+        4'd0:  div_val = val_base_self[offset];  // 直接索引查表  
+        4'd1:  div_val = val_base[1] - {7'd0, base1_offset[offset]};  
+        4'd2:  div_val = val_base[2] - {9'd0, base2_offset[offset]};
+        4'd3:  div_val = val_base[3] - {9'd0, base3_offset[offset]};
+        4'd4:  div_val = val_base[4] - {10'd0, base4_offset[offset]};
+        4'd5:  div_val = val_base[5] - {11'd0, base5_offset[offset]};
+        4'd6:  div_val = val_base[6] - {11'd0, base6_offset[offset]};
+        4'd7:  div_val = val_base[7] - {12'd0, base7_offset[offset]};
+        4'd8:  div_val = val_base[8] - {12'd0, base8_offset[offset]};
+        4'd9:  div_val = val_base[9] - {12'd0, base9_offset[offset]};
+        4'd10: div_val = seg_start[idx_out];  
+        default: div_val = 17'd0;
+    endcase
+end
 endmodule

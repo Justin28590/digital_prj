@@ -11,6 +11,7 @@ module y_gen(
 //第0级：初始化，寄存变量值
 reg [11:0] a_reg, b_reg, c_reg;
 reg [12:0] apd_reg;
+//reg apd_ready;
 wire [11:0] d;
 wire d_ready;
 reg d_ready_reg;
@@ -29,12 +30,14 @@ always@(posedge clk) begin
         b_reg <= 12'd0;
         c_reg <= 12'd0;
         apd_reg <= 13'd0;
+        //apd_ready <= 1'b0;
         d_ready_reg <= 1'b0;
     end else begin
         a_reg <= a;
         b_reg <= b;
         c_reg <= c;
         apd_reg <= a + d;
+        //apd_ready <= 1'b1;
         d_ready_reg <= d_ready;
     end
 end
@@ -50,46 +53,58 @@ cos_lut u_cos_lut(
     .cos_out(cos_wire)
 );
 
-wire [3:0]  segment_type;
-wire [12:0] offset;
-wire valid;
+reg [3:0]  segment_type;
+reg [6:0] offset;
+//reg found;
+reg [7:0] idx_out;
+//reg valid;
 apd_idx u_apd_idx(
+    //.clk(clk),
+    //.rst_n(rst_n),
+    //.start(apd_ready),
     .apd(apd_reg),
     .segment_type(segment_type),
     .offset(offset),
-    .valid(valid)
+    //.found(found),
+    .idx_out(idx_out)
+    //.valid(valid)
 );
 
 reg [3:0] segment_type_reg;
-reg [12:0] offset_reg;
+reg [6:0] offset_reg;
+reg [7:0] idx_out_reg;
 always@(posedge clk) begin
-    if(!rst_n || !d_ready) begin
+    if(!rst_n) begin
         segment_type_reg <= 4'd0;
-        offset_reg <= 13'd0;
+        offset_reg <= 7'd0;
+        idx_out_reg <= 8'd0;
     end else begin
         segment_type_reg <= segment_type;
         offset_reg <= offset;
+        idx_out_reg <= idx_out;
     end
 end
 
-wire [17:0] div_wire;
-reg  [17:0] div_reg;
+reg  [16:0] div_val;
+reg  [16:0] div_reg;
 div_lut u_div_lut(
+    //.valid(valid),
     .segment_type(segment_type_reg),
     .offset(offset_reg),
-    .div_val(div_wire)
+    .idx_out(idx_out_reg),
+    .div_val(div_val)
 );
 
 always@(posedge clk) begin
     if(!rst_n || !d_ready) begin
         a_reg_2 <= 12'd0;
         b_reg_2 <= 12'd0;
-        div_reg <= 18'd0;
+        div_reg <= 17'd0;
         cos_reg <= 16'd0;
     end else begin
         a_reg_2 <= a_reg;
         b_reg_2 <= b_reg;
-        div_reg <= div_wire;
+        div_reg <= div_val;
         cos_reg <= cos_wire;
     end
 end

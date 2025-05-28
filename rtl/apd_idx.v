@@ -1,10 +1,7 @@
 module apd_idx(
-    input wire clk,
-    input wire rst_n,
-    input wire [12:0] apd,          // APD输入值 (1-8190)
-    output wire [3:0] segment_type,  // 段类型：0=base_self, 1=seg0, 2=seg1, ..., 11=seg10, 12=direct
-    output wire [7:0] offset,        // 段内偏移量
-    output reg found,
+    input wire [12:0] apd,           // APD输入值 (1-8190)
+    output reg [3:0] segment_type,  // 段类型：0=base_self, 1=seg0, 2=seg1, ..., 11=seg10, 12=direct
+    output reg [6:0] offset,        // 段内偏移量
     output reg [7:0] idx_out         // 二分法索引输出
 );
 
@@ -26,14 +23,14 @@ localparam SEG_DIRECT     = 4'd10;  // 直接查val_base表
 wire [12:0] boundaries [0:11];
 assign boundaries[0]  = 13'd1;    // base_self: apd-1
 assign boundaries[1]  = 13'd91;   
-assign boundaries[2]  = 13'd154;  
-assign boundaries[3]  = 13'd218;  
-assign boundaries[4]  = 13'd282;  
-assign boundaries[5]  = 13'd346;  
-assign boundaries[6]  = 13'd410;  
-assign boundaries[7]  = 13'd474;  
-assign boundaries[8]  = 13'd536;  
-assign boundaries[9]  = 13'd600;  
+assign boundaries[2]  = 13'd155;  
+assign boundaries[3]  = 13'd219;  
+assign boundaries[4]  = 13'd283;  
+assign boundaries[5]  = 13'd347;  
+assign boundaries[6]  = 13'd411;  
+assign boundaries[7]  = 13'd475;  
+assign boundaries[8]  = 13'd537;  
+assign boundaries[9]  = 13'd601;  
 assign boundaries[10]  = 13'd673;  
 assign boundaries[11]  = 13'd8190;  
 
@@ -55,7 +52,7 @@ wire sel_direct     = (apd > boundaries[10]) && (apd <= boundaries[11]);
 
 // 组合逻辑计算段类型和偏移量
 reg [3:0] segment_type_comb;
-wire [7:0] offset_comb;    
+wire [6:0] offset_comb;    
 
 // 使用优先编码器函数 - 更简洁的写法
 always @(*) begin
@@ -73,28 +70,12 @@ always @(*) begin
     else                    segment_type_comb = 4'd15; // 错误标志
 end
 
-
-
 assign offset_comb = apd - boundaries[segment_type_comb]; 
 
-/*
-// 时钟逻辑
-always @(posedge clk) begin
-    if (!rst_n) begin
-        segment_type <= 4'd0;
-        offset <= 13'd0;
-        valid <= 1'b0;
-    end else begin
-        segment_type <= segment_type_comb;
-        offset <= offset_comb;
-        valid <= !out_of_range;
-    end
+always @(*) begin
+    segment_type = segment_type_comb;
+    offset = offset_comb;
 end
-*/
-
-// 输出逻辑
-assign segment_type = segment_type_comb; 
-assign offset = offset_comb;
 
 //二分法的索引
 wire [12:0] val_seg [0:178]; 
@@ -278,95 +259,121 @@ assign val_seg[176] = 13'd7085;
 assign val_seg[177] = 13'd7490;
 assign val_seg[178] = 13'd7944;
 
-localparam N = 179;
-localparam Q1 = 44, Q2 = 88, Q3 = 132;
 
-// 第0级输入逻辑（预设四分段）
-reg [7:0] left_0, right_0;
-reg [12:0] apd_0;
-reg valid_0;
-always @(posedge clk) begin
-    if (!rst_n) begin
-        left_0 <= 0; right_0 <= 0; apd_0 <= 0; valid_0 <= 0;
-    end else if (start) begin
-        apd_0 <= apd;
-        if (apd < val_seg[Q1])      {left_0, right_0} <= {8'd0, Q1};
-        else if (apd < val_seg[Q2]) {left_0, right_0} <= {Q1 + 1, Q2};
-        else if (apd < val_seg[Q3]) {left_0, right_0} <= {Q2 + 1, Q3};
-        else                        {left_0, right_0} <= {Q3 + 1, N - 1};
-    end else begin
-        valid_0 <= 0;
-    end
-end
-// 第1级：第一次比较
-reg [7:0] left_1, right_1, mid_1, apd_1;
-reg valid_1;
-reg [7:0] idx_1;
-reg found_1;
-always @(posedge clk) begin
-    if (!rst_n) begin
-        valid_1 <= 0; found_1 <= 0;
-    end else begin
-        valid_1 <= valid_0;
-        apd_1 <= apd_0;
-        if (valid_0 && left_0 <= right_0) begin
-            mid_1 <= (left_0 + right_0) >> 1;
-            if (val_seg[(left_0 + right_0) >> 1] == apd_0) begin
-                found_1 <= 1;
-                idx_1 <= (left_0 + right_0) >> 1;
-                left_1 <= 0; right_1 <= 0;
-            end else if (val_seg[(left_0 + right_0) >> 1] < apd_0) begin
-                left_1 <= ((left_0 + right_0) >> 1) + 1;
-                right_1 <= right_0;
-                found_1 <= 0;
-            end else begin
-                right_1 <= ((left_0 + right_0) >> 1) - 1;
-                left_1 <= left_0;
-                found_1 <= 0;
-            end
-        end else begin
-            found_1 <= 0;
-            left_1 <= left_0;
-            right_1 <= right_0;
-        end
-    end
-end
+// 假设N=179，分成13段，段界点如下（示例索引）
+localparam Q0 = 0;
+localparam Q1 = 13;
+localparam Q2 = 26;
+localparam Q3 = 39;
+localparam Q4 = 52;
+localparam Q5 = 65;
+localparam Q6 = 78;
+localparam Q7 = 91;
+localparam Q8 = 104;
+localparam Q9 = 117;
+localparam Q10 = 130;
+localparam Q11 = 143;
+localparam Q12 = 156;
+localparam Q13 = 178;  // 最后一段结尾
 
-// 第2级：第二次比较
-reg [7:0] apd_2, left_2, right_2, mid_2;
-reg valid_2;
-reg [7:0] idx_2;
-reg found_2;
-always @(posedge clk) begin
-    if (!rst_n) begin
-        valid_2 <= 0; found_2 <= 0;
-    end else begin
-        valid_2 <= valid_1;
-        apd_2 <= apd_1;
-        if (found_1) begin
-            found_2 <= 1;
-            idx_2 <= idx_1;
-        end else if (valid_1 && left_1 <= right_1) begin
-            mid_2 <= (left_1 + right_1) >> 1;
-            if (val_seg[(left_1 + right_1) >> 1] == apd_1) begin
-                found_2 <= 1;
-                idx_2 <= (left_1 + right_1) >> 1;
-            end else begin
-                found_2 <= 0;  // 可继续拓展第三级比较
+integer i;
+reg found_flag;
+
+always @(*) begin
+    idx_out = 0; 
+    found_flag = 0;
+
+    if (apd < val_seg[Q1]) begin
+        for (i = Q0; i <= Q1; i = i + 1) begin
+            if (!found_flag && val_seg[i] >= apd) begin
+                idx_out = i-1;
+                found_flag = 1;
             end
-        end else begin
-            found_2 <= 0;
         end
-    end
-end
-// 输出阶段（第三级）
-always @(posedge clk) begin
-    if (!rst_n) begin
-        found <= 0;
-        idx_out <= 0;
+    end else if (apd < val_seg[Q2]) begin
+        for (i = Q1 + 1; i <= Q2; i = i + 1) begin
+            if (!found_flag && val_seg[i] >= apd) begin
+                idx_out = i-1;
+                found_flag = 1;
+            end
+        end
+    end else if (apd < val_seg[Q3]) begin
+        for (i = Q2 + 1; i <= Q3; i = i + 1) begin
+            if (!found_flag && val_seg[i] >= apd) begin
+                idx_out = i-1;
+                found_flag = 1;
+            end
+        end
+    end else if (apd < val_seg[Q4]) begin
+        for (i = Q3 + 1; i <= Q4; i = i + 1) begin
+            if (!found_flag && val_seg[i] >= apd) begin
+                idx_out = i-1;
+                found_flag = 1;
+            end
+        end
+    end else if (apd < val_seg[Q5]) begin
+        for (i = Q4 + 1; i <= Q5; i = i + 1) begin
+            if (!found_flag && val_seg[i] >= apd) begin
+                idx_out = i-1;
+                found_flag = 1;
+            end
+        end
+    end else if (apd < val_seg[Q6]) begin
+        for (i = Q5 + 1; i <= Q6; i = i + 1) begin
+            if (!found_flag && val_seg[i] >= apd) begin
+                idx_out = i-1;
+                found_flag = 1;
+            end
+        end
+    end else if (apd < val_seg[Q7]) begin
+        for (i = Q6 + 1; i <= Q7; i = i + 1) begin
+            if (!found_flag && val_seg[i] >= apd) begin
+                idx_out = i-1;
+                found_flag = 1;
+            end
+        end
+    end else if (apd < val_seg[Q8]) begin
+        for (i = Q7 + 1; i <= Q8; i = i + 1) begin
+            if (!found_flag && val_seg[i] >= apd) begin
+                idx_out = i-1;
+                found_flag = 1;
+            end
+        end
+    end else if (apd < val_seg[Q9]) begin
+        for (i = Q8 + 1; i <= Q9; i = i + 1) begin
+            if (!found_flag && val_seg[i] >= apd) begin
+                idx_out = i-1;
+                found_flag = 1;
+            end
+        end
+    end else if (apd < val_seg[Q10]) begin
+        for (i = Q9 + 1; i <= Q10; i = i + 1) begin
+            if (!found_flag && val_seg[i] >= apd) begin
+                idx_out = i-1;
+                found_flag = 1;
+            end
+        end
+    end else if (apd < val_seg[Q11]) begin
+        for (i = Q10 + 1; i <= Q11; i = i + 1) begin
+            if (!found_flag && val_seg[i] >= apd) begin
+                idx_out = i-1;
+                found_flag = 1;
+            end
+        end
+    end else if (apd < val_seg[Q12]) begin
+        for (i = Q11 + 1; i <= Q12; i = i + 1) begin
+            if (!found_flag && val_seg[i] >= apd) begin
+                idx_out = i-1;
+                found_flag = 1;
+            end
+        end
     end else begin
-        found <= found_2;
-        idx_out <= idx_2;
+        for (i = Q12 + 1; i <= Q13; i = i + 1) begin
+            if (!found_flag && val_seg[i] >= apd) begin
+                idx_out = i-1;
+                found_flag = 1;
+            end
+        end
     end
 end
 
