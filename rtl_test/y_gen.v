@@ -161,23 +161,44 @@ always@(posedge clk) begin
 end
 
 reg sign_reg_2;
-reg [26:0] a_cos;
-reg [28:0] b_div;
+reg [26:0] a_cos_1;
+reg [26:0] a_cos_2;
+reg [28:0] b_div_1;
+reg [28:0] b_div_2;
 always@(posedge clk) begin
     if(!rst_n) begin
         sign_reg_2 <= 1'b0;
-        a_cos <= 27'd0;
-        b_div <= 30'd0;
+        a_cos_1 <= 27'd0;
+        a_cos_2 <= 27'd0;
+        b_div_1 <= 29'd0;
+        b_div_2 <= 29'd0;
     end else begin
         sign_reg_2 <= sign_reg_1;
-        a_cos <= a1cos1 + {a2cos1,6'b0} + {a1cos2,7'b0} + {a2cos2,13'b0};
-        b_div <= b1d1 + {b2d1,6'b0} + {b1d2,6'b0} + {b2d2,12'b0} + {b1d3,12'b0} + {b2d3,18'b0};
+        a_cos_1 <= a1cos1 + {a2cos2,13'b0};
+        a_cos_2 <= {a2cos1,6'b0} + {a1cos2,7'b0};
+        //这里的6个加法器延迟很大，分成两段
+        b_div_1 <= b1d1 + {b1d2,6'b0} + {b2d3,18'b0};
+        b_div_2 <= {b2d1,6'b0} + {b2d2,12'b0} + {b1d3,12'b0};
     end
 end
 
+reg [26:0] a_cos;
+reg [28:0] b_div;
+reg sign_reg_3;
+always@(posedge clk) begin
+    if(!rst_n) begin
+        sign_reg_3 <= 1'b0;
+        a_cos <= 27'd0;
+        b_div <= 29'd0;
+    end else begin
+        sign_reg_3 <= sign_reg_2;
+        a_cos <= a_cos_1 + a_cos_2;
+        b_div <= b_div_1 + b_div_2;
+    end
+end
 
 //第4级：将a_cos和b_div以部分积相乘,a_cos27位分成6*4+3，b_div29位分成4*6+5
-reg sign_reg_3;
+reg sign_reg_4;
 reg [13:0]  x1y1, x2y1, x3y1;
 reg [13:0]  x1y2, x2y2, x3y2;
 reg [13:0]  x1y3, x2y3, x3y3;
@@ -186,7 +207,7 @@ reg [14:0]  x1y4, x2y4, x3y4;
 reg [13:0]  x4y4;
 always@(posedge clk) begin
     if(!rst_n) begin
-        sign_reg_3 <= 1'b0;
+        sign_reg_4 <= 1'b0;
         x1y1 <= 14'd0;
         x2y1 <= 14'd0;
         x3y1 <= 14'd0;
@@ -204,7 +225,7 @@ always@(posedge clk) begin
         x3y4 <= 15'd0;
         x4y4 <= 14'd0; 
     end else begin
-        sign_reg_3 <= sign_reg_2;
+        sign_reg_4 <= sign_reg_3;
         x1y1 <= a_cos[6:0]   * b_div[6:0];
         x2y1 <= a_cos[13:7]  * b_div[6:0];
         x3y1 <= a_cos[20:14] * b_div[6:0];
@@ -224,17 +245,17 @@ always@(posedge clk) begin
     end
 end
 
-reg sign_reg_4;
+reg sign_reg_5;
 reg [55:0] result1, result2, result3, result4;
 always@(posedge clk) begin
     if(!rst_n) begin
-        sign_reg_4 <= 1'b0;
+        sign_reg_5 <= 1'b0;
         result1 <= 56'd0;
         result2 <= 56'd0;
         result3 <= 56'd0;
         result4 <= 56'd0;
     end else begin
-        sign_reg_4 <= sign_reg_3;
+        sign_reg_5 <= sign_reg_4;
         result1 <= x1y1 + {x2y1,7'b0} + {x3y1,14'b0} + {x4y1,21'b0};
         result2 <= {x1y2,7'b0} + {x2y2,14'b0} + {x3y2,21'b0} + {x4y2,28'b0};
         result3 <= {x1y3,14'b0} + {x2y3,21'b0} + {x3y3,28'b0} + {x4y3,35'b0};
@@ -242,14 +263,14 @@ always@(posedge clk) begin
     end
 end
 
-reg sign_reg_5;
+reg sign_reg_6;
 reg [55:0] result;
 always@(posedge clk) begin
     if(!rst_n) begin
-        sign_reg_5 <= 1'b0;
+        sign_reg_6 <= 1'b0;
         result <= 56'd0;
     end else begin
-        sign_reg_5 <= sign_reg_4;
+        sign_reg_6 <= sign_reg_5;
         result <= result1 + result2 + result3 + result4;
     end
 end
@@ -258,7 +279,7 @@ wire [11:0] result_cut;
 wire [12:0] result_sign;
 //cos:15位，div:17位，右移32位
 assign result_cut = result[31]?(result[43:32]+1'b1):result[43:32];
-assign result_sign = sign_reg_5 ? {1'b1,-result_cut} : {1'b0,result_cut};
+assign result_sign = sign_reg_6 ? {1'b1,-result_cut} : {1'b0,result_cut};
 
 always@(posedge clk) begin
     if(!rst_n) begin
