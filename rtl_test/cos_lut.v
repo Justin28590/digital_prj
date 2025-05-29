@@ -6,52 +6,12 @@ module cos_lut (
 
 wire signed [15:0] cos_val [1024:0];
 wire [10:0] idx;
+assign idx = (addr < 1024)? addr: (addr<2048)? 2048-addr: (addr<3072)? addr-2048: 4096-addr;
 wire sign;
-wire [15:0] abs_cos_val;
+assign sign = (addr<1024)? 1'b0: (addr<2048)? 1'b1: (addr<3072)? 1'b1: 1'b0;
 
-// Optimized address decode using parallel logic instead of nested ternary
-wire [1:0] quadrant = addr[11:10];  // Extract upper 2 bits for quadrant
-wire [9:0] base_addr = addr[9:0];   // Lower 10 bits
+assign cos_out = d_ready ? (sign ? -cos_val[idx] : cos_val[idx]) : 16'd0;
 
-// Parallel quadrant processing
-wire [10:0] idx_q0 = {1'b0, base_addr};              // Quadrant 0: 0-1023
-wire [10:0] idx_q1 = 11'd1024 - {1'b0, base_addr};   // Quadrant 1: 1024-2047  
-wire [10:0] idx_q2 = {1'b0, base_addr};              // Quadrant 2: 2048-3071
-wire [10:0] idx_q3 = 11'd1024 - {1'b0, base_addr};   // Quadrant 3: 3072-4095
-
-// Use case statement for cleaner logic
-reg [10:0] idx_mux;
-reg sign_mux;
-
-always @(*) begin
-    case (quadrant)
-        2'b00: begin  // 0-1023
-            idx_mux = idx_q0;
-            sign_mux = 1'b0;
-        end
-        2'b01: begin  // 1024-2047
-            idx_mux = idx_q1;
-            sign_mux = 1'b1;
-        end
-        2'b10: begin  // 2048-3071
-            idx_mux = idx_q2;
-            sign_mux = 1'b1;
-        end
-        2'b11: begin  // 3072-4095
-            idx_mux = idx_q3;
-            sign_mux = 1'b0;
-        end
-    endcase
-end
-
-assign idx = idx_mux;
-assign sign = sign_mux;
-
-// LUT access
-assign abs_cos_val = cos_val[idx];
-
-// Output with optimized negation
-assign cos_out = d_ready ? (sign ? (~abs_cos_val + 1'b1) : abs_cos_val) : 16'd0;
 
 assign cos_val[0] = 16'sd32767;
 assign cos_val[1] = 16'sd32767;

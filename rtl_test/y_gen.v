@@ -25,7 +25,7 @@ d_gen u_d_gen(
 );
 
 always@(posedge clk) begin 
-    if(!rst_n || !d_ready) begin
+    if(!rst_n) begin
         a_reg <= 12'd0;
         b_reg <= 12'd0;
         c_reg <= 12'd0;
@@ -86,7 +86,7 @@ div_lut u_div_lut(
 );
 
 always@(posedge clk) begin
-    if(!rst_n || !d_ready) begin
+    if(!rst_n) begin
         a_reg_2 <= 12'd0;
         b_reg_2 <= 12'd0;
         div_reg <= 17'd0;
