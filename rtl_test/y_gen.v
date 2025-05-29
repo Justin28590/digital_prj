@@ -20,7 +20,7 @@ d_gen u_d_gen(
 reg [11:0] a_reg, b_reg;
 reg [9:0] c_reg; 
 reg sign;
-reg [12:0] apd_reg;
+reg [12:0] apd;
 
 always@(posedge clk) begin 
     if(!rst_n) begin
@@ -28,11 +28,11 @@ always@(posedge clk) begin
         b_reg <= 12'd0;
         c_reg <= 10'd0;
         sign <= 1'b0;
-        apd_reg <= 13'd0;
+        apd <= 13'd0;
     end else begin
         a_reg <= a;
         b_reg <= b;
-        apd_reg <= a + d;
+        apd <= a + d;
         if(c[11:10] == 2'b01) begin //当c为2047的时候，c[9:0]为1023，实际对应的是索引1
             sign <= 1'b1;
             c_reg <= 1024 - c[9:0];    
@@ -49,6 +49,14 @@ always@(posedge clk) begin
     end
 end
 
+reg [12:0] apd_reg;
+always@(posedge clk) begin
+    if(!rst_n) begin
+        apd_reg <= 13'b0;
+    end else begin
+        apd_reg <= apd;
+    end
+end
 //第1级：cos查表和div查表
 wire [11:0] cos_abs;
 cos_lut u_cos_lut(
@@ -235,6 +243,14 @@ always@(posedge clk) begin
     end
 end
 
+reg [23:0] a_cos_reg;
+always@(posedge clk) begin
+    if(!rst_n) begin
+        a_cos_reg <= 24'd0;
+    end else begin
+        a_cos_reg <= a_cos;
+    end
+end
 //第4级：将a_cos和b_div以部分积相乘,a_cos27位分成6*4+3，b_div29位分成4*6+5
 reg sign_reg_6;
 reg [18:0]  x1y1, x2y1, x3y1;
@@ -254,15 +270,15 @@ always@(posedge clk) begin
         x3y3 <= 19'd0;
     end else begin
         sign_reg_6 <= sign_reg_5;
-        x1y1 <= a_cos[7:0]   * b_div[10:0];
-        x2y1 <= a_cos[15:8]  * b_div[10:0];
-        x3y1 <= a_cos[23:16] * b_div[10:0];
-        x1y2 <= a_cos[7:0]   * b_div[21:11];
-        x2y2 <= a_cos[15:8]  * b_div[21:11];
-        x3y2 <= a_cos[23:16] * b_div[21:11];
-        x1y3 <= a_cos[7:0]   * b_div[32:22];
-        x2y3 <= a_cos[15:8]  * b_div[32:22];
-        x3y3 <= a_cos[23:16] * b_div[32:22];
+        x1y1 <= a_cos_reg[7:0]   * b_div[10:0];
+        x2y1 <= a_cos_reg[15:8]  * b_div[10:0];
+        x3y1 <= a_cos_reg[23:16] * b_div[10:0];
+        x1y2 <= a_cos_reg[7:0]   * b_div[21:11];
+        x2y2 <= a_cos_reg[15:8]  * b_div[21:11];
+        x3y2 <= a_cos_reg[23:16] * b_div[21:11];
+        x1y3 <= a_cos_reg[7:0]   * b_div[32:22];
+        x2y3 <= a_cos_reg[15:8]  * b_div[32:22];
+        x3y3 <= a_cos_reg[23:16] * b_div[32:22];
     end
 end
 
