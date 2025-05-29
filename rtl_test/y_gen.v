@@ -8,7 +8,7 @@ module y_gen(
     output reg [12:0] y
 );
 
-reg [11:0] d;
+wire [11:0] d;
 d_gen u_d_gen(
     .clk(clk),
     .e(e),
@@ -81,7 +81,7 @@ always@(posedge clk) begin
 end
 
 //除法查表例化
-reg  [20:0] div;
+wire  [20:0] div;
 div_lut u_div_lut(
     .idx(idx),
     .div(div)
@@ -196,24 +196,27 @@ always@(posedge clk) begin
 end
 
 reg sign_reg_4;
-reg [23:0] a_cos_1;
-reg [23:0] a_cos_2;
-reg [32:0] b_div_1;
-reg [32:0] b_div_2;
+reg [17:0] a_cos_1;
+reg [17:0] a_cos_2;
+reg [18:0] b_div_1;
+reg [18:0] b_div_2;
+reg [18:0] b_div_3;
 always@(posedge clk) begin
     if(!rst_n) begin
         sign_reg_4 <= 1'b0;
-        a_cos_1 <= 24'd0;
-        a_cos_2 <= 24'd0;
-        b_div_1 <= 33'd0;
-        b_div_2 <= 33'd0;
+        a_cos_1 <= 18'd0;
+        a_cos_2 <= 18'd0;
+        b_div_1 <= 19'd0;
+        b_div_2 <= 19'd0;
+        b_div_3 <= 19'd0;
     end else begin
         sign_reg_4 <= sign_reg_3;
-        a_cos_1 <= a1cos1 + {a2cos2,12'b0};
-        a_cos_2 <= {a2cos1,6'b0} + {a1cos2,6'b0};
-        //这里的6个加法器延迟很大，分成两段
-        b_div_1 <= b1d1 + {b1d2,7'b0} + {b2d3,20'b0};
-        b_div_2 <= {b2d1,6'b0} + {b2d2,13'b0} + {b1d3,14'b0};
+        a_cos_1 <= a1cos1 + {a2cos1,6'b0};
+        a_cos_2 <= a1cos2 + {a2cos2,6'b0};
+
+        b_div_1 <= b1d1 + {b2d1,6'b0};
+        b_div_2 <= b1d2 + {b2d2,6'b0};
+        b_div_3 <= b1d3 + {b2d3,6'b0};
     end
 end
 
@@ -227,8 +230,8 @@ always@(posedge clk) begin
         b_div <= 33'd0;
     end else begin
         sign_reg_5 <= sign_reg_4;
-        a_cos <= a_cos_1 + a_cos_2;
-        b_div <= b_div_1 + b_div_2;
+        a_cos <= a_cos_1 + {a_cos_2,6'b0};
+        b_div <= b_div_1 + {b_div_2,7'b0} + {b_div_3,14'b0};
     end
 end
 
@@ -264,18 +267,18 @@ always@(posedge clk) begin
 end
 
 reg sign_reg_7;
-reg [56:0] result1, result2, result3;
+reg [34:0] result1, result2, result3;
 always@(posedge clk) begin
     if(!rst_n) begin
         sign_reg_7 <= 1'b0;
-        result1 <= 57'd0;
-        result2 <= 57'd0;
-        result3 <= 57'd0;
+        result1 <= 35'd0;
+        result2 <= 35'd0;
+        result3 <= 35'd0;
     end else begin
         sign_reg_7 <= sign_reg_6;
-        result1 <= x1y1 + {x1y2,11'b0}+ {x3y3,38'b0};
-        result2 <= {x2y2,19'b0} + {x1y3,22'b0} + {x3y2,27'b0};
-        result3 <= {x2y1,8'b0}  + {x2y3,30'b0} + {x3y1,16'b0};
+        result1 <= x1y1 + {x2y1,8'b0} + {x3y1,16'b0};
+        result2 <= x1y2 + {x2y2,8'b0} + {x3y2,16'b0};
+        result3 <= x1y3 + {x2y3,8'b0} + {x3y3,16'b0};
     end
 end
 
@@ -287,7 +290,7 @@ always@(posedge clk) begin
         result <= 57'd0;
     end else begin
         sign_reg_8 <= sign_reg_7;
-        result <= result1 + result2 + result3;
+        result <= result1 + {result2,11'b0} + {result3,22'b0};
     end
 end
 //第6级：右移12位，截取12位，合并符号位

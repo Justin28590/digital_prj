@@ -1,6 +1,6 @@
 module div_lut (
     input wire [9:0] idx,  
-    output reg [20:0] div
+    output wire [20:0] div
 );
 
 wire [20:0] div_val[0:1024];
