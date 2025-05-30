@@ -18,43 +18,53 @@ d_gen u_d_gen(
 
 //第0级：初始化，寄存变量值
 reg [11:0] a_reg, b_reg;
-reg [9:0] c_reg; 
-reg sign;
+reg [11:0] c_reg; 
 reg [12:0] apd_reg;
 reg [11:0] d_reg;
 always@(posedge clk) begin 
     if(!rst_n) begin
         a_reg <= 12'd0;
         b_reg <= 12'd0;
-        c_reg <= 10'd0;
+        c_reg <= 12'd0;
         d_reg <= 12'd0;
-        sign <= 1'b0;
         apd_reg <= 13'd0;
     end else begin
         a_reg <= a;
         b_reg <= b;
+        c_reg <= c;
         d_reg <= d;
         apd_reg <= a_reg + d_reg;
-        if(c[11:10] == 2'b01) begin //当c为2047的时候，c[9:0]为1023，实际对应的是索引1
-            sign <= 1'b1;
-            c_reg <= 1024 - c[9:0];    
-        end else if(c[11:10] == 2'b10) begin //当c为2048的时候，c[9:0]为0,对应的索引为0
-            sign <= 1'b1;   
-            c_reg <= c[9:0];
-        end else if(c[11:10] == 2'b11) begin   //当c为3072的时候，c[9:0]为0，对应索引1024
-            sign <= 1'b0;
-            c_reg <= 1024 - c[9:0];
-        end else if(c[11:10] == 2'b00) begin //当c为1023的时候，c[9:0]
-            sign <= 1'b0;
-            c_reg <= c[9:0];
-        end
     end
 end
 
+reg [9:0] c_reg_2;
+reg sign;
+always@(posedge clk) begin
+    if(!rst_n) begin
+        sign <= 1'b0;
+        c_reg_2 <= 10'd0;
+    end else begin
+        if(c_reg[11:10] == 2'b01) begin //当c为2047的时候，c[9:0]为1023，实际对应的是索引1
+            sign <= 1'b1;
+            c_reg_2 <= 1024 - c[9:0];    
+        end else if(c_reg[11:10] == 2'b10) begin //当c为2048的时候，c[9:0]为0,对应的索引为0
+            sign <= 1'b1;   
+            c_reg_2 <= c[9:0];
+        end else if(c_reg[11:10] == 2'b11) begin   //当c为3072的时候，c[9:0]为0，对应索引1024
+            sign <= 1'b0;
+            c_reg_2 <= 1024 - c[9:0];
+        end else if(c_reg[11:10] == 2'b00) begin //当c为1023的时候，c[9:0]
+            sign <= 1'b0;
+            c_reg_2 <= c[9:0];
+        end
+
+    end
+
+end
 //第1级：cos查表和div查表
 wire [11:0] cos_abs;
 cos_lut u_cos_lut(
-    .addr(c_reg),   //直接通过c的后10位来查表,但是注意查表的顺序
+    .addr(c_reg_2),   //直接通过c的后10位来查表,但是注意查表的顺序
     .cos_abs(cos_abs)
 );
 
@@ -113,30 +123,18 @@ always@(posedge clk) begin
     end
 end
 
-reg  sign_reg;
 reg  [11:0] cos_reg;
 reg  [11:0] a_reg_2;
 reg  [11:0] b_reg_2;
 always@(posedge clk) begin
     if(!rst_n) begin
-        sign_reg <= 1'b0;    
         a_reg_2 <= 12'd0;
         b_reg_2 <= 12'd0;
         cos_reg <= 12'd0;
     end else begin
-        sign_reg <= sign;
         a_reg_2 <= a_reg;
         b_reg_2 <= b_reg;
         cos_reg <= cos_abs;
-    end
-end
-
-reg [11:0] cos_reg_2;
-always@(posedge clk) begin
-    if(!rst_n) begin
-        cos_reg_2 <= 12'd0;
-    end else begin
-        cos_reg_2 <= cos_reg;
     end
 end
 
@@ -150,7 +148,7 @@ always@(posedge clk) begin
         a_reg_3 <= 12'd0;
         b_reg_3 <= 12'd0;
     end else begin
-        sign_reg_2 <= sign_reg;
+        sign_reg_2 <= sign;
         a_reg_3 <= a_reg_2;
         b_reg_3 <= b_reg_2;
     end
@@ -183,10 +181,10 @@ always@(posedge clk) begin
         b2d3 <= 13'd0;
     end else begin
         sign_reg_3 <= sign_reg_2;
-        a1cos1 <= a_reg_3[5:0] *  cos_reg_2[5:0];
-        a2cos1 <= a_reg_3[11:6] * cos_reg_2[5:0];
-        a1cos2 <= a_reg_3[5:0] *  cos_reg_2[11:6];
-        a2cos2 <= a_reg_3[11:6] * cos_reg_2[11:6];
+        a1cos1 <= a_reg_3[5:0] *  cos_reg[5:0];
+        a2cos1 <= a_reg_3[11:6] * cos_reg[5:0];
+        a1cos2 <= a_reg_3[5:0] *  cos_reg[11:6];
+        a2cos2 <= a_reg_3[11:6] * cos_reg[11:6];
 
         b1d1 <= b_reg_3[5:0] *  div_val[6:0];
         b2d1 <= b_reg_3[11:6] * div_val[6:0];
