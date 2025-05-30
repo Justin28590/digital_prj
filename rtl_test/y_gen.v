@@ -244,21 +244,24 @@ always@(posedge clk) begin
 end
 
 reg [23:0] a_cos_reg;
+reg sign_reg_6;
 always@(posedge clk) begin
     if(!rst_n) begin
+        sign_reg_6 <= 1'b0;
         a_cos_reg <= 24'd0;
     end else begin
+        sign_reg_6 <= sign_reg_5;
         a_cos_reg <= a_cos;
     end
 end
 //第4级：将a_cos和b_div以部分积相乘,a_cos27位分成6*4+3，b_div29位分成4*6+5
-reg sign_reg_6;
+reg sign_reg_7;
 reg [18:0]  x1y1, x2y1, x3y1;
 reg [18:0]  x1y2, x2y2, x3y2;
 reg [18:0]  x1y3, x2y3, x3y3;
 always@(posedge clk) begin
     if(!rst_n) begin
-        sign_reg_6 <= 1'b0;
+        sign_reg_7 <= 1'b0;
         x1y1 <= 19'd0;
         x2y1 <= 19'd0;
         x3y1 <= 19'd0;
@@ -269,7 +272,7 @@ always@(posedge clk) begin
         x2y3 <= 19'd0;
         x3y3 <= 19'd0;
     end else begin
-        sign_reg_6 <= sign_reg_5;
+        sign_reg_7 <= sign_reg_6;
         x1y1 <= a_cos_reg[7:0]   * b_div[10:0];
         x2y1 <= a_cos_reg[15:8]  * b_div[10:0];
         x3y1 <= a_cos_reg[23:16] * b_div[10:0];
@@ -282,30 +285,30 @@ always@(posedge clk) begin
     end
 end
 
-reg sign_reg_7;
+reg sign_reg_8;
 reg [34:0] result1, result2, result3;
 always@(posedge clk) begin
     if(!rst_n) begin
-        sign_reg_7 <= 1'b0;
+        sign_reg_8 <= 1'b0;
         result1 <= 35'd0;
         result2 <= 35'd0;
         result3 <= 35'd0;
     end else begin
-        sign_reg_7 <= sign_reg_6;
+        sign_reg_8 <= sign_reg_7;
         result1 <= x1y1 + {x2y1,8'b0} + {x3y1,16'b0};
         result2 <= x1y2 + {x2y2,8'b0} + {x3y2,16'b0};
         result3 <= x1y3 + {x2y3,8'b0} + {x3y3,16'b0};
     end
 end
 
-reg sign_reg_8;
+reg sign_reg_9;
 reg [56:0] result;
 always@(posedge clk) begin
     if(!rst_n) begin
-        sign_reg_8 <= 1'b0;
+        sign_reg_9 <= 1'b0;
         result <= 57'd0;
     end else begin
-        sign_reg_8 <= sign_reg_7;
+        sign_reg_9 <= sign_reg_8;
         result <= result1 + {result2,11'b0} + {result3,22'b0};
     end
 end
@@ -314,7 +317,7 @@ wire [11:0] result_cut;
 wire [12:0] result_sign;
 //cos:12位，div:21位，右移33位
 assign result_cut = result[44:33];
-assign result_sign = sign_reg_8 ? {1'b1,-result_cut} : {1'b0,result_cut};
+assign result_sign = sign_reg_9 ? {1'b1,-result_cut} : {1'b0,result_cut};
 
 always@(posedge clk) begin
     if(!rst_n) begin
