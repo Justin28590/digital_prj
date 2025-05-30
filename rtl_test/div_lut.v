@@ -7,6 +7,7 @@ wire [20:0] div_val[0:1024];
 
 assign div = div_val[idx]; 
 
+assign div_val[0] = 21'd2097151;
 assign div_val[1] = 21'd2097151;
 assign div_val[2] = 21'd1048576;
 assign div_val[3] = 21'd699050;

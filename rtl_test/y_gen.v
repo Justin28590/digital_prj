@@ -46,16 +46,16 @@ always@(posedge clk) begin
     end else begin
         if(c_reg[11:10] == 2'b01) begin //当c为2047的时候，c[9:0]为1023，实际对应的是索引1
             sign <= 1'b1;
-            c_reg_2 <= 1024 - c[9:0];    
+            c_reg_2 <= 1024 - c_reg[9:0];    
         end else if(c_reg[11:10] == 2'b10) begin //当c为2048的时候，c[9:0]为0,对应的索引为0
             sign <= 1'b1;   
-            c_reg_2 <= c[9:0];
+            c_reg_2 <= c_reg[9:0];
         end else if(c_reg[11:10] == 2'b11) begin   //当c为3072的时候，c[9:0]为0，对应索引1024
             sign <= 1'b0;
-            c_reg_2 <= 1024 - c[9:0];
+            c_reg_2 <= 1024 - c_reg[9:0];
         end else if(c_reg[11:10] == 2'b00) begin //当c为1023的时候，c[9:0]
             sign <= 1'b0;
-            c_reg_2 <= c[9:0];
+            c_reg_2 <= c_reg[9:0];
         end
 
     end
