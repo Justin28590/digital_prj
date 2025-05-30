@@ -20,19 +20,21 @@ d_gen u_d_gen(
 reg [11:0] a_reg, b_reg;
 reg [9:0] c_reg; 
 reg sign;
-reg [12:0] apd;
-
+reg [12:0] apd_reg;
+reg [11:0] d_reg;
 always@(posedge clk) begin 
     if(!rst_n) begin
         a_reg <= 12'd0;
         b_reg <= 12'd0;
         c_reg <= 10'd0;
+        d_reg <= 12'd0;
         sign <= 1'b0;
-        apd <= 13'd0;
+        apd_reg <= 13'd0;
     end else begin
         a_reg <= a;
         b_reg <= b;
-        apd <= a + d;
+        d_reg <= d;
+        apd_reg <= a_reg + d_reg;
         if(c[11:10] == 2'b01) begin //当c为2047的时候，c[9:0]为1023，实际对应的是索引1
             sign <= 1'b1;
             c_reg <= 1024 - c[9:0];    
@@ -49,14 +51,6 @@ always@(posedge clk) begin
     end
 end
 
-reg [12:0] apd_reg;
-always@(posedge clk) begin
-    if(!rst_n) begin
-        apd_reg <= 13'b0;
-    end else begin
-        apd_reg <= apd;
-    end
-end
 //第1级：cos查表和div查表
 wire [11:0] cos_abs;
 cos_lut u_cos_lut(
