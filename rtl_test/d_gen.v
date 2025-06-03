@@ -24,13 +24,15 @@ always@(posedge clk) begin
 		d_ready <= 1'd0;
 		d <= 12'd0;
 		e_reg <= 1'b0;
-	end else if(!d_ready) begin 
+	end else begin 
 		e_reg <= e;
-		d_cnt <= d_cnt + 1'b1;
-		d <= {d[10:0],e_reg};
-		if(d_cnt > 4'd11) begin
-			d_ready <= 1'b1;
-			d_cnt <= d_cnt;
+		if(!d_ready) begin
+			d_cnt <= d_cnt + 1'b1;
+			d <= {d[10:0],e};
+			if(d_cnt > 4'd10) begin
+				d_ready <= 1'b1;
+				d_cnt <= d_cnt;
+			end
 		end
 	end
 end

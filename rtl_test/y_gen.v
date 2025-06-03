@@ -175,47 +175,86 @@ always@(posedge clk) begin
        sign_reg_6 <= sign_reg_5;
        a_cos_reg <= a_cos;
 end
-//第4级：将a_cos和b_div以部分积相乘,a_cos27位分成6*4+3，b_div29位分成4*6+5
+
 reg sign_reg_7;
-reg [18:0]  x1y1, x2y1, x3y1;
-reg [18:0]  x1y2, x2y2, x3y2;
-reg [18:0]  x1y3, x2y3, x3y3;
+reg [14:0] x1y1,x2y1,x3y1,x4y1;
+reg [14:0] x1y2,x2y2,x3y2,x4y2;
+reg [14:0] x1y3,x2y3,x3y3,x4y3;
+reg [11:0] x1y4,x2y4,x3y4,x4y4;
 always@(posedge clk) begin
-       sign_reg_7 <= sign_reg_6;
-       x1y1 <= a_cos_reg[7:0]   * b_div[10:0];
-       x2y1 <= a_cos_reg[15:8]  * b_div[10:0];
-       x3y1 <= a_cos_reg[23:16] * b_div[10:0];
-       x1y2 <= a_cos_reg[7:0]   * b_div[21:11];
-       x2y2 <= a_cos_reg[15:8]  * b_div[21:11];
-       x3y2 <= a_cos_reg[23:16] * b_div[21:11];
-       x1y3 <= a_cos_reg[7:0]   * b_div[32:22];
-       x2y3 <= a_cos_reg[15:8]  * b_div[32:22];
-       x3y3 <= a_cos_reg[23:16] * b_div[32:22];
+    sign_reg_7 <= sign_reg_6;
+	x1y1 <= a_cos_reg[5:0] 		* b_div[8:0];
+	x2y1 <= a_cos_reg[11:6] 	* b_div[8:0];
+	x3y1 <= a_cos_reg[17:12]	* b_div[8:0];
+	x4y1 <= a_cos_reg[23:18]	* b_div[8:0];
+	
+	x1y2 <=  a_cos_reg[5:0] 	* b_div[17:9];
+	x2y2 <=  a_cos_reg[11:6]    * b_div[17:9];
+	x3y2 <=  a_cos_reg[17:12]   * b_div[17:9];
+	x4y2 <=  a_cos_reg[23:18]   * b_div[17:9];
+	
+	x1y3 <=  a_cos_reg[5:0] 	* b_div[26:18];
+	x2y3 <=  a_cos_reg[11:6]    * b_div[26:18];
+	x3y3 <=  a_cos_reg[17:12]   * b_div[26:18];
+	x4y3 <=  a_cos_reg[23:18]   * b_div[26:18];
+
+	x1y4 <=  a_cos_reg[5:0] 	* b_div[32:27];
+	x2y4 <=  a_cos_reg[11:6]    * b_div[32:27];
+	x3y4 <=  a_cos_reg[17:12]   * b_div[32:27];
+	x4y4 <=  a_cos_reg[23:18]   * b_div[32:27];
 end
 
 reg sign_reg_8;
-reg [34:0] result1, result2, result3;
-reg [26:0] result1;
+reg [20:0] stage1_1, stage1_2;
+reg [20:0] stage2_1, stage2_2;
+reg [20:0] stage3_1, stage3_2;
+reg [17:0] stage4_1, stage4_2;
 always@(posedge clk) begin
-       sign_reg_8 <= sign_reg_7;
-       result1 <= x1y1 + {x2y1,8'b0};
-			  + {x3y1,16'b0};
-       result2 <= x1y2 + {x2y2,8'b0} + {x3y2,16'b0};
-       result3 <= x1y3 + {x2y3,8'b0} + {x3y3,16'b0};
+    sign_reg_8 <= sign_reg_7;
+	stage1_1 <= x1y1 + {x2y1,6'b0};
+	stage1_2 <= x3y1 + {x4y1,6'b0};
+	stage2_1 <= x1y2 + {x2y2,6'b0};
+	stage2_2 <= x3y2 + {x4y2,6'b0};
+	stage3_1 <= x1y3 + {x2y3,6'b0};
+	stage3_2 <= x3y3 + {x4y3,6'b0};
+	stage4_1 <= x1y4 + {x2y4,6'b0};
+	stage4_2 <= x3y4 + {x4y4,6'b0};
 end
 
 reg sign_reg_9;
+reg [32:0] layer1,layer2,layer3;
+reg [29:0] layer4;
+always@(posedge clk) begin
+    sign_reg_9 <= sign_reg_8;
+	layer1 <= stage1_1 + {stage1_2,12'b0};
+	layer2 <= stage2_1 + {stage2_2,12'b0};
+	layer3 <= stage3_1 + {stage3_2,12'b0};
+	layer4 <= stage4_1 + {stage4_2,12'b0};
+end
+
+reg sign_reg_10;
+reg [41:0] layer1p2;
+reg [38:0] layer3p4;
+always@(posedge clk) begin
+    sign_reg_10 <= sign_reg_9;
+	layer1p2 <= layer1 + {layer2,9'b0};
+	layer3p4 <= layer3 + {layer4,9'b0};
+end
+
+reg sign_reg_11;
 reg [56:0] result;
 always@(posedge clk) begin
-       sign_reg_9 <= sign_reg_8;
-       result <= result1 + {result2,11'b0} + {result3,22'b0};
+    sign_reg_11 <= sign_reg_10;
+	result <= layer1p2 + {layer3p4,18'b0};
 end
+
+
 //第6级：右移12位，截取12位，合并符号位
 wire [11:0] result_cut;
 wire [12:0] result_sign;
 //cos:12位，div:21位，右移33位
 assign result_cut = result[44:33];
-assign result_sign = sign_reg_9 ? {1'b1,-result_cut} : {1'b0,result_cut};
+assign result_sign = sign_reg_11 ? {1'b1,-result_cut} : {1'b0,result_cut};
 
 always@(posedge clk) begin
        y <= result_sign;
